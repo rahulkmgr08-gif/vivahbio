@@ -1,0 +1,21 @@
+VIVAHBIO PAYMENT + SUPABASE FIX
+
+Replace/upload these files into your project:
+api/create-order.js
+api/verify-payment.js
+api/log-download.js
+package.json
+
+Then update app.js payment code as shown in the chat:
+1) Send profile data to /api/create-order (optional; order row is created server-side).
+2) Send the same profile data to /api/verify-payment.
+3) Save returned paymentId in localStorage as vivah_payment_id.
+4) After PDF/JPG download, POST /api/log-download with payment_id and file_type.
+
+Vercel environment variables required:
+SUPABASE_URL
+SUPABASE_SECRET_KEY
+RAZORPAY_KEY_ID
+RAZORPAY_KEY_SECRET
+
+Do NOT put SUPABASE_SECRET_KEY or RAZORPAY_KEY_SECRET in frontend code.
