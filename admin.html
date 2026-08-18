@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VivahBio Admin</title><link rel="stylesheet" href="styles.css"></head>
+<body class="admin-body">
+<header class="nav"><a class="brand" href="index.html"><span class="brand-icon">♡</span>Vivah<span>Bio</span></a><a href="index.html" class="small-btn">← Back to Website</a></header>
+<main class="admin">
+  <div class="admin-head"><div><span class="eyebrow">ADMIN DASHBOARD</span><h1>Manage your biodata business.</h1><p>This MVP uses browser localStorage. Connect a database/authentication for production.</p></div></div>
+  <div class="admin-stats"><div><b id="aTemplates">20</b><span>Templates</span></div><div><b id="aDownloads">0</b><span>Downloads</span></div><div><b id="aUsers">0</b><span>Saved profiles</span></div><div><b>₹49</b><span>Premium price</span></div></div>
+  <section class="admin-card"><div class="admin-card-head"><h2>Template Manager</h2><button id="addTemplate" class="primary-btn">+ Add Template</button></div><div id="adminTemplates" class="admin-table"></div></section>
+  <section class="admin-card"><div class="admin-card-head"><h2>Payment setup</h2></div><div class="setup"><label>Razorpay Key ID<input id="razorpayKey" placeholder="rzp_test_..."></label><label>Premium Price<input id="price" value="49"></label><button id="saveSetup" class="secondary-btn">Save settings</button></div><p class="payment-note">For real payments, create a server-side order and verify the Razorpay signature. Never put secret keys in frontend code.</p></section>
+</main><script src="admin.js"></script></body></html>
