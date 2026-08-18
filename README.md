@@ -1,36 +1,24 @@
-# VivahBio — Actual Product MVP
+# VivahBio + Razorpay Test Mode
 
-## Included
-- Polished landing page
-- Template library with 20 built-in designs
-- Template category filters
-- Hindi / English UI toggle
-- Biodata maker with live preview
-- Photo upload
-- PDF via browser print / Save as PDF
-- JPG download
-- Premium checkout placeholder (₹19)
-- Admin dashboard
-- Local settings/download counters
-- Responsive mobile design
+## Added
+- Vercel serverless `/api/create-order` endpoint
+- Vercel serverless `/api/verify-payment` endpoint
+- Razorpay Checkout
+- ₹19 order amount (1900 paise)
+- Server-side signature verification
+- Premium unlock stored locally after verified test payment
 
-## Run locally
-Open `index.html` in Chrome.
+## GitHub/Vercel setup
+1. Upload these files to the repository.
+2. Vercel will detect the `api/` serverless functions.
+3. In Vercel Project Settings → Environment Variables add:
+   - `RAZORPAY_KEY_ID` = your `rzp_test_...` key ID
+   - `RAZORPAY_KEY_SECRET` = your Razorpay Test Mode secret
+4. Apply variables to Production/Preview as needed and redeploy.
+5. Test the ₹19 checkout.
 
-## Production work still required
-- Real authentication
-- Database (PostgreSQL/Supabase)
-- Server-side PDF/JPG generation
-- Cloud image storage
-- Razorpay server-side order creation + signature verification
-- Real admin CRUD for templates
-- User accounts and purchase history
-- Production deployment/domain/analytics
+## Security
+Never commit the Razorpay Key Secret to GitHub or frontend JavaScript.
 
-Never place Razorpay secret keys in frontend JavaScript.
-
-
-## v2 fixes
-- JPG export now generates a full A4-style designed biodata and includes uploaded photo.
-- Admin demo now supports rename, free/premium toggle, delete, add template, price setting, download counter and reset.
-- Admin changes are stored in browser localStorage for this MVP; production requires authenticated server/database storage.
+## Important
+This is a Test Mode integration. Real payments require Live Mode keys and Razorpay account activation/KYC.
