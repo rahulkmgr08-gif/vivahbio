@@ -583,6 +583,7 @@ $("photo")?.addEventListener("change",e => {
 // ---------- Razorpay Premium Unlock ----------
 const PREMIUM_PRICE_PAISE = 1900; // ₹19
 const PREMIUM_UNLOCK_KEY = "vivah_premium_unlocked";
+const PROFILE_ID_KEY = "vivah_profile_id";
 
 function premiumUnlocked(){
   return localStorage.getItem(PREMIUM_UNLOCK_KEY) === "true";
@@ -590,6 +591,35 @@ function premiumUnlocked(){
 
 function setPremiumUnlocked(){
   localStorage.setItem(PREMIUM_UNLOCK_KEY, "true");
+}
+
+function getProfileId(){
+  return localStorage.getItem(PROFILE_ID_KEY) || "";
+}
+
+function setProfileId(id){
+  if(id) localStorage.setItem(PROFILE_ID_KEY, id);
+}
+
+async function uploadProfilePhoto(profileId){
+  if(!profileId || !profileDataUrl) return null;
+
+  const response = await fetch("/api/upload-photo", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      profile_id: profileId,
+      image_data: profileDataUrl
+    })
+  });
+
+  const data = await response.json().catch(()=>({}));
+
+  if(!response.ok || !data.success){
+    throw new Error(data.error || "Photo upload failed");
+  }
+
+  return data.photoUrl || null;
 }
 
 async function startRazorpayPayment(){
@@ -614,53 +644,60 @@ async function startRazorpayPayment(){
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({
-  amount: PREMIUM_PRICE_PAISE,
+        amount: PREMIUM_PRICE_PAISE,
 
-  profile: {
-    name: safeValue("name"),
-    date_of_birth: safeValue("dob"),
-    time_of_birth: safeValue("time_of_birth"),
-    place_of_birth: safeValue("place_of_birth"),
+        profile: {
+          name: safeValue("name"),
+          date_of_birth: safeValue("dob"),
+          time_of_birth: safeValue("time_of_birth"),
+          place_of_birth: safeValue("place_of_birth"),
 
-    height: safeValue("height"),
-    religion: safeValue("religion"),
-    caste: safeValue("caste"),
-    gotra: safeValue("gotra"),
-    rashi: safeValue("rashi"),
-    nakshatra: safeValue("nakshatra"),
-    complexion: safeValue("complexion"),
+          height: safeValue("height"),
+          religion: safeValue("religion"),
+          caste: safeValue("caste"),
+          gotra: safeValue("gotra"),
+          rashi: safeValue("rashi"),
+          nakshatra: safeValue("nakshatra"),
+          complexion: safeValue("complexion"),
 
-    education: safeValue("education"),
-    profession: safeValue("profession"),
-    company: safeValue("company"),
+          education: safeValue("education"),
+          profession: safeValue("profession"),
+          company: safeValue("company"),
 
-    languages: safeValue("languages"),
-    hobbies: safeValue("hobbies"),
+          languages: safeValue("languages"),
+          hobbies: safeValue("hobbies"),
 
-    father_name: safeValue("father"),
-    father_occupation: safeValue("father_occupation"),
+          father_name: safeValue("father"),
+          father_occupation: safeValue("father_occupation"),
 
-    mother_name: safeValue("mother"),
-    mother_occupation: safeValue("mother_occupation"),
+          mother_name: safeValue("mother"),
+          mother_occupation: safeValue("mother_occupation"),
 
-    siblings: safeValue("siblings"),
+          siblings: safeValue("siblings"),
 
-    contact_person: safeValue("contact_person"),
-    phone: safeValue("phone"),
-    email: safeValue("email"),
-    city: safeValue("city"),
-    address: safeValue("address"),
+          contact_person: safeValue("contact_person"),
+          phone: safeValue("phone"),
+          email: safeValue("email"),
+          city: safeValue("city"),
+          address: safeValue("address"),
 
-    about_me: safeValue("about"),
+          about_me: safeValue("about"),
 
-    template_id: templates[selected]?.[0] || "classic"
-  }
-})
+          template_id: templates[selected]?.[0] || "classic"
+        }
+      })
     });
 
     const orderData = await orderRes.json().catch(()=>({}));
+
     if(!orderRes.ok || !orderData.orderId || !orderData.keyId){
       throw new Error(orderData.error || "Unable to create payment order");
+    }
+
+    // create-order.js now creates/updates the profile before payment.
+    // Keep the profile ID so the photo can be uploaded after successful payment.
+    if(orderData.profileId){
+      setProfileId(orderData.profileId);
     }
 
     const options = {
@@ -670,11 +707,14 @@ async function startRazorpayPayment(){
       name: "VivahBio",
       description: "Premium Biodata Download",
       order_id: orderData.orderId,
+
       prefill: {
         name: val("name") === "—" ? "" : val("name"),
         contact: val("phone") === "—" ? "" : val("phone")
       },
+
       theme: {color:"#7b2036"},
+
       handler: async function(response){
         try{
           const verifyRes = await fetch("/api/verify-payment", {
@@ -688,20 +728,56 @@ async function startRazorpayPayment(){
           });
 
           const verifyData = await verifyRes.json().catch(()=>({}));
+
           if(!verifyRes.ok || !verifyData.verified){
-            throw new Error(verifyData.error || "Payment verification failed");
+            throw new Error(
+              verifyData.error || "Payment verification failed"
+            );
           }
 
+          // Payment is verified first.
           setPremiumUnlocked();
-          toast("Payment successful! PDF/JPG unlocked.");
           updatePremiumButtons();
+
+          // Photo upload is separate from payment verification.
+          // A photo upload failure must NOT turn a successful payment into
+          // a payment failure.
+          try{
+            const profileId =
+              getProfileId() ||
+              orderData.profileId ||
+              verifyData.profileId ||
+              "";
+
+            if(profileId && profileDataUrl){
+              const photoUrl =
+                await uploadProfilePhoto(profileId);
+
+              if(photoUrl){
+                toast("Payment successful! Photo saved. PDF/JPG unlocked.");
+              }else{
+                toast("Payment successful! PDF/JPG unlocked.");
+              }
+            }else{
+              toast("Payment successful! PDF/JPG unlocked.");
+            }
+          }catch(photoError){
+            console.error("photo upload:", photoError);
+            toast(
+              "Payment successful! PDF/JPG unlocked, but photo save failed."
+            );
+          }
+
         }catch(err){
           console.error(err);
-          toast("Payment hua, lekin verification fail hua. Please try again.");
+          toast(
+            "Payment hua, lekin verification fail hua. Please try again."
+          );
         }finally{
           resetPayButton();
         }
       },
+
       modal: {
         ondismiss: function(){
           resetPayButton();
@@ -711,12 +787,15 @@ async function startRazorpayPayment(){
     };
 
     const rzp = new Razorpay(options);
+
     rzp.on("payment.failed", function(){
       resetPayButton();
       toast("Payment failed. Please try again.");
     });
+
     rzp.open();
     return true;
+
   }catch(err){
     console.error(err);
     toast(err.message || "Payment start nahi ho paya.");
@@ -727,20 +806,34 @@ async function startRazorpayPayment(){
 
 function resetPayButton(){
   const payBtn = $("payBtn");
+
   if(payBtn){
     payBtn.disabled = false;
-    payBtn.textContent = premiumUnlocked() ? "Premium Unlocked ✓" : "Unlock Premium ₹19";
+
+    payBtn.textContent =
+      premiumUnlocked()
+        ? "Premium Unlocked ✓"
+        : "Unlock Premium ₹19";
   }
 }
 
 function updatePremiumButtons(){
   const unlocked = premiumUnlocked();
+
   if($("pdfBtn")){
-    $("pdfBtn").textContent = unlocked ? "Download PDF" : "Unlock to Download PDF";
+    $("pdfBtn").textContent =
+      unlocked
+        ? "Download PDF"
+        : "Unlock to Download PDF";
   }
+
   if($("jpgBtn")){
-    $("jpgBtn").textContent = unlocked ? "Download JPG" : "Unlock to Download JPG";
+    $("jpgBtn").textContent =
+      unlocked
+        ? "Download JPG"
+        : "Unlock to Download JPG";
   }
+
   resetPayButton();
 }
 
@@ -749,13 +842,18 @@ function requirePremium(action){
     action();
     return;
   }
+
   toast("Download ke liye pehle ₹19 Premium unlock karein.");
   startRazorpayPayment();
 }
 
 $("pdfBtn")?.addEventListener("click",()=>{
   requirePremium(()=>{
-    localStorage.setItem("vivah_downloads", +(localStorage.getItem("vivah_downloads")||0)+1);
+    localStorage.setItem(
+      "vivah_downloads",
+      +(localStorage.getItem("vivah_downloads")||0)+1
+    );
+
     window.print();
   });
 });
@@ -763,12 +861,17 @@ $("pdfBtn")?.addEventListener("click",()=>{
 $("jpgBtn")?.addEventListener("click",async()=>{
   requirePremium(async()=>{
     await downloadJpg();
-    localStorage.setItem("vivah_downloads", +(localStorage.getItem("vivah_downloads")||0)+1);
+
+    localStorage.setItem(
+      "vivah_downloads",
+      +(localStorage.getItem("vivah_downloads")||0)+1
+    );
   });
 });
 
 $("payBtn")?.addEventListener("click", startRazorpayPayment);
 updatePremiumButtons();
+
 document.querySelectorAll(".filter").forEach(b=>b.onclick=()=>{document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderTemplates(b.dataset.filter)});
 $("langBtn")?.addEventListener("click",()=>toast("Hindi/English UI toggle is ready; template text can be localized next."));
 renderTemplates();renderMini();updatePreview();
