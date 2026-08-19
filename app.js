@@ -91,16 +91,73 @@ $("photo")?.addEventListener("change",e=>{const f=e.target.files[0];if(!f)return
 // ---------- Razorpay Premium Unlock ----------
 const PREMIUM_PRICE_PAISE = 1900; // ₹19
 const PREMIUM_UNLOCK_KEY = "vivah_premium_unlocked";
+const PAYMENT_ID_KEY = "vivah_payment_id";
 
 function premiumUnlocked(){
   return localStorage.getItem(PREMIUM_UNLOCK_KEY) === "true";
 }
 
-function setPremiumUnlocked(){
+function setPremiumUnlocked(paymentId){
   localStorage.setItem(PREMIUM_UNLOCK_KEY, "true");
+
+  if(paymentId){
+    localStorage.setItem(PAYMENT_ID_KEY, paymentId);
+  }
+}
+
+function getProfilePayload(){
+  return {
+    name: val("name") === "—" ? null : val("name"),
+    date_of_birth: $("dob")?.value || null,
+    height: $("height")?.value || null,
+    religion: $("religion")?.value || null,
+    caste: $("caste")?.value || null,
+    education: $("education")?.value || null,
+    profession: $("profession")?.value || null,
+    company: $("company")?.value || null,
+    father_name: $("father")?.value || null,
+    mother_name: $("mother")?.value || null,
+    city: $("city")?.value || null,
+    phone: $("phone")?.value || null,
+    about_me: $("about")?.value || null,
+    template_id: templates[selected]?.[0] || "classic"
+  };
+}
+
+async function logDownload(fileType){
+  const paymentId = localStorage.getItem(PAYMENT_ID_KEY);
+
+  if(!paymentId){
+    console.warn("No Supabase payment ID found.");
+    return;
+  }
+
+  try{
+    const res = await fetch("/api/log-download", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        payment_id: paymentId,
+        file_type: fileType
+      })
+    });
+
+    if(!res.ok){
+      const data = await res.json().catch(()=>({}));
+      console.error(
+        "Download log failed:",
+        data.error || "Unknown error"
+      );
+    }
+  }catch(err){
+    console.error("Download log error:", err);
+  }
 }
 
 async function startRazorpayPayment(){
+
   if(premiumUnlocked()){
     toast("Premium already unlocked. You can download now.");
     return true;
@@ -112,129 +169,339 @@ async function startRazorpayPayment(){
   }
 
   const payBtn = $("payBtn");
-  if(payBtn) {
+
+  if(payBtn){
     payBtn.disabled = true;
     payBtn.textContent = "Opening payment…";
   }
 
   try{
+
     const orderRes = await fetch("/api/create-order", {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ amount: PREMIUM_PRICE_PAISE })
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        amount: PREMIUM_PRICE_PAISE,
+        profile: getProfilePayload()
+      })
     });
 
     const orderData = await orderRes.json().catch(()=>({}));
-    if(!orderRes.ok || !orderData.orderId || !orderData.keyId){
-      throw new Error(orderData.error || "Unable to create payment order");
+
+    if(
+      !orderRes.ok ||
+      !orderData.orderId ||
+      !orderData.keyId
+    ){
+      throw new Error(
+        orderData.error ||
+        "Unable to create payment order"
+      );
     }
 
     const options = {
-      key: orderData.keyId,
-      amount: orderData.amount,
-      currency: orderData.currency || "INR",
-      name: "VivahBio",
-      description: "Premium Biodata Download",
-      order_id: orderData.orderId,
-      prefill: {
-        name: val("name") === "—" ? "" : val("name"),
-        contact: val("phone") === "—" ? "" : val("phone")
-      },
-      theme: {color:"#7b2036"},
-      handler: async function(response){
-        try{
-          const verifyRes = await fetch("/api/verify-payment", {
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature
-            })
-          });
 
-          const verifyData = await verifyRes.json().catch(()=>({}));
-          if(!verifyRes.ok || !verifyData.verified){
-            throw new Error(verifyData.error || "Payment verification failed");
+      key: orderData.keyId,
+
+      amount: orderData.amount,
+
+      currency: orderData.currency || "INR",
+
+      name: "VivahBio",
+
+      description: "Premium Biodata Download",
+
+      order_id: orderData.orderId,
+
+      prefill:{
+        name:
+          val("name") === "—"
+            ? ""
+            : val("name"),
+
+        contact:
+          val("phone") === "—"
+            ? ""
+            : val("phone")
+      },
+
+      theme:{
+        color:"#7b2036"
+      },
+
+      handler: async function(response){
+
+        try{
+
+          const verifyRes = await fetch(
+            "/api/verify-payment",
+            {
+              method:"POST",
+
+              headers:{
+                "Content-Type":"application/json"
+              },
+
+              body:JSON.stringify({
+
+                razorpay_order_id:
+                  response.razorpay_order_id,
+
+                razorpay_payment_id:
+                  response.razorpay_payment_id,
+
+                razorpay_signature:
+                  response.razorpay_signature
+
+              })
+            }
+          );
+
+          const verifyData =
+            await verifyRes.json().catch(()=>({}));
+
+          if(
+            !verifyRes.ok ||
+            !verifyData.verified ||
+            !verifyData.paymentId
+          ){
+
+            throw new Error(
+              verifyData.error ||
+              "Payment verification failed"
+            );
           }
 
-          setPremiumUnlocked();
-          toast("Payment successful! PDF/JPG unlocked.");
+          /*
+           IMPORTANT:
+
+           verifyData.paymentId is the
+           SUPABASE payments.id UUID.
+
+           This is what log-download.js expects.
+          */
+
+          setPremiumUnlocked(
+            verifyData.paymentId
+          );
+
+          toast(
+            "Payment successful! PDF/JPG unlocked."
+          );
+
           updatePremiumButtons();
+
         }catch(err){
-          console.error(err);
-          toast("Payment hua, lekin verification fail hua. Please try again.");
+
+          console.error(
+            "Payment verification error:",
+            err
+          );
+
+          toast(
+            err.message ||
+            "Payment verification failed."
+          );
+
         }finally{
+
           resetPayButton();
+
         }
       },
-      modal: {
-        ondismiss: function(){
+
+      modal:{
+        ondismiss:function(){
+
           resetPayButton();
+
           toast("Payment cancelled.");
+
         }
       }
     };
 
     const rzp = new Razorpay(options);
-    rzp.on("payment.failed", function(){
-      resetPayButton();
-      toast("Payment failed. Please try again.");
-    });
+
+    rzp.on(
+      "payment.failed",
+      function(){
+
+        resetPayButton();
+
+        toast(
+          "Payment failed. Please try again."
+        );
+
+      }
+    );
+
     rzp.open();
+
     return true;
+
   }catch(err){
-    console.error(err);
-    toast(err.message || "Payment start nahi ho paya.");
+
+    console.error(
+      "Payment error:",
+      err
+    );
+
+    toast(
+      err.message ||
+      "Payment start nahi ho paya."
+    );
+
     resetPayButton();
+
     return false;
   }
 }
 
 function resetPayButton(){
+
   const payBtn = $("payBtn");
+
   if(payBtn){
+
     payBtn.disabled = false;
-    payBtn.textContent = premiumUnlocked() ? "Premium Unlocked ✓" : "Unlock Premium ₹19";
+
+    payBtn.textContent =
+      premiumUnlocked()
+        ? "Premium Unlocked ✓"
+        : "Unlock Premium ₹19";
+
   }
 }
 
 function updatePremiumButtons(){
-  const unlocked = premiumUnlocked();
+
+  const unlocked =
+    premiumUnlocked();
+
   if($("pdfBtn")){
-    $("pdfBtn").textContent = unlocked ? "Download PDF" : "Unlock to Download PDF";
+
+    $("pdfBtn").textContent =
+      unlocked
+        ? "Download PDF"
+        : "Unlock to Download PDF";
+
   }
+
   if($("jpgBtn")){
-    $("jpgBtn").textContent = unlocked ? "Download JPG" : "Unlock to Download JPG";
+
+    $("jpgBtn").textContent =
+      unlocked
+        ? "Download JPG"
+        : "Unlock to Download JPG";
+
   }
+
   resetPayButton();
 }
 
-function requirePremium(action){
-  if(premiumUnlocked()){
-    action();
-    return;
-  }
-  toast("Download ke liye pehle ₹19 Premium unlock karein.");
-  startRazorpayPayment();
-}
+$("pdfBtn")?.addEventListener(
+  "click",
+  async function(){
 
-$("pdfBtn")?.addEventListener("click",()=>{
-  requirePremium(()=>{
-    localStorage.setItem("vivah_downloads", +(localStorage.getItem("vivah_downloads")||0)+1);
+    if(!premiumUnlocked()){
+
+      toast(
+        "Download ke liye pehle ₹19 Premium unlock karein."
+      );
+
+      await startRazorpayPayment();
+
+      return;
+    }
+
+    localStorage.setItem(
+      "vivah_downloads",
+      +(
+        localStorage.getItem(
+          "vivah_downloads"
+        ) || 0
+      ) + 1
+    );
+
+    await logDownload("pdf");
+
     window.print();
-  });
-});
+  }
+);
 
-$("jpgBtn")?.addEventListener("click",async()=>{
-  requirePremium(async()=>{
+$("jpgBtn")?.addEventListener(
+  "click",
+  async function(){
+
+    if(!premiumUnlocked()){
+
+      toast(
+        "Download ke liye pehle ₹19 Premium unlock karein."
+      );
+
+      await startRazorpayPayment();
+
+      return;
+    }
+
     await downloadJpg();
-    localStorage.setItem("vivah_downloads", +(localStorage.getItem("vivah_downloads")||0)+1);
-  });
-});
 
-$("payBtn")?.addEventListener("click", startRazorpayPayment);
+    localStorage.setItem(
+      "vivah_downloads",
+      +(
+        localStorage.getItem(
+          "vivah_downloads"
+        ) || 0
+      ) + 1
+    );
+
+    await logDownload("jpg");
+  }
+);
+
+$("payBtn")?.addEventListener(
+  "click",
+  startRazorpayPayment
+);
+
 updatePremiumButtons();
-document.querySelectorAll(".filter").forEach(b=>b.onclick=()=>{document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderTemplates(b.dataset.filter)});
-$("langBtn")?.addEventListener("click",()=>toast("Hindi/English UI toggle is ready; template text can be localized next."));
-renderTemplates();renderMini();updatePreview();
+
+document
+  .querySelectorAll(".filter")
+  .forEach(function(b){
+
+    b.onclick = function(){
+
+      document
+        .querySelectorAll(".filter")
+        .forEach(function(x){
+          x.classList.remove("active");
+        });
+
+      b.classList.add("active");
+
+      renderTemplates(
+        b.dataset.filter
+      );
+    };
+  });
+
+$("langBtn")?.addEventListener(
+  "click",
+  function(){
+    toast(
+      "Hindi/English UI toggle is ready; template text can be localized next."
+    );
+  }
+);
+
+renderTemplates();
+renderMini();
+updatePreview();
+
+
+
+
