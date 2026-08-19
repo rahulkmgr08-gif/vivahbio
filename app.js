@@ -613,7 +613,49 @@ async function startRazorpayPayment(){
     const orderRes = await fetch("/api/create-order", {
       method: "POST",
       headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ amount: PREMIUM_PRICE_PAISE })
+      body: JSON.stringify({
+  amount: PREMIUM_PRICE_PAISE,
+
+  profile: {
+    name: safeValue("name"),
+    date_of_birth: safeValue("dob"),
+    time_of_birth: safeValue("time_of_birth"),
+    place_of_birth: safeValue("place_of_birth"),
+
+    height: safeValue("height"),
+    religion: safeValue("religion"),
+    caste: safeValue("caste"),
+    gotra: safeValue("gotra"),
+    rashi: safeValue("rashi"),
+    nakshatra: safeValue("nakshatra"),
+    complexion: safeValue("complexion"),
+
+    education: safeValue("education"),
+    profession: safeValue("profession"),
+    company: safeValue("company"),
+
+    languages: safeValue("languages"),
+    hobbies: safeValue("hobbies"),
+
+    father_name: safeValue("father"),
+    father_occupation: safeValue("father_occupation"),
+
+    mother_name: safeValue("mother"),
+    mother_occupation: safeValue("mother_occupation"),
+
+    siblings: safeValue("siblings"),
+
+    contact_person: safeValue("contact_person"),
+    phone: safeValue("phone"),
+    email: safeValue("email"),
+    city: safeValue("city"),
+    address: safeValue("address"),
+
+    about_me: safeValue("about"),
+
+    template_id: templates[selected]?.[0] || "classic"
+  }
+})
     });
 
     const orderData = await orderRes.json().catch(()=>({}));
