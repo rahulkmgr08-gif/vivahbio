@@ -149,7 +149,20 @@ module.exports = async function handler(req, res) {
           "Payment verified but payment record ID was not returned"
       });
     }
+// Mark profile as premium after successful payment
+const paymentRecord = rows?.[0];
 
+if (paymentRecord?.profile_id) {
+  await supabase(
+    `profiles?id=eq.${encodeURIComponent(paymentRecord.profile_id)}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        premium: true
+      })
+    }
+  );
+}
     return res.status(200).json({
 
       verified: true,
