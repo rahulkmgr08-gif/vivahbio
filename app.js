@@ -1,14 +1,14 @@
 const defaultTemplates = [
-  ["Classic Gold", "traditional", "gold", false],
-  ["Royal Maroon", "royal", "maroon", false],
-  ["Royal Blue", "royal", "blue", false],
-  ["Blush Floral", "floral", "blush", false],
-  ["Elegant Cream", "traditional", "cream", false],
-  ["Heritage Frame", "traditional", "heritage", true],
-  ["Modern Burgundy", "modern", "burgundy", true],
-  ["Golden Classic", "traditional", "mustard", true],
-  ["Floral White", "floral", "floral", true],
-  ["Modern Floral", "modern", "modern-floral", true]
+  ["Classic Gold", "classic", "gold", false],
+  ["Royal Maroon", "royal", "maroon", true],
+  ["Royal Blue", "blue", "blue", true],
+  ["Blush Floral", "floral", "blush", true],
+  ["Elegant Cream", "elegant", "cream", true],
+  ["Heritage Frame", "heritage", "heritage", true],
+  ["Modern Burgundy", "burgundy", "burgundy", true],
+  ["Golden Classic", "golden", "mustard", true],
+  ["Floral White", "floral-white", "floral", true],
+  ["Modern Floral", "modern-floral", "modern-floral", true]
 ];
 
 const $ = id => document.getElementById(id);
@@ -683,7 +683,7 @@ async function startRazorpayPayment(){
 
           about_me: safeValue("about"),
 
-          template_id: templates[selected]?.[0] || "classic"
+          template_id: templates[selected]?.[1] || "classic"
         }
       })
     });
