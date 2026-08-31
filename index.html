@@ -1,554 +1,1001 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VivahBio — Marriage Biodata Maker</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<style>
-.site-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 30px;
-  flex-wrap: wrap;
-}
+  <title>VivahBio — Marriage Biodata Maker</title>
 
-.site-footer .footer-links a {
-  color: #eadfd5 !important;
-  text-decoration: none !important;
-}
+  <link rel="stylesheet" href="styles.css">
 
-.site-footer .footer-links a:hover {
-  color: #ffffff !important;
-  text-decoration: underline !important;
-}
+  <style>
+    /* =====================================================
+       FOOTER
+    ===================================================== */
 
-.site-footer .footer-links {
-  line-height: 1.8;
-}
-</style>
+    .site-footer {
+      width: 100%;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 45px 30px 25px;
+      background: #24181d;
+      color: #eadfd5;
+      overflow: hidden;
+    }
+
+    .footer-inner {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 35px;
+      flex-wrap: wrap;
+      box-sizing: border-box;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .footer-brand-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #fff5f7;
+      color: #8b1e3f;
+      font-size: 28px;
+    }
+
+    .footer-brand-name {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .footer-brand-name span {
+      color: #8b1e3f;
+    }
+
+    .footer-description {
+      font-size: 17px;
+      color: #a99da0;
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .site-footer .footer-links {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 6px;
+      line-height: 1.8;
+      font-size: 16px;
+      text-align: right;
+      max-width: 700px;
+    }
+
+    .site-footer .footer-links a {
+      color: #eadfd5 !important;
+      text-decoration: none !important;
+      white-space: nowrap;
+    }
+
+    .site-footer .footer-links a:hover {
+      color: #ffffff !important;
+      text-decoration: underline !important;
+    }
+
+    .footer-copyright {
+      width: 100%;
+      max-width: 1400px;
+      margin: 30px auto 0;
+      padding-top: 20px;
+      border-top: 1px solid rgba(234, 223, 213, .18);
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .footer-copyright p {
+      margin: 0;
+      color: #a99da0;
+      font-size: 14px;
+    }
+
+
+    /* =====================================================
+       MOBILE FOOTER
+    ===================================================== */
+
+    @media (max-width: 700px) {
+
+      .site-footer {
+        padding: 35px 20px 20px;
+      }
+
+      .footer-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 22px;
+      }
+
+      .footer-description {
+        min-width: 0;
+        font-size: 15px;
+      }
+
+      .site-footer .footer-links {
+        justify-content: center;
+        text-align: center;
+        max-width: 100%;
+        font-size: 14px;
+      }
+
+      .footer-copyright {
+        margin-top: 25px;
+      }
+    }
+  </style>
 
 </head>
+
+
 <body>
-<div id="toast"></div>
 
-<header class="nav">
-  <a class="brand" href="#"><span class="brand-icon">♡</span><span>Vivah<span>Bio</span></span></a>
-  <nav>
-    <a href="#templates" data-i18n="templates">Templates</a>
-    <a href="#how" data-i18n="how">How it works</a>
-    <a href="#maker" data-i18n="create">Create Biodata</a>
-  </nav>
-  <div class="nav-actions">
-    <button id="langBtn" class="lang">हिंदी</button>
-    <a href="admin.html" class="admin-link">Admin</a>
-    <a href="#maker" class="small-btn" data-i18n="start">Start Free</a>
-  </div>
-</header>
+  <div id="toast"></div>
 
-<section class="hero">
-  <div class="hero-copy">
-    <span class="eyebrow">✦ <span data-i18n="eyebrow">INDIA'S BIODATA MAKER</span></span>
-    <h1 data-i18n="heroTitle">Your story deserves a <em>beautiful</em> biodata.</h1>
-    <p data-i18n="heroText">Choose a design, add your details and photo, then download a polished marriage biodata ready to share.</p>
 
-    <div class="hero-buttons">
-      <a href="#templates" class="primary-btn" data-i18n="browse">Browse Templates →</a>
-      <a href="#maker" class="ghost-btn" data-i18n="make">Make Mine Free</a>
+  <!-- =====================================================
+       NAVIGATION
+  ===================================================== -->
+
+  <header class="nav">
+
+    <a class="brand" href="#">
+      <span class="brand-icon">♡</span>
+      <span>
+        Vivah<span>Bio</span>
+      </span>
+    </a>
+
+    <nav>
+
+      <a href="#templates" data-i18n="templates">
+        Templates
+      </a>
+
+      <a href="#how" data-i18n="how">
+        How it works
+      </a>
+
+      <a href="#maker" data-i18n="create">
+        Create Biodata
+      </a>
+
+    </nav>
+
+
+    <div class="nav-actions">
+
+      <button id="langBtn" class="lang">
+        हिंदी
+      </button>
+
+      <a href="admin.html" class="admin-link">
+        Admin
+      </a>
+
+      <a href="#maker" class="small-btn" data-i18n="start">
+        Start Free
+      </a>
+
     </div>
 
-    <div class="ticks">
-      <span>✓ 20 designs</span>
-      <span>✓ Hindi + English</span>
-      <span>✓ PDF + JPG</span>
+  </header>
+
+
+  <!-- =====================================================
+       HERO
+  ===================================================== -->
+
+  <section class="hero">
+
+    <div class="hero-copy">
+
+      <span class="eyebrow">
+        ✦
+        <span data-i18n="eyebrow">
+          INDIA'S BIODATA MAKER
+        </span>
+      </span>
+
+      <h1 data-i18n="heroTitle">
+        Your story deserves a <em>beautiful</em> biodata.
+      </h1>
+
+      <p data-i18n="heroText">
+        Choose a design, add your details and photo, then
+        download a polished marriage biodata ready to share.
+      </p>
+
+
+      <div class="hero-buttons">
+
+        <a href="#templates"
+           class="primary-btn"
+           data-i18n="browse">
+          Browse Templates →
+        </a>
+
+        <a href="#maker"
+           class="ghost-btn"
+           data-i18n="make">
+          Make Mine Free
+        </a>
+
+      </div>
+
+
+      <div class="ticks">
+
+        <span>✓ 20 designs</span>
+        <span>✓ Hindi + English</span>
+        <span>✓ PDF + JPG</span>
+
+      </div>
+
     </div>
-  </div>
 
-  <div class="hero-stage">
-    <div class="decor d1">✦ Premium</div>
-    <div class="decor d2">♥ WhatsApp Ready</div>
 
-    <div id="heroPaper" class="paper design-1">
-      <div class="paper-top">॥ श्री गणेशाय नमः ॥</div>
+    <div class="hero-stage">
 
-      <div class="paper-person">
-        <div>
-          <small>MARRIAGE BIODATA</small>
-          <h2>Priya Sharma</h2>
-          <p>Software Engineer</p>
+      <div class="decor d1">
+        ✦ Premium
+      </div>
+
+      <div class="decor d2">
+        ♥ WhatsApp Ready
+      </div>
+
+
+      <div id="heroPaper" class="paper design-1">
+
+        <div class="paper-top">
+          ॥ श्री गणेशाय नमः ॥
         </div>
-        <div class="paper-photo">PHOTO</div>
+
+
+        <div class="paper-person">
+
+          <div>
+
+            <small>
+              MARRIAGE BIODATA
+            </small>
+
+            <h2>
+              Priya Sharma
+            </h2>
+
+            <p>
+              Software Engineer
+            </p>
+
+          </div>
+
+
+          <div class="paper-photo">
+            PHOTO
+          </div>
+
+        </div>
+
+
+        <hr>
+
+
+        <h5>
+          PERSONAL DETAILS
+        </h5>
+
+
+        <div class="paper-details">
+
+          <span>
+            Date of Birth
+            <b>12 March 1998</b>
+          </span>
+
+          <span>
+            Height
+            <b>5'4"</b>
+          </span>
+
+          <span>
+            Religion
+            <b>Hindu</b>
+          </span>
+
+          <span>
+            Education
+            <b>B.Tech</b>
+          </span>
+
+        </div>
+
+
+        <h5>
+          FAMILY DETAILS
+        </h5>
+
+
+        <div class="paper-details">
+
+          <span>
+            Father
+            <b>Businessman</b>
+          </span>
+
+          <span>
+            Mother
+            <b>Homemaker</b>
+          </span>
+
+        </div>
+
+
+        <div class="paper-foot">
+          📞 +91 98765 43210 • 📍 Delhi
+        </div>
+
       </div>
 
-      <hr>
-
-      <h5>PERSONAL DETAILS</h5>
-
-      <div class="paper-details">
-        <span>Date of Birth <b>12 March 1998</b></span>
-        <span>Height <b>5'4"</b></span>
-        <span>Religion <b>Hindu</b></span>
-        <span>Education <b>B.Tech</b></span>
-      </div>
-
-      <h5>FAMILY DETAILS</h5>
-
-      <div class="paper-details">
-        <span>Father <b>Businessman</b></span>
-        <span>Mother <b>Homemaker</b></span>
-      </div>
-
-      <div class="paper-foot">📞 +91 98765 43210 • 📍 Delhi</div>
     </div>
-  </div>
-</section>
 
-<section class="stats">
-  <div><b>20</b><span>ready templates</span></div>
-  <div><b>2</b><span>languages</span></div>
-  <div><b>PDF</b><span>print ready</span></div>
-  <div><b>JPG</b><span>share ready</span></div>
-</section>
+  </section>
 
-<section id="templates" class="section">
-  <div class="section-head">
+
+  <!-- =====================================================
+       STATS
+  ===================================================== -->
+
+  <section class="stats">
+
     <div>
-      <span class="eyebrow">TEMPLATE LIBRARY</span>
-      <h2 data-i18n="templateTitle">Find a style that feels <em>like you.</em></h2>
-    </div>
-
-    <p data-i18n="templateText">
-      Traditional, modern, floral and royal designs — built for Indian marriage biodatas.
-    </p>
-  </div>
-
-  <div class="filters">
-    <button class="filter active" data-filter="all">All</button>
-    <button class="filter" data-filter="traditional">Traditional</button>
-    <button class="filter" data-filter="modern">Modern</button>
-    <button class="filter" data-filter="floral">Floral</button>
-    <button class="filter" data-filter="royal">Royal</button>
-  </div>
-
-  <div id="templateGrid" class="template-grid"></div>
-</section>
-
-<section id="how" class="how section">
-  <div class="section-head">
-    <div>
-      <span class="eyebrow">SIMPLE PROCESS</span>
-      <h2 data-i18n="howTitle">From blank page to <em>beautiful biodata.</em></h2>
-    </div>
-  </div>
-
-  <div class="steps">
-    <div>
-      <span>01</span>
-      <h3>Choose</h3>
-      <p>Pick any of the ready-made designs.</p>
+      <b>20</b>
+      <span>ready templates</span>
     </div>
 
     <div>
-      <span>02</span>
-      <h3>Fill</h3>
-      <p>Add your personal, family and career details.</p>
+      <b>2</b>
+      <span>languages</span>
     </div>
 
     <div>
-      <span>03</span>
-      <h3>Download</h3>
-      <p>Save as PDF or JPG and share on WhatsApp.</p>
+      <b>PDF</b>
+      <span>print ready</span>
     </div>
-  </div>
-</section>
 
-<section id="maker" class="maker">
-  <div class="maker-title">
-    <span class="eyebrow">BIODATA MAKER</span>
-    <h2 data-i18n="makerTitle">Create yours in minutes.</h2>
-    <p>Your draft is saved in this browser. Choose a design and the preview updates instantly.</p>
-  </div>
+    <div>
+      <b>JPG</b>
+      <span>share ready</span>
+    </div>
 
-  <div class="maker-layout">
+  </section>
 
-    <div class="form-card">
 
-      <div class="form-top">
-        <b>1. Template</b>
-        <span id="selectedName">Elegant Gold</span>
-      </div>
+  <!-- =====================================================
+       TEMPLATES
+  ===================================================== -->
 
-      <div id="miniTemplates" class="mini-templates"></div>
+  <section id="templates" class="section">
 
-      <div class="form-top">
-        <b>2. Details</b>
-        <span>Live preview</span>
-      </div>
+    <div class="section-head">
 
-      <div class="form-grid">
+      <div>
 
-        <label>Full Name
-          <input id="name" placeholder="Priya Sharma">
-        </label>
+        <span class="eyebrow">
+          TEMPLATE LIBRARY
+        </span>
 
-        <label>Date of Birth
-          <input id="dob" type="date">
-        </label>
-
-        <label>Time of Birth
-          <input id="time_of_birth" type="time">
-        </label>
-
-        <label>Place of Birth
-          <input id="place_of_birth" placeholder="New Delhi">
-        </label>
-
-        <label>Height
-          <input id="height" placeholder="5'4&quot;">
-        </label>
-
-        <label>Religion
-          <input id="religion" placeholder="Hindu">
-        </label>
-
-        <label>Caste / Community
-          <input id="caste" placeholder="Optional">
-        </label>
-
-        <label>Gotra
-          <input id="gotra" placeholder="Optional">
-        </label>
-
-        <label>Rashi
-          <input id="rashi" placeholder="Tula (Libra)">
-        </label>
-
-        <label>Nakshatra
-          <input id="nakshatra" placeholder="Aswini">
-        </label>
-
-        <label>Complexion
-          <input id="complexion" placeholder="Fair">
-        </label>
-
-        <label>Education
-          <input id="education" placeholder="B.Tech">
-        </label>
-
-        <label>Profession / Work
-          <input id="profession" placeholder="Software Engineer">
-        </label>
-
-        <label>Company
-          <input id="company" placeholder="Company name">
-        </label>
-
-        <label>Languages
-          <input id="languages" placeholder="Hindi, English">
-        </label>
-
-        <label>Hobbies
-          <input id="hobbies" placeholder="Travel, Music">
-        </label>
-
-        <label>Father's Name
-          <input id="father" placeholder="Father's name">
-        </label>
-
-        <label>Father's Occupation
-          <input id="father_occupation" placeholder="Business">
-        </label>
-
-        <label>Mother's Name
-          <input id="mother" placeholder="Mother's name">
-        </label>
-
-        <label>Mother's Occupation
-          <input id="mother_occupation" placeholder="Homemaker">
-        </label>
-
-        <label>Siblings
-          <input id="siblings" placeholder="1 Brother, 1 Sister">
-        </label>
-
-        <label>Contact Person
-          <input id="contact_person" placeholder="Father / Mother">
-        </label>
-
-        <label>City
-          <input id="city" placeholder="Delhi">
-        </label>
-
-        <label>Contact Number
-          <input id="phone" placeholder="+91 XXXXX XXXXX">
-        </label>
-
-        <label>Email
-          <input id="email" type="email" placeholder="name@email.com">
-        </label>
-
-        <label>Residential Address
-          <input id="address" placeholder="City, State">
-        </label>
+        <h2 data-i18n="templateTitle">
+          Find a style that feels <em>like you.</em>
+        </h2>
 
       </div>
 
-      <label class="full">
-        About Me
-        <textarea id="about" placeholder="Write a short introduction..."></textarea>
-      </label>
 
-      <label class="upload full">
-        Profile Photo
-        <input id="photo" type="file" accept="image/*">
-        <span>＋ Choose photo</span>
-      </label>
-
-      <div class="download-row">
-        <button id="pdfBtn" class="primary-btn">Download PDF</button>
-        <button id="jpgBtn" class="secondary-btn">Download JPG</button>
-        <button id="payBtn" class="premium-btn">Unlock Premium ₹19</button>
-      </div>
-
-      <p class="payment-note">
-        PDF/JPG downloads are locked until the ₹19 Premium payment is verified.
+      <p data-i18n="templateText">
+        Traditional, modern, floral and royal designs —
+        built for Indian marriage biodatas.
       </p>
 
     </div>
 
-    <div class="preview-wrap">
-      <div class="preview-bar">
-        LIVE PREVIEW <span>● SAVED LOCALLY</span>
+
+    <div class="filters">
+
+      <button class="filter active" data-filter="all">
+        All
+      </button>
+
+      <button class="filter" data-filter="traditional">
+        Traditional
+      </button>
+
+      <button class="filter" data-filter="modern">
+        Modern
+      </button>
+
+      <button class="filter" data-filter="floral">
+        Floral
+      </button>
+
+      <button class="filter" data-filter="royal">
+        Royal
+      </button>
+
+    </div>
+
+
+    <div id="templateGrid" class="template-grid"></div>
+
+  </section>
+
+
+  <!-- =====================================================
+       HOW IT WORKS
+  ===================================================== -->
+
+  <section id="how" class="how section">
+
+    <div class="section-head">
+
+      <div>
+
+        <span class="eyebrow">
+          SIMPLE PROCESS
+        </span>
+
+        <h2 data-i18n="howTitle">
+          From blank page to <em>beautiful biodata.</em>
+        </h2>
+
       </div>
 
-      <div id="preview" class="bio-preview design-1"></div>
     </div>
 
-  </div>
-</section>
-  <footer class="site-footer"
-  style="
-    display:flex;
-    align-items:center;
-    gap:35px;
-    width:100%;
-    box-sizing:border-box;
-    padding:40px 30px;
-    overflow:hidden;
-  ">
 
-  <!-- Logo -->
-  <div class="brand" style="white-space:nowrap; flex-shrink:0;">
-    <span class="brand-icon">♡</span>
-    Vivah<span>Bio</span>
-  </div>
+    <div class="steps">
 
-  <!-- Description -->
-  <div style="
-    white-space:nowrap;
-    flex-shrink:0;
-    font-size:18px;
-  ">
-    Beautiful marriage biodata, made simple.
-  </div>
+      <div>
 
-  <!-- Links -->
-  <div class="footer-links"
-       style="
-         flex:1;
-         min-width:0;
-         display:flex;
-         justify-content:flex-end;
-         align-items:center;
-         flex-wrap:wrap;
-         gap:0;
-         line-height:1.8;
-         font-size:16px;
-       ">
+        <span>01</span>
 
-    <a href="about.html"
-       style="color:#eadfd5 !important;text-decoration:none !important;">
-      About Us
-    </a>
-    <span> · </span>
+        <h3>
+          Choose
+        </h3>
 
-    <a href="contact.html"
-       style="color:#eadfd5 !important;text-decoration:none !important;">
-      Contact Us
-    </a>
-    <span> · </span>
+        <p>
+          Pick any of the ready-made designs.
+        </p>
 
-    <a href="privacy.html"
-       style="color:#eadfd5 !important;text-decoration:none !important;">
-      Privacy Policy
-    </a>
-    <span> · </span>
+      </div>
 
-    <a href="terms.html"
-       style="color:#eadfd5 !important;text-decoration:none !important;">
-      Terms &amp; Conditions
-    </a>
-    <span> · </span>
 
-    <a href="refund.html"
-       style="color:#eadfd5 !important;text-decoration:none !important;">
-      Refund / Cancellation
-    </a>
-    <span> · </span>
+      <div>
 
-    <a href="admin.html"
-       style="color:#eadfd5 !important;text-decoration:none !important;">
-      Admin Panel
-    </a>
+        <span>02</span>
 
-  </div>
+        <h3>
+          Fill
+        </h3>
 
-</footer>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script src="app.js"></script>
-<!-- =====================================================
-     FOOTER
-===================================================== -->
+        <p>
+          Add your personal, family and career details.
+        </p>
 
-<footer class="site-footer" style="
-  display:block;
-  width:100%;
-  box-sizing:border-box;
-  margin:0;
-  padding:45px 30px 25px;
-  background:#24181d;
-  color:#eadfd5;
-  overflow:hidden;
-">
+      </div>
 
-  <div style="
-    width:100%;
-    max-width:1400px;
-    margin:0 auto;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:35px;
-    flex-wrap:wrap;
-    box-sizing:border-box;
-  ">
 
-    <!-- LOGO -->
-    <div style="
-      display:flex;
-      align-items:center;
-      gap:12px;
-      white-space:nowrap;
-      flex-shrink:0;
-    ">
+      <div>
 
-      <span class="brand-icon" style="
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        width:52px;
-        height:52px;
-        border-radius:50%;
-        background:#fff5f7;
-        color:#8b1e3f;
-        font-size:28px;
-      ">♡</span>
+        <span>03</span>
 
-      <span style="
-        font-size:28px;
-        font-weight:700;
-        color:#ffffff;
-      ">
-        Vivah<span style="color:#8b1e3f;">Bio</span>
+        <h3>
+          Download
+        </h3>
+
+        <p>
+          Save as PDF or JPG and share on WhatsApp.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       BIODATA MAKER
+  ===================================================== -->
+
+  <section id="maker" class="maker">
+
+    <div class="maker-title">
+
+      <span class="eyebrow">
+        BIODATA MAKER
       </span>
 
-    </div>
+      <h2 data-i18n="makerTitle">
+        Create yours in minutes.
+      </h2>
 
-
-    <!-- DESCRIPTION -->
-    <div style="
-      font-size:17px;
-      color:#a99da0;
-      flex:1;
-      min-width:220px;
-    ">
-      Beautiful marriage biodata, made simple.
-    </div>
-
-
-    <!-- LINKS -->
-    <div class="footer-links" style="
-      display:flex;
-      align-items:center;
-      justify-content:flex-end;
-      flex-wrap:wrap;
-      gap:6px;
-      line-height:1.8;
-      font-size:16px;
-      text-align:right;
-      max-width:650px;
-    ">
-
-      <a href="about.html">About Us</a>
-      <span>·</span>
-
-      <a href="contact.html">Contact Us</a>
-      <span>·</span>
-
-      <a href="privacy.html">Privacy Policy</a>
-      <span>·</span>
-
-      <a href="terms.html">Terms &amp; Conditions</a>
-      <span>·</span>
-
-      <a href="refund.html">Refund / Cancellation</a>
-      <span>·</span>
-
-      <a href="admin.html">Admin Panel</a>
+      <p>
+        Your draft is saved in this browser.
+        Choose a design and the preview updates instantly.
+      </p>
 
     </div>
 
-  </div>
+
+    <div class="maker-layout">
 
 
-  <!-- COPYRIGHT -->
+      <!-- FORM -->
 
-  <div style="
-    width:100%;
-    max-width:1400px;
-    margin:30px auto 0;
-    padding-top:20px;
-    border-top:1px solid rgba(234,223,213,.18);
-    text-align:center;
-    box-sizing:border-box;
-  ">
-
-    <p style="
-      margin:0;
-      color:#a99da0;
-      font-size:14px;
-    ">
-      © <span id="currentYear"></span> VivahBio. All rights reserved.
-    </p>
-
-  </div>
-
-</footer>
+      <div class="form-card">
 
 
-<!-- =====================================================
-     SCRIPTS
-===================================================== -->
+        <div class="form-top">
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+          <b>
+            1. Template
+          </b>
 
-<script src="app.js"></script>
+          <span id="selectedName">
+            Elegant Gold
+          </span>
 
-<script>
-  document.getElementById("currentYear").textContent =
-    new Date().getFullYear();
-</script>
+        </div>
+
+
+        <div id="miniTemplates"
+             class="mini-templates">
+        </div>
+
+
+        <div class="form-top">
+
+          <b>
+            2. Details
+          </b>
+
+          <span>
+            Live preview
+          </span>
+
+        </div>
+
+
+        <div class="form-grid">
+
+
+          <label>
+            Full Name
+            <input
+              id="name"
+              placeholder="Priya Sharma">
+          </label>
+
+
+          <label>
+            Date of Birth
+            <input
+              id="dob"
+              type="date">
+          </label>
+
+
+          <label>
+            Time of Birth
+            <input
+              id="time_of_birth"
+              type="time">
+          </label>
+
+
+          <label>
+            Place of Birth
+            <input
+              id="place_of_birth"
+              placeholder="New Delhi">
+          </label>
+
+
+          <label>
+            Height
+            <input
+              id="height"
+              placeholder="5'4&quot;">
+          </label>
+
+
+          <label>
+            Religion
+            <input
+              id="religion"
+              placeholder="Hindu">
+          </label>
+
+
+          <label>
+            Caste / Community
+            <input
+              id="caste"
+              placeholder="Optional">
+          </label>
+
+
+          <label>
+            Gotra
+            <input
+              id="gotra"
+              placeholder="Optional">
+          </label>
+
+
+          <label>
+            Rashi
+            <input
+              id="rashi"
+              placeholder="Tula (Libra)">
+          </label>
+
+
+          <label>
+            Nakshatra
+            <input
+              id="nakshatra"
+              placeholder="Aswini">
+          </label>
+
+
+          <label>
+            Complexion
+            <input
+              id="complexion"
+              placeholder="Fair">
+          </label>
+
+
+          <label>
+            Education
+            <input
+              id="education"
+              placeholder="B.Tech">
+          </label>
+
+
+          <label>
+            Profession / Work
+            <input
+              id="profession"
+              placeholder="Software Engineer">
+          </label>
+
+
+          <label>
+            Company
+            <input
+              id="company"
+              placeholder="Company name">
+          </label>
+
+
+          <label>
+            Languages
+            <input
+              id="languages"
+              placeholder="Hindi, English">
+          </label>
+
+
+          <label>
+            Hobbies
+            <input
+              id="hobbies"
+              placeholder="Travel, Music">
+          </label>
+
+
+          <label>
+            Father's Name
+            <input
+              id="father"
+              placeholder="Father's name">
+          </label>
+
+
+          <label>
+            Father's Occupation
+            <input
+              id="father_occupation"
+              placeholder="Business">
+          </label>
+
+
+          <label>
+            Mother's Name
+            <input
+              id="mother"
+              placeholder="Mother's name">
+          </label>
+
+
+          <label>
+            Mother's Occupation
+            <input
+              id="mother_occupation"
+              placeholder="Homemaker">
+          </label>
+
+
+          <label>
+            Siblings
+            <input
+              id="siblings"
+              placeholder="1 Brother, 1 Sister">
+          </label>
+
+
+          <label>
+            Contact Person
+            <input
+              id="contact_person"
+              placeholder="Father / Mother">
+          </label>
+
+
+          <label>
+            City
+            <input
+              id="city"
+              placeholder="Delhi">
+          </label>
+
+
+          <label>
+            Contact Number
+            <input
+              id="phone"
+              placeholder="+91 XXXXX XXXXX">
+          </label>
+
+
+          <label>
+            Email
+            <input
+              id="email"
+              type="email"
+              placeholder="name@email.com">
+          </label>
+
+
+          <label>
+            Residential Address
+            <input
+              id="address"
+              placeholder="City, State">
+          </label>
+
+
+        </div>
+
+
+        <label class="full">
+
+          About Me
+
+          <textarea
+            id="about"
+            placeholder="Write a short introduction..."></textarea>
+
+        </label>
+
+
+        <label class="upload full">
+
+          Profile Photo
+
+          <input
+            id="photo"
+            type="file"
+            accept="image/*">
+
+          <span>
+            ＋ Choose photo
+          </span>
+
+        </label>
+
+
+        <div class="download-row">
+
+          <button
+            id="pdfBtn"
+            class="primary-btn">
+            Download PDF
+          </button>
+
+
+          <button
+            id="jpgBtn"
+            class="secondary-btn">
+            Download JPG
+          </button>
+
+
+          <button
+            id="payBtn"
+            class="premium-btn">
+            Unlock Premium ₹19
+          </button>
+
+        </div>
+
+
+        <p class="payment-note">
+          PDF/JPG downloads are locked until the
+          ₹19 Premium payment is verified.
+        </p>
+
+      </div>
+
+
+      <!-- PREVIEW -->
+
+      <div class="preview-wrap">
+
+        <div class="preview-bar">
+
+          LIVE PREVIEW
+
+          <span>
+            ● SAVED LOCALLY
+          </span>
+
+        </div>
+
+
+        <div
+          id="preview"
+          class="bio-preview design-1">
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       SINGLE FOOTER
+  ===================================================== -->
+
+  <footer class="site-footer">
+
+    <div class="footer-inner">
+
+
+      <!-- LOGO -->
+
+      <div class="footer-brand">
+
+        <span class="footer-brand-icon">
+          ♡
+        </span>
+
+        <span class="footer-brand-name">
+          Vivah<span>Bio</span>
+        </span>
+
+      </div>
+
+
+      <!-- DESCRIPTION -->
+
+      <div class="footer-description">
+        Beautiful marriage biodata, made simple.
+      </div>
+
+
+      <!-- LINKS -->
+
+      <div class="footer-links">
+
+        <a href="about.html">
+          About Us
+        </a>
+
+        <span>·</span>
+
+        <a href="contact.html">
+          Contact Us
+        </a>
+
+        <span>·</span>
+
+        <a href="privacy.html">
+          Privacy Policy
+        </a>
+
+        <span>·</span>
+
+        <a href="terms.html">
+          Terms &amp; Conditions
+        </a>
+
+        <span>·</span>
+
+        <a href="refund.html">
+          Refund / Cancellation
+        </a>
+
+        <span>·</span>
+
+        <a href="admin.html">
+          Admin Panel
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- COPYRIGHT -->
+
+    <div class="footer-copyright">
+
+      <p>
+        © <span id="currentYear"></span>
+        VivahBio. All rights reserved.
+      </p>
+
+    </div>
+
+  </footer>
+
+
+  <!-- =====================================================
+       SCRIPTS
+  ===================================================== -->
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <script src="app.js"></script>
+
+
+  <script>
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
+  </script>
+
 
 </body>
 </html>
