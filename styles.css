@@ -17,13 +17,17 @@
 
 html {
   scroll-behavior: smooth;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   margin: 0;
+  padding: 0;
   background: var(--cream);
   color: var(--ink);
   font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
 }
 
 button,
@@ -43,7 +47,7 @@ a {
 
 /* =====================================================
    NAVIGATION
-   ===================================================== */
+===================================================== */
 
 .nav {
   height: 76px;
@@ -137,7 +141,7 @@ a {
 
 /* =====================================================
    HERO
-   ===================================================== */
+===================================================== */
 
 .hero {
   padding: 82px 7% 92px;
@@ -209,7 +213,7 @@ h2 em {
 
 /* =====================================================
    HERO STAGE
-   ===================================================== */
+===================================================== */
 
 .hero-stage {
   position: relative;
@@ -236,7 +240,7 @@ h2 em {
 
 /* =====================================================
    PAPER
-   ===================================================== */
+===================================================== */
 
 .paper-top {
   text-align: center;
@@ -320,7 +324,7 @@ h2 em {
 
 /* =====================================================
    DECORATIONS
-   ===================================================== */
+===================================================== */
 
 .decor {
   position: absolute;
@@ -347,7 +351,7 @@ h2 em {
 
 /* =====================================================
    STATS
-   ===================================================== */
+===================================================== */
 
 .stats {
   background: var(--wine);
@@ -379,7 +383,7 @@ h2 em {
 
 /* =====================================================
    SECTIONS
-   ===================================================== */
+===================================================== */
 
 .section {
   padding: 88px 7%;
@@ -407,7 +411,7 @@ h2 em {
 
 /* =====================================================
    FILTERS
-   ===================================================== */
+===================================================== */
 
 .filters {
   display: flex;
@@ -431,7 +435,7 @@ h2 em {
 
 /* =====================================================
    TEMPLATE GRID
-   ===================================================== */
+===================================================== */
 
 .template-grid {
   display: grid;
@@ -510,7 +514,7 @@ h2 em {
 
 /* =====================================================
    TEMPLATE COLORS
-   ===================================================== */
+===================================================== */
 
 .gold {
   border: 7px solid #e6cc91;
@@ -547,7 +551,7 @@ h2 em {
 
 /* =====================================================
    HOW IT WORKS
-   ===================================================== */
+===================================================== */
 
 .how {
   background: #fff;
@@ -589,10 +593,11 @@ h2 em {
 
 /* =====================================================
    MAKER
-   ===================================================== */
+===================================================== */
 
 .maker {
-  padding: 85px 7%;
+  padding: 85px 7% 0 !important;
+  margin: 0 !important;
   background: #f4eae5;
 }
 
@@ -609,6 +614,7 @@ h2 em {
   grid-template-columns: 1fr 1fr;
   gap: 25px;
   margin-top: 38px;
+  margin-bottom: 0 !important;
 }
 
 .form-card,
@@ -617,6 +623,7 @@ h2 em {
   border: 1px solid var(--line);
   border-radius: 14px;
   padding: 25px;
+  margin-bottom: 0 !important;
 }
 
 .form-top {
@@ -634,7 +641,7 @@ h2 em {
 
 /* =====================================================
    MINI TEMPLATES
-   ===================================================== */
+===================================================== */
 
 .mini-templates {
   display: grid;
@@ -665,7 +672,7 @@ h2 em {
 
 /* =====================================================
    FORM
-   ===================================================== */
+===================================================== */
 
 .form-grid {
   display: grid;
@@ -727,7 +734,7 @@ textarea:focus {
 
 /* =====================================================
    PREVIEW
-   ===================================================== */
+===================================================== */
 
 .preview-bar {
   font-size: 10px;
@@ -767,7 +774,7 @@ textarea:focus {
 
 /* =====================================================
    BIODATA COMMON ELEMENTS
-   ===================================================== */
+===================================================== */
 
 .bio-preview .bio-ornament,
 .bio-preview .bio-gold-symbol {
@@ -886,7 +893,7 @@ textarea:focus {
 
 /* =====================================================
    DESIGN 1
-   ===================================================== */
+===================================================== */
 
 .bio-preview.design-1 {
   border: 8px solid #e2c785;
@@ -901,7 +908,7 @@ textarea:focus {
 
 /* =====================================================
    DESIGN 2
-   ===================================================== */
+===================================================== */
 
 .bio-preview.design-2 {
   border: 8px solid #f0c95c;
@@ -936,7 +943,7 @@ textarea:focus {
 
 /* =====================================================
    DESIGN 3
-   ===================================================== */
+===================================================== */
 
 .bio-preview.design-3 {
   border: 8px solid #e7ba45;
@@ -971,7 +978,7 @@ textarea:focus {
 
 /* =====================================================
    DESIGN 4
-   ===================================================== */
+===================================================== */
 
 .bio-preview.design-4 {
   border: 0;
@@ -1019,7 +1026,7 @@ textarea:focus {
 
 /* =====================================================
    DESIGN 5
-   ===================================================== */
+===================================================== */
 
 .bio-preview.design-5 {
   border: 8px solid #d9bf77;
@@ -1038,15 +1045,15 @@ textarea:focus {
 
 /* =====================================================
    DESIGN 6
-   ===================================================== */
+===================================================== */
 
 .bio-preview.design-6 {
   border: 5px solid #b58a45;
   background: #fffdf9;
 }
 
-.bio-preview.design-6:before,
-.bio-preview.design-6:after {
+.bio-preview.design-6::before,
+.bio-preview.design-6::after {
   content: "✦";
   position: absolute;
   color: #b58a45;
@@ -1054,12 +1061,12 @@ textarea:focus {
   z-index: 1;
 }
 
-.bio-preview.design-6:before {
+.bio-preview.design-6::before {
   left: 14px;
   top: 8px;
 }
 
-.bio-preview.design-6:after {
+.bio-preview.design-6::after {
   right: 14px;
   bottom: 8px;
 }
@@ -1075,7 +1082,7 @@ textarea:focus {
 
 /* =====================================================
    DESIGN 7
-   ===================================================== */
+===================================================== */
 
 .bio-preview.design-7 {
   border: 0;
@@ -1110,7 +1117,7 @@ textarea:focus {
 
 /* =====================================================
    DESIGN 8
-   ===================================================== */
+===================================================== */
 
 .bio-preview.design-8 {
   border: 8px solid #d9bd69;
@@ -1133,7 +1140,7 @@ textarea:focus {
 
 /* =====================================================
    DESIGN 9
-   ===================================================== */
+===================================================== */
 
 .bio-preview.design-9 {
   border: 7px solid #d7d0c5;
@@ -1158,7 +1165,7 @@ textarea:focus {
 
 /* =====================================================
    DESIGN 10
-   ===================================================== */
+===================================================== */
 
 .bio-preview.design-10 {
   border: 7px solid #d0b35b;
@@ -1186,7 +1193,7 @@ textarea:focus {
 
 /* =====================================================
    TEMPLATE PREVIEW CARDS
-   ===================================================== */
+===================================================== */
 
 .template-art.design-thumb {
   border: 0;
@@ -1261,7 +1268,7 @@ textarea:focus {
 
 /* =====================================================
    TEMPLATE THUMBNAILS
-   ===================================================== */
+===================================================== */
 
 .thumb-photo {
   width: 58px;
@@ -1302,7 +1309,7 @@ textarea:focus {
 
 /* =====================================================
    ADMIN
-   ===================================================== */
+===================================================== */
 
 .premium {
   background: #fff5df;
@@ -1416,7 +1423,7 @@ textarea:focus {
 
 /* =====================================================
    TOAST
-   ===================================================== */
+===================================================== */
 
 .toast {
   position: fixed;
@@ -1433,22 +1440,23 @@ textarea:focus {
 
 /* =====================================================
    FOOTER
-   IMPORTANT: ONLY ONE FOOTER STYLE
-   ===================================================== */
+===================================================== */
 
 .site-footer {
   width: 100%;
   background: #241a1d;
   color: #fff;
-  padding: 30px 7%;
-  margin: 0;
-  border: 0;
+  margin: 0 !important;
+  padding: 40px 7% 25px;
+  border: 0 !important;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 30px;
   flex-wrap: wrap;
   overflow: hidden;
+  position: relative;
+  clear: both;
 }
 
 .site-footer .brand {
@@ -1473,6 +1481,7 @@ textarea:focus {
   line-height: 1.8;
   font-size: 16px;
   margin-left: auto;
+  text-align: right;
 }
 
 .site-footer .footer-links a {
@@ -1495,9 +1504,10 @@ textarea:focus {
   background: #241a1d;
   color: #eadfd5;
   padding: 20px 7% 30px;
-  margin: 0;
+  margin: 0 !important;
   border: 0;
   font-size: 14px;
+  text-align: center;
 }
 
 .site-footer-copyright p {
@@ -1506,21 +1516,39 @@ textarea:focus {
 
 
 /* =====================================================
-   REMOVE UNWANTED GAP
-   ===================================================== */
+   REMOVE EXTRA SPACE BEFORE FOOTER
+===================================================== */
+
+.maker {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.maker-layout {
+  margin-bottom: 0 !important;
+}
+
+.form-card,
+.preview-wrap {
+  margin-bottom: 0 !important;
+}
+
+.preview-wrap {
+  padding-bottom: 25px;
+}
+
+.site-footer {
+  margin-top: 0 !important;
+}
 
 .site-footer + .site-footer {
   display: none !important;
 }
 
-.site-footer-copyright + * {
-  margin-top: 0 !important;
-}
-
 
 /* =====================================================
    TABLET
-   ===================================================== */
+===================================================== */
 
 @media (max-width: 900px) {
 
@@ -1559,6 +1587,10 @@ textarea:focus {
     padding-right: 5%;
   }
 
+  .maker {
+    padding-bottom: 0 !important;
+  }
+
   .site-footer {
     padding-left: 5%;
     padding-right: 5%;
@@ -1568,14 +1600,14 @@ textarea:focus {
     width: 100%;
     margin-left: 0;
     justify-content: flex-start;
+    text-align: left;
   }
-
 }
 
 
 /* =====================================================
    MOBILE
-   ===================================================== */
+===================================================== */
 
 @media (max-width: 600px) {
 
@@ -1661,8 +1693,11 @@ textarea:focus {
     display: none !important;
   }
 
-  /* Mobile footer */
+
+  /* MOBILE FOOTER */
+
   .site-footer {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1670,6 +1705,7 @@ textarea:focus {
     text-align: center;
     padding: 30px 20px 20px;
     gap: 18px;
+    margin: 0 !important;
   }
 
   .site-footer .brand {
@@ -1684,8 +1720,10 @@ textarea:focus {
   .site-footer .footer-links {
     width: 100%;
     justify-content: center;
+    text-align: center;
     font-size: 14px;
     line-height: 2;
+    margin-left: 0;
   }
 
   .site-footer-copyright {
@@ -1703,13 +1741,12 @@ textarea:focus {
     align-items: flex-start;
     gap: 12px;
   }
-
 }
 
 
 /* =====================================================
    PRINT
-   ===================================================== */
+===================================================== */
 
 @media print {
 
@@ -1730,7 +1767,8 @@ textarea:focus {
   }
 
   .maker {
-    padding: 0;
+    padding: 0 !important;
+    margin: 0 !important;
     background: #fff;
   }
 
@@ -1748,47 +1786,24 @@ textarea:focus {
     box-shadow: none;
     min-height: auto;
   }
-
 }
+
+
 /* =====================================================
-   FINAL FOOTER + BOTTOM GAP FIX
+   FINAL SAFETY FIX
 ===================================================== */
 
 html,
-body {
-  margin: 0 !important;
-  padding: 0 !important;
+body,
+main,
+section {
+  margin-bottom: 0;
 }
 
-.site-footer {
-  margin: 0 !important;
+.site-footer:first-of-type {
+  margin-top: 0 !important;
 }
 
-/* Remove unwanted space immediately before footer */
-.site-footer {
-  position: relative;
-  clear: both;
-}
-
-.site-footer::before {
-  display: none !important;
-}
-
-/* Remove bottom margin from the section before footer */
-.maker {
+.site-footer:last-of-type {
   margin-bottom: 0 !important;
-}
-
-/* Prevent extra whitespace from last elements */
-.maker-layout,
-.preview-wrap,
-.form-card {
-  margin-bottom: 0 !important;
-}
-
-/* Mobile footer */
-@media (max-width: 700px) {
-  .site-footer {
-    margin: 0 !important;
-  }
 }
