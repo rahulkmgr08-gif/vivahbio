@@ -2067,7 +2067,28 @@ async function startDashboard() {
   renderTemplates();
 
 
-  createExtraStatCards();
+ async function startDashboard() {
+
+  const allowed =
+    await protectAdminPage();
+
+  if (!allowed) {
+    return;
+  }
+
+  document.body.classList.add(
+    "admin-authenticated"
+  );
+
+  renderTemplates();
+
+  addAdminStyles();
+
+  addRefreshButton();
+
+  await loadDashboardStats();
+
+}
 
 
   addAdminStyles();
