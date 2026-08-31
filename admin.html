@@ -1,10 +1,236 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VivahBio Admin</title><link rel="stylesheet" href="styles.css"></head>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>VivahBio Admin</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* =====================================================
+       ADMIN SECURITY
+       Dashboard is hidden until admin authentication passes
+    ===================================================== */
+
+    .admin-protected {
+      visibility: hidden;
+    }
+
+    body.admin-authenticated .admin-protected {
+      visibility: visible;
+    }
+  </style>
+</head>
+
+
 <body class="admin-body">
-<header class="nav"><a class="brand" href="index.html"><span class="brand-icon">♡</span>Vivah<span>Bio</span></a><a href="index.html" class="small-btn">← Back to Website</a></header>
-<main class="admin">
-  <div class="admin-head"><div><span class="eyebrow">ADMIN DASHBOARD</span><h1>Manage your biodata business.</h1><p>Demo admin is functional in this browser. For real customers, connect database + authentication + server APIs.</p></div></div>
-  <div class="admin-stats"><div><b id="aTemplates">20</b><span>Templates</span></div><div><b id="aDownloads">0</b><span>Downloads</span></div><div><b id="aUsers">0</b><span>Saved profiles</span></div><div><b>₹19</b><span>Premium price</span></div></div>
-  <section class="admin-card"><div class="admin-card-head"><h2>Template Manager</h2><div><button id="resetDemo" class="secondary-btn">Reset Demo</button> <button id="addTemplate" class="primary-btn">+ Add Template</button></div></div><div id="adminTemplates" class="admin-table"></div></section>
-  <section class="admin-card"><div class="admin-card-head"><h2>Payment setup</h2></div><div class="setup"><label>Razorpay Key ID<input id="razorpayKey" placeholder="rzp_test_..."></label><label>Premium Price<input id="price" value="19"></label><button id="saveSetup" class="secondary-btn">Save settings</button></div><p class="payment-note">For real payments, create a server-side order and verify the Razorpay signature. Never put secret keys in frontend code.</p></section>
-</main><script src="admin.js"></script></body></html>
+
+  <!-- =====================================================
+       HEADER
+       Hidden until authentication
+  ===================================================== -->
+
+  <header class="nav admin-protected">
+
+    <a class="brand" href="index.html">
+      <span class="brand-icon">♡</span>
+      Vivah<span>Bio</span>
+    </a>
+
+    <a href="index.html" class="small-btn">
+      ← Back to Website
+    </a>
+
+  </header>
+
+
+  <!-- =====================================================
+       ADMIN DASHBOARD
+       Hidden until authentication
+  ===================================================== -->
+
+  <main class="admin admin-protected">
+
+    <!-- ADMIN HEADER -->
+
+    <div class="admin-head">
+
+      <div>
+
+        <span class="eyebrow">
+          ADMIN DASHBOARD
+        </span>
+
+        <h1>
+          Manage your biodata business.
+        </h1>
+
+        <p>
+          Secure admin dashboard for managing
+          templates, profiles, payments and downloads.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         STATISTICS
+    =================================================== -->
+
+    <div class="admin-stats">
+
+      <div>
+        <b id="aTemplates">20</b>
+        <span>Templates</span>
+      </div>
+
+
+      <div>
+        <b id="aDownloads">0</b>
+        <span>Downloads</span>
+      </div>
+
+
+      <div>
+        <b id="aUsers">0</b>
+        <span>Saved profiles</span>
+      </div>
+
+
+      <div>
+        <b id="aPremiumPrice">₹19</b>
+        <span>Premium price</span>
+      </div>
+
+
+      <div>
+        <b id="aPaidPayments">0</b>
+        <span>Paid Payments</span>
+      </div>
+
+
+      <div>
+        <b id="aRevenue">₹0</b>
+        <span>Revenue</span>
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         TEMPLATE MANAGER
+    =================================================== -->
+
+    <section class="admin-card">
+
+      <div class="admin-card-head">
+
+        <h2>
+          Template Manager
+        </h2>
+
+        <div>
+
+          <button
+            id="resetDemo"
+            class="secondary-btn"
+          >
+            Reset Demo
+          </button>
+
+          <button
+            id="addTemplate"
+            class="primary-btn"
+          >
+            + Add Template
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="adminTemplates"
+        class="admin-table"
+      ></div>
+
+    </section>
+
+
+    <!-- ===================================================
+         PAYMENT SETUP
+    =================================================== -->
+
+    <section class="admin-card">
+
+      <div class="admin-card-head">
+
+        <h2>
+          Payment setup
+        </h2>
+
+      </div>
+
+
+      <div class="setup">
+
+        <label>
+          Razorpay Key ID
+
+          <input
+            id="razorpayKey"
+            placeholder="rzp_test_..."
+          >
+
+        </label>
+
+
+        <label>
+          Premium Price
+
+          <input
+            id="price"
+            value="19"
+            type="number"
+            min="1"
+          >
+
+        </label>
+
+
+        <button
+          id="saveSetup"
+          class="secondary-btn"
+        >
+          Save settings
+        </button>
+
+      </div>
+
+
+      <p class="payment-note">
+        For real payments, create a server-side order
+        and verify the Razorpay signature.
+        Never put secret keys in frontend code.
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <!-- =====================================================
+       ADMIN JAVASCRIPT
+  ===================================================== -->
+
+  <script src="admin.js"></script>
+
+</body>
+
+</html>
