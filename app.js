@@ -1,412 +1,415 @@
-// COMPLETE app.js
-// Template click + Maker navigation fixed
-// Existing payment, photo, preview and download functionality preserved
+/* =========================================================
+   VIVAHBIO APP.JS
+   Complete frontend
+   - Templates
+   - Live preview
+   - Local draft
+   - Razorpay payment
+   - Profile saving through create-order
+   - Photo upload
+   - Exact preview JPG
+   - Exact preview PDF
+   - Download logging
+========================================================= */
+
+
+/* =========================================================
+   TEMPLATE DATA
+========================================================= */
 
 const defaultTemplates = [
-  ["Classic Gold", "classic", "gold", false],
-  ["Royal Maroon", "royal", "maroon", true],
-  ["Royal Blue", "blue", "blue", true],
-  ["Blush Floral", "floral", "blush", true],
-  ["Elegant Cream", "elegant", "cream", true],
-  ["Heritage Frame", "heritage", "heritage", true],
-  ["Modern Burgundy", "burgundy", "burgundy", true],
-  ["Golden Classic", "golden", "mustard", true],
-  ["Floral White", "floral-white", "floral", true],
-  ["Modern Floral", "modern-floral", "modern-floral", true]
+  ["Elegant Gold","traditional","gold",false],
+  ["Modern Rose","modern","rose",false],
+  ["Royal Blue","royal","blue",false],
+  ["Sage Garden","floral","green",false],
+  ["Lavender Love","floral","purple",false],
+  ["Sunset Marigold","floral","orange",true],
+  ["Classic Cream","traditional","cream",true],
+  ["Red Heritage","traditional","red",true],
+  ["Minimal Pearl","modern","cream",true],
+  ["Midnight Royal","royal","blue",true],
+  ["Blush Bloom","floral","rose",true],
+  ["Temple Gold","traditional","gold",true],
+  ["Emerald Grace","royal","green",true],
+  ["Dusty Rose","modern","rose",true],
+  ["Regal Navy","royal","blue",true],
+  ["Peach Petals","floral","orange",true],
+  ["Vintage Ivory","traditional","cream",true],
+  ["Plum Elegance","royal","purple",true],
+  ["Garden Sage","floral","green",true],
+  ["Ruby Classic","traditional","red",true]
 ];
+
 
 const $ = id => document.getElementById(id);
 
 let selected = 0;
 let profileDataUrl = "";
 
+
+/* =========================================================
+   TEMPLATE STORAGE
+========================================================= */
+
 function getTemplates(){
+
+  try{
+
+    const saved =
+      JSON.parse(
+        localStorage.getItem("vivah_templates")
+      );
+
+    if(
+      Array.isArray(saved) &&
+      saved.length
+    ){
+
+      return saved;
+    }
+
+  }catch(error){
+
+    console.error(
+      "Template load error:",
+      error
+    );
+  }
+
   return defaultTemplates.slice();
 }
 
+
 let templates = getTemplates();
 
+
 function saveTemplates(){
+
   localStorage.setItem(
     "vivah_templates",
     JSON.stringify(templates)
   );
 }
 
-function artClass(i){
-  return [
-    "gold",
-    "maroon",
-    "blue",
-    "blush",
-    "cream",
-    "heritage",
-    "burgundy",
-    "mustard",
-    "floral",
-    "modern-floral"
-  ][i % 10];
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(
+      /[&<>"']/g,
+      char =>
+        ({
+          "&":"&amp;",
+          "<":"&lt;",
+          ">":"&gt;",
+          '"':"&quot;",
+          "'":"&#039;"
+        })[char]
+    );
+}
+
+
+function safeValue(id){
+
+  const el = $(id);
+
+  if(!el) return "";
+
+  return String(el.value || "").trim();
+}
+
+
+function val(id){
+
+  const value =
+    safeValue(id);
+
+  return value || "—";
+}
+
+
+function cap(value){
+
+  if(!value) return "";
+
+  return value.charAt(0).toUpperCase() +
+    value.slice(1);
+}
+
+
+function toast(message){
+
+  const box =
+    $("toast");
+
+  if(!box) return;
+
+  box.textContent =
+    message;
+
+  box.style.display =
+    "block";
+
+  clearTimeout(
+    window.__vivahToastTimer
+  );
+
+  window.__vivahToastTimer =
+    setTimeout(
+      () => {
+        box.style.display =
+          "none";
+      },
+      2800
+    );
 }
 
 
 /* =========================================================
-   TEMPLATE LIBRARY
+   TEMPLATE CARDS
 ========================================================= */
 
-function renderTemplates(filter = "all"){
+function artClass(index){
 
-  const grid = $("templateGrid");
+  const colors = [
+    "gold",
+    "rose",
+    "blue",
+    "green",
+    "purple",
+    "orange",
+    "cream",
+    "red"
+  ];
+
+  return colors[
+    index % colors.length
+  ];
+}
+
+
+function renderTemplates(
+  filter = "all"
+){
+
+  const grid =
+    $("templateGrid");
 
   if(!grid) return;
 
   grid.innerHTML = "";
 
-  templates.forEach((t, i) => {
+  templates.forEach(
+    (template,index) => {
 
-    if(filter !== "all" && t[1] !== filter){
-      return;
-    }
+      if(
+        filter !== "all" &&
+        template[1] !== filter
+      ){
 
-    const card = document.createElement("button");
+        return;
+      }
 
-    card.type = "button";
+      const card =
+        document.createElement(
+          "div"
+        );
 
-    card.className = "template-card";
+      card.className =
+        "template-card";
 
-    card.setAttribute(
-      "aria-label",
-      `Use ${t[0]} template`
-    );
+      card.setAttribute(
+        "role",
+        "button"
+      );
 
-    card.innerHTML = `
-      <div class="template-art template-thumb design-${i + 1}">
+      card.setAttribute(
+        "tabindex",
+        "0"
+      );
 
-        <div class="thumb-photo"></div>
+      card.innerHTML = `
+        <div class="template-art ${artClass(index)}">
 
-        <div class="thumb-title">
-          ${escapeHtml(t[0])}
+          <div class="tp"></div>
+
+          <div class="tt">
+            ${escapeHtml(template[0])}
+          </div>
+
+          <div class="tl"></div>
+
+          <div class="lines"></div>
+
         </div>
 
-        <div class="thumb-section"></div>
+        <footer>
 
-        <div class="thumb-lines"></div>
+          <b>
+            ${escapeHtml(template[0])}
+          </b>
 
-      </div>
+          <small>
+            ${escapeHtml(cap(template[1]))}
+            •
+            ${template[3] ? "Premium" : "Free"}
+          </small>
 
-      <footer>
+        </footer>
+      `;
 
-        <b>${escapeHtml(t[0])}</b>
+      card.onclick =
+        () => selectTemplate(index);
 
-        <small>
-          ${cap(t[1])} •
-          ${t[3] ? "Premium" : "Free"}
-        </small>
+      card.onkeydown =
+        event => {
 
-      </footer>
-    `;
+          if(
+            event.key === "Enter" ||
+            event.key === " "
+          ){
 
-    /*
-      IMPORTANT:
-      Template click now works properly.
-    */
+            event.preventDefault();
 
-    card.addEventListener("click", function(e){
+            selectTemplate(index);
+          }
+        };
 
-      e.preventDefault();
+      grid.appendChild(card);
 
-      e.stopPropagation();
-
-      selectTemplate(i);
-
-    });
-
-    grid.appendChild(card);
-
-  });
+    }
+  );
 }
 
 
 /* =========================================================
-   MINI TEMPLATE LIST
+   MINI TEMPLATE SELECTOR
 ========================================================= */
 
 function renderMini(){
 
-  const el = $("miniTemplates");
+  const box =
+    $("miniTemplates");
 
-  if(!el) return;
+  if(!box) return;
 
-  el.innerHTML = templates.map((t, i) => `
+  box.innerHTML = "";
 
-    <button
-      type="button"
-      class="mini ${i === selected ? "active" : ""}"
-      data-i="${i}"
-    >
-      ${i + 1}. ${escapeHtml(t[0])}
-    </button>
+  templates.forEach(
+    (template,index) => {
 
-  `).join("");
+      const button =
+        document.createElement(
+          "button"
+        );
 
-  el.querySelectorAll(".mini").forEach(button => {
+      button.type =
+        "button";
 
-    button.addEventListener("click", function(e){
+      button.className =
+        "mini" +
+        (
+          index === selected
+            ? " active"
+            : ""
+        );
 
-      e.preventDefault();
+      button.textContent =
+        template[0];
 
-      selectTemplate(
-        Number(this.dataset.i)
-      );
+      button.title =
+        template[0];
 
-    });
+      button.onclick =
+        () => selectTemplate(index);
 
-  });
+      box.appendChild(button);
 
+    }
+  );
 }
 
 
 /* =========================================================
-   SELECT TEMPLATE
+   TEMPLATE SELECTION
 ========================================================= */
 
-function selectTemplate(i){
+function selectTemplate(index){
 
-  if(!templates.length){
+  if(
+    index < 0 ||
+    index >= templates.length
+  ){
+
     return;
   }
 
-  selected = Math.max(
-    0,
-    Math.min(
-      Number(i),
-      templates.length - 1
-    )
-  );
+  selected =
+    index;
 
-  /*
-    Update selected template name
-  */
+  const selectedName =
+    $("selectedName");
 
-  if($("selectedName")){
+  if(selectedName){
 
-    $("selectedName").textContent =
-      templates[selected][0];
-
+    selectedName.textContent =
+      templates[index][0];
   }
 
-  /*
-    Update mini templates
-  */
+  const preview =
+    $("preview");
+
+  if(preview){
+
+    preview.className =
+      "bio-preview design-" +
+      ((index % 10) + 1);
+  }
 
   renderMini();
 
-  /*
-    Update live preview
-  */
-
   updatePreview();
 
-  /*
-    Highlight selected card
-  */
-
-  document
-    .querySelectorAll(".template-card")
-    .forEach(card => {
-
-      card.classList.remove("selected");
-
-    });
-
-
-  /*
-    Find selected template card
-  */
-
-  document
-    .querySelectorAll(".template-card")
-    .forEach(card => {
-
-      const title =
-        card.querySelector("footer b");
-
-      if(
-        title &&
-        title.textContent.trim() ===
-        templates[selected][0]
-      ){
-
-        card.classList.add("selected");
-
-      }
-
-    });
-
-
-  /*
-    Scroll to Biodata Maker
-  */
-
-  const maker = $("maker");
-
-  if(maker){
-
-    setTimeout(() => {
-
-      maker.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-
-    }, 150);
-
-  }
-
-  /*
-    Show confirmation
-  */
-
-  toast(
-    `${templates[selected][0]} selected ✓`
-  );
-
+  saveDraftMeta();
 }
 
 
 /* =========================================================
-   VALUE HELPERS
+   BIODATA PREVIEW
 ========================================================= */
 
-function val(id){
+function updatePreview(){
 
-  return $(id)?.value || "—";
+  const preview =
+    $("preview");
 
-}
-
-function safeValue(id){
-
-  const value = val(id);
-
-  return value === "—"
-    ? ""
-    : value;
-
-}
+  if(!preview) return;
 
 
-/* =========================================================
-   DATE / TIME
-========================================================= */
-
-function formatDate(value){
-
-  if(
-    !value ||
-    value === "—"
-  ){
-    return "—";
-  }
-
-  const parts =
-    value.split("-");
-
-  if(parts.length !== 3){
-    return value;
-  }
-
-  return `${parts[2]}/${parts[1]}/${parts[0]}`;
-
-}
+  const designNumber =
+    (selected % 10) + 1;
 
 
-function formatTime(value){
-
-  if(
-    !value ||
-    value === "—"
-  ){
-    return "—";
-  }
-
-  const [h, m] =
-    value.split(":").map(Number);
-
-  if(
-    Number.isNaN(h) ||
-    Number.isNaN(m)
-  ){
-    return value;
-  }
-
-  const suffix =
-    h >= 12
-      ? "PM"
-      : "AM";
-
-  const hour =
-    h % 12 || 12;
-
-  return `${hour}:${String(m).padStart(2,"0")} ${suffix}`;
-
-}
+  preview.className =
+    "bio-preview design-" +
+    designNumber;
 
 
-/* =========================================================
-   PREVIEW ROW
-========================================================= */
+  const name =
+    escapeHtml(
+      val("name")
+    );
 
-function row(label, value){
+  const profession =
+    escapeHtml(
+      val("profession")
+    );
 
-  return `
-
-    <div class="bio-row">
-
-      <span>
-        ${escapeHtml(label)}
-      </span>
-
-      <b>
-        ${escapeHtml(value || "—")}
-      </b>
-
-    </div>
-
-  `;
-
-}
-
-
-function section(title, content){
-
-  return `
-
-    <section class="bio-section">
-
-      <h5>
-        ${escapeHtml(title)}
-      </h5>
-
-      <div class="bio-section-body">
-
-        ${content}
-
-      </div>
-
-    </section>
-
-  `;
-
-}
-
-
-/* =========================================================
-   PHOTO
-========================================================= */
-
-function photoMarkup(){
-
-  return `
-
+  const photoHtml = `
     <div class="profile">
 
       <img
@@ -419,188 +422,15 @@ function photoMarkup(){
       </span>
 
     </div>
-
   `;
 
-}
 
-
-/* =========================================================
-   UPDATE PREVIEW
-========================================================= */
-
-function updatePreview(){
-
-  const p = $("preview");
-
-  if(!p) return;
-
-  const design =
-    selected + 1;
-
-
-  /* PERSONAL */
-
-  const personal = [
-
-    row(
-      "Name",
-      safeValue("name")
-    ),
-
-    row(
-      "Date of Birth",
-      formatDate(
-        safeValue("dob")
-      )
-    ),
-
-    row(
-      "Time of Birth",
-      formatTime(
-        safeValue("time_of_birth")
-      )
-    ),
-
-    row(
-      "Place of Birth",
-      safeValue("place_of_birth")
-    ),
-
-    row(
-      "Rashi",
-      safeValue("rashi")
-    ),
-
-    row(
-      "Nakshatra",
-      safeValue("nakshatra")
-    ),
-
-    row(
-      "Complexion",
-      safeValue("complexion")
-    ),
-
-    row(
-      "Height",
-      safeValue("height")
-    ),
-
-    row(
-      "Religion",
-      safeValue("religion")
-    ),
-
-    row(
-      "Caste",
-      safeValue("caste")
-    ),
-
-    row(
-      "Gotra",
-      safeValue("gotra")
-    ),
-
-    row(
-      "Education",
-      safeValue("education")
-    ),
-
-    row(
-      "Work",
-      safeValue("profession")
-    ),
-
-    row(
-      "Company",
-      safeValue("company")
-    ),
-
-    row(
-      "Languages",
-      safeValue("languages")
-    ),
-
-    row(
-      "Hobbies",
-      safeValue("hobbies")
-    )
-
-  ].join("");
-
-
-  /* FAMILY */
-
-  const family = [
-
-    row(
-      "Father's Name",
-      safeValue("father")
-    ),
-
-    row(
-      "Father's Occupation",
-      safeValue("father_occupation")
-    ),
-
-    row(
-      "Mother's Name",
-      safeValue("mother")
-    ),
-
-    row(
-      "Mother's Occupation",
-      safeValue("mother_occupation")
-    ),
-
-    row(
-      "Siblings",
-      safeValue("siblings")
-    )
-
-  ].join("");
-
-
-  /* CONTACT */
-
-  const contact = [
-
-    row(
-      "Contact Person",
-      safeValue("contact_person")
-    ),
-
-    row(
-      "Contact Number",
-      safeValue("phone")
-    ),
-
-    row(
-      "Email ID",
-      safeValue("email")
-    ),
-
-    row(
-      "Residential Address",
-      safeValue("address") ||
-      safeValue("city")
-    )
-
-  ].join("");
-
-
-  const about =
-    safeValue("about");
-
-
-  /* HEADER */
-
-  const header = `
+  preview.innerHTML = `
 
     <div class="bio-ornament">
-      ॐ
+      ॥ श्री गणेशाय नमः ॥
     </div>
+
 
     <div class="bio-header">
 
@@ -611,1283 +441,268 @@ function updatePreview(){
         </small>
 
         <h2>
-          ${escapeHtml(
-            safeValue("name") ||
-            "Your Name"
-          )}
+          ${name}
         </h2>
 
         <p>
-          ${escapeHtml(
-            safeValue("profession") ||
-            "Profession"
-          )}
+          ${profession}
         </p>
-
-        <div class="bio-location">
-
-          ${escapeHtml(
-            safeValue("place_of_birth") ||
-            safeValue("city") ||
-            "India"
-          )}
-
-        </div>
 
       </div>
 
-      ${photoMarkup()}
+      ${photoHtml}
 
     </div>
 
-  `;
+
+    <div class="bio-section">
+
+      <h5>
+        PERSONAL DETAILS
+      </h5>
+
+      <div class="bio-section-body">
+
+        ${bioRow(
+          "Date of Birth",
+          safeValue("dob")
+        )}
+
+        ${bioRow(
+          "Time of Birth",
+          safeValue("time_of_birth")
+        )}
+
+        ${bioRow(
+          "Place of Birth",
+          safeValue("place_of_birth")
+        )}
+
+        ${bioRow(
+          "Height",
+          safeValue("height")
+        )}
+
+        ${bioRow(
+          "Religion",
+          safeValue("religion")
+        )}
+
+        ${bioRow(
+          "Caste / Community",
+          safeValue("caste")
+        )}
+
+        ${bioRow(
+          "Gotra",
+          safeValue("gotra")
+        )}
+
+        ${bioRow(
+          "Rashi",
+          safeValue("rashi")
+        )}
+
+        ${bioRow(
+          "Nakshatra",
+          safeValue("nakshatra")
+        )}
+
+        ${bioRow(
+          "Complexion",
+          safeValue("complexion")
+        )}
+
+        ${bioRow(
+          "Education",
+          safeValue("education")
+        )}
+
+        ${bioRow(
+          "Profession",
+          safeValue("profession")
+        )}
+
+        ${bioRow(
+          "Company",
+          safeValue("company")
+        )}
+
+        ${bioRow(
+          "Languages",
+          safeValue("languages")
+        )}
+
+        ${bioRow(
+          "Hobbies",
+          safeValue("hobbies")
+        )}
+
+      </div>
+
+    </div>
 
 
-  /* CLASSIC */
+    <div class="bio-section">
 
-  const classic = `
+      <h5>
+        FAMILY DETAILS
+      </h5>
 
-    ${header}
+      <div class="bio-section-body">
 
-    ${section(
-      "PERSONAL DETAILS",
-      personal
-    )}
+        ${bioRow(
+          "Father's Name",
+          safeValue("father")
+        )}
 
-    ${section(
-      "FAMILY DETAILS",
-      family
-    )}
+        ${bioRow(
+          "Father's Occupation",
+          safeValue("father_occupation")
+        )}
 
-    ${
-      about
-        ? section(
-            "ABOUT ME",
-            `<p class="bio-about">
-              ${escapeHtml(about)}
-            </p>`
-          )
-        : ""
-    }
+        ${bioRow(
+          "Mother's Name",
+          safeValue("mother")
+        )}
 
-    ${section(
-      "CONTACT DETAILS",
-      contact
-    )}
+        ${bioRow(
+          "Mother's Occupation",
+          safeValue("mother_occupation")
+        )}
+
+        ${bioRow(
+          "Siblings",
+          safeValue("siblings")
+        )}
+
+        ${bioRow(
+          "Contact Person",
+          safeValue("contact_person")
+        )}
+
+      </div>
+
+    </div>
+
+
+    <div class="bio-section">
+
+      <h5>
+        ABOUT ME
+      </h5>
+
+      <p class="bio-about">
+        ${escapeHtml(
+          safeValue("about") || "—"
+        )}
+      </p>
+
+    </div>
+
+
+    <div class="bio-section">
+
+      <h5>
+        CONTACT DETAILS
+      </h5>
+
+      <div class="bio-section-body">
+
+        ${bioRow(
+          "City",
+          safeValue("city")
+        )}
+
+        ${bioRow(
+          "Contact Number",
+          safeValue("phone")
+        )}
+
+        ${bioRow(
+          "Email",
+          safeValue("email")
+        )}
+
+        ${bioRow(
+          "Address",
+          safeValue("address")
+        )}
+
+      </div>
+
+    </div>
+
 
     <div class="bio-foot">
 
-      ${escapeHtml(
-        safeValue("phone") || ""
+      📞 ${escapeHtml(
+        safeValue("phone") || "—"
       )}
 
-      ${
-        safeValue("city")
-          ? " • " +
-            escapeHtml(
-              safeValue("city")
-            )
-          : ""
-      }
+      &nbsp; • &nbsp;
+
+      📍 ${escapeHtml(
+        safeValue("city") || "—"
+      )}
 
     </div>
 
   `;
-
-
-  let html =
-    classic;
-
-
-  /* ROYAL MAROON */
-
-  if(design === 2){
-
-    html = `
-
-      <div class="bio-royal-pattern"></div>
-
-      ${header}
-
-      ${section(
-        "PERSONAL DETAILS",
-        personal
-      )}
-
-      ${section(
-        "FAMILY DETAILS",
-        family
-      )}
-
-      ${section(
-        "CONTACT DETAILS",
-        contact
-      )}
-
-      ${
-        about
-          ? section(
-              "ABOUT ME",
-              `<p class="bio-about">
-                ${escapeHtml(about)}
-              </p>`
-            )
-          : ""
-      }
-
-    `;
-
-  }
-
-
-  /* ROYAL BLUE */
-
-  if(design === 3){
-
-    html = `
-
-      <div class="bio-royal-pattern"></div>
-
-      ${header}
-
-      ${section(
-        "PERSONAL DETAILS",
-        personal
-      )}
-
-      ${section(
-        "FAMILY DETAILS",
-        family
-      )}
-
-      ${section(
-        "CONTACT DETAILS",
-        contact
-      )}
-
-      ${
-        about
-          ? section(
-              "ABOUT ME",
-              `<p class="bio-about">
-                ${escapeHtml(about)}
-              </p>`
-            )
-          : ""
-      }
-
-    `;
-
-  }
-
-
-  /* BLUSH FLORAL */
-
-  if(design === 4){
-
-    html = `
-
-      <div class="bio-blush-top">
-
-        ${photoMarkup()}
-
-        <div>
-
-          <h2>
-            ${escapeHtml(
-              safeValue("name") ||
-              "Your Name"
-            )}
-          </h2>
-
-          <p>
-            Date of Birth :
-            ${escapeHtml(
-              formatDate(
-                safeValue("dob")
-              )
-            )}
-          </p>
-
-          <p>
-            Place of Birth :
-            ${escapeHtml(
-              safeValue("place_of_birth") ||
-              safeValue("city")
-            )}
-          </p>
-
-        </div>
-
-      </div>
-
-      ${section(
-        "PERSONAL DETAILS",
-        personal
-      )}
-
-      ${section(
-        "FAMILY DETAILS",
-        family
-      )}
-
-      ${section(
-        "CONTACT DETAILS",
-        contact
-      )}
-
-      ${
-        about
-          ? section(
-              "ABOUT ME",
-              `<p class="bio-about">
-                ${escapeHtml(about)}
-              </p>`
-            )
-          : ""
-      }
-
-    `;
-
-  }
-
-
-  /* ELEGANT CREAM */
-
-  if(design === 5){
-
-    html = `
-
-      <div class="bio-gold-symbol">
-        ॐ श्री गणेशाय नमः
-      </div>
-
-      ${header}
-
-      ${section(
-        "PERSONAL DETAILS",
-        personal
-      )}
-
-      ${section(
-        "FAMILY DETAILS",
-        family
-      )}
-
-      ${section(
-        "CONTACT DETAILS",
-        contact
-      )}
-
-      ${
-        about
-          ? section(
-              "ABOUT ME",
-              `<p class="bio-about">
-                ${escapeHtml(about)}
-              </p>`
-            )
-          : ""
-      }
-
-    `;
-
-  }
-
-
-  /* HERITAGE */
-
-  if(design === 6){
-
-    html = `
-
-      <div class="bio-corner-ornaments">
-        ✦
-      </div>
-
-      ${header}
-
-      ${section(
-        "PERSONAL DETAILS",
-        personal
-      )}
-
-      ${section(
-        "FAMILY DETAILS",
-        family
-      )}
-
-      ${section(
-        "CONTACT DETAILS",
-        contact
-      )}
-
-      ${
-        about
-          ? section(
-              "ABOUT ME",
-              `<p class="bio-about">
-                ${escapeHtml(about)}
-              </p>`
-            )
-          : ""
-      }
-
-    `;
-
-  }
-
-
-  /* MODERN BURGUNDY */
-
-  if(design === 7){
-
-    html = `
-
-      ${header}
-
-      ${section(
-        "PERSONAL DETAILS",
-        personal
-      )}
-
-      ${section(
-        "FAMILY DETAILS",
-        family
-      )}
-
-      ${section(
-        "CONTACT DETAILS",
-        contact
-      )}
-
-      ${
-        about
-          ? section(
-              "ABOUT ME",
-              `<p class="bio-about">
-                ${escapeHtml(about)}
-              </p>`
-            )
-          : ""
-      }
-
-    `;
-
-  }
-
-
-  /* GOLDEN CLASSIC */
-
-  if(design === 8){
-
-    html = `
-
-      <div class="bio-gold-symbol">
-        ॐ श्री गणेशाय नमः
-      </div>
-
-      ${header}
-
-      ${section(
-        "PERSONAL DETAILS",
-        personal
-      )}
-
-      ${section(
-        "FAMILY DETAILS",
-        family
-      )}
-
-      ${section(
-        "CONTACT DETAILS",
-        contact
-      )}
-
-      ${
-        about
-          ? section(
-              "ABOUT ME",
-              `<p class="bio-about">
-                ${escapeHtml(about)}
-              </p>`
-            )
-          : ""
-      }
-
-    `;
-
-  }
-
-
-  /* FLORAL WHITE */
-
-  if(design === 9){
-
-    html = `
-
-      <div class="bio-floral-watermark">
-        ❀
-      </div>
-
-      ${header}
-
-      ${section(
-        "PERSONAL DETAILS",
-        personal
-      )}
-
-      ${section(
-        "FAMILY DETAILS",
-        family
-      )}
-
-      ${section(
-        "CONTACT DETAILS",
-        contact
-      )}
-
-      ${
-        about
-          ? section(
-              "ABOUT ME",
-              `<p class="bio-about">
-                ${escapeHtml(about)}
-              </p>`
-            )
-          : ""
-      }
-
-    `;
-
-  }
-
-
-  /* MODERN FLORAL */
-
-  if(design === 10){
-
-    html = `
-
-      <div class="bio-floral-watermark">
-        ❀
-      </div>
-
-      ${header}
-
-      ${section(
-        "PERSONAL DETAILS",
-        personal
-      )}
-
-      ${section(
-        "FAMILY DETAILS",
-        family
-      )}
-
-      ${section(
-        "CONTACT DETAILS",
-        contact
-      )}
-
-      ${
-        about
-          ? section(
-              "ABOUT ME",
-              `<p class="bio-about">
-                ${escapeHtml(about)}
-              </p>`
-            )
-          : ""
-      }
-
-    `;
-
-  }
-
-
-  /*
-    Put preview into page
-  */
-
-  p.className =
-    `bio-preview design-${design}`;
-
-  p.innerHTML =
-    html;
-
-
-  /*
-    Show uploaded photo
-  */
-
-  if(
-    profileDataUrl &&
-    $("pimg")
-  ){
-
-    $("pimg").src =
-      profileDataUrl;
-
-    $("pimg").style.display =
-      "block";
-
-    if($("ph")){
-
-      $("ph").style.display =
-        "none";
-
-    }
-
-  }
-
-}
-
-
-/* =========================================================
-   SECURITY
-========================================================= */
-
-function escapeHtml(s){
-
-  return String(
-    s ?? ""
-  ).replace(
-    /[&<>"']/g,
-    c => ({
-
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#039;"
-
-    }[c])
-  );
-
-}
-
-
-function cap(s){
-
-  return s
-    ? s[0].toUpperCase() +
-      s.slice(1)
-    : s;
-
-}
-
-
-/* =========================================================
-   JPG DOWNLOAD
-========================================================= */
-
-async function downloadJpg(){
-
-  const W = 1400;
-
-  const H = 1980;
-
-  const c =
-    document.createElement(
-      "canvas"
-    );
-
-  const ctx =
-    c.getContext("2d");
-
-  c.width = W;
-
-  c.height = H;
-
-
-  const themes = [
-
-    ["#fffdfb","#9d712e","#e2c785"],
-
-    ["#843b32","#f0c95c","#843b32"],
-
-    ["#2e518f","#e7ba45","#2e518f"],
-
-    ["#ead6dd","#9b6678","#ead6dd"],
-
-    ["#faf1dc","#8b6a2f","#d9bf77"],
-
-    ["#fffdf9","#8b5b2b","#b58a45"],
-
-    ["#7f3030","#f0c95c","#7f3030"],
-
-    ["#fff0bd","#a8482d","#d9bd69"],
-
-    ["#fffefa","#8d7345","#d7d0c5"],
-
-    ["#fffefa","#477e9e","#d0b35b"]
-
-  ];
-
-
-  const [
-    background,
-    accent,
-    border
-  ] =
-    themes[
-      selected %
-      themes.length
-    ];
-
-
-  ctx.fillStyle =
-    background;
-
-  ctx.fillRect(
-    0,
-    0,
-    W,
-    H
-  );
-
-
-  ctx.strokeStyle =
-    border;
-
-  ctx.lineWidth =
-    24;
-
-  ctx.strokeRect(
-    35,
-    35,
-    W - 70,
-    H - 70
-  );
-
-
-  if(
-    [1,2,6].includes(selected)
-  ){
-
-    ctx.fillStyle =
-      accent;
-
-    ctx.globalAlpha =
-      .12;
-
-    ctx.fillRect(
-      0,
-      0,
-      W,
-      H
-    );
-
-    ctx.globalAlpha =
-      1;
-
-  }
-
-
-  ctx.fillStyle =
-    accent;
-
-  ctx.textAlign =
-    "center";
-
-  ctx.font =
-    "26px Georgia";
-
-  ctx.fillText(
-    "ॐ श्री गणेशाय नमः",
-    W / 2,
-    105
-  );
-
-
-  ctx.font =
-    "bold 22px Arial";
-
-  ctx.fillText(
-    "MARRIAGE BIODATA",
-    W / 2,
-    165
-  );
-
-
-  ctx.textAlign =
-    "left";
-
-  ctx.font =
-    "bold 48px Georgia";
-
-  ctx.fillText(
-    safeValue("name") ||
-    "Your Name",
-    100,
-    250
-  );
-
-
-  ctx.font =
-    "22px Arial";
-
-  ctx.fillStyle =
-    "#62595a";
-
-  ctx.fillText(
-    safeValue("profession") ||
-    "Profession",
-    100,
-    292
-  );
 
 
   if(profileDataUrl){
 
-    await drawImage(
-      profileDataUrl,
-      W - 330,
-      140,
-      190,
-      235,
-      ctx
-    );
+    const image =
+      $("pimg");
 
-  }else{
+    const placeholder =
+      $("ph");
 
-    ctx.fillStyle =
-      "#eee3df";
+    if(image){
 
-    ctx.fillRect(
-      W - 330,
-      140,
-      190,
-      235
-    );
+      image.src =
+        profileDataUrl;
 
-    ctx.fillStyle =
-      "#999";
-
-    ctx.font =
-      "18px Arial";
-
-    ctx.textAlign =
-      "center";
-
-    ctx.fillText(
-      "PHOTO",
-      W - 235,
-      265
-    );
-
-  }
-
-
-  ctx.strokeStyle =
-    border;
-
-  ctx.lineWidth =
-    4;
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    100,
-    345
-  );
-
-  ctx.lineTo(
-    W - 100,
-    345
-  );
-
-  ctx.stroke();
-
-
-  let y = 410;
-
-
-  canvasSection(
-    "PERSONAL DETAILS"
-  );
-
-
-  canvasRows([
-
-    [
-      "Name",
-      safeValue("name")
-    ],
-
-    [
-      "Date of Birth",
-      formatDate(
-        safeValue("dob")
-      )
-    ],
-
-    [
-      "Time of Birth",
-      formatTime(
-        safeValue("time_of_birth")
-      )
-    ],
-
-    [
-      "Place of Birth",
-      safeValue("place_of_birth")
-    ],
-
-    [
-      "Rashi",
-      safeValue("rashi")
-    ],
-
-    [
-      "Nakshatra",
-      safeValue("nakshatra")
-    ],
-
-    [
-      "Complexion",
-      safeValue("complexion")
-    ],
-
-    [
-      "Height",
-      safeValue("height")
-    ],
-
-    [
-      "Religion",
-      safeValue("religion")
-    ],
-
-    [
-      "Caste",
-      safeValue("caste")
-    ],
-
-    [
-      "Gotra",
-      safeValue("gotra")
-    ],
-
-    [
-      "Education",
-      safeValue("education")
-    ],
-
-    [
-      "Work",
-      safeValue("profession")
-    ],
-
-    [
-      "Company",
-      safeValue("company")
-    ]
-
-  ]);
-
-
-  canvasSection(
-    "FAMILY DETAILS"
-  );
-
-
-  canvasRows([
-
-    [
-      "Father's Name",
-      safeValue("father")
-    ],
-
-    [
-      "Father's Occupation",
-      safeValue("father_occupation")
-    ],
-
-    [
-      "Mother's Name",
-      safeValue("mother")
-    ],
-
-    [
-      "Mother's Occupation",
-      safeValue("mother_occupation")
-    ],
-
-    [
-      "Siblings",
-      safeValue("siblings")
-    ]
-
-  ]);
-
-
-  canvasSection(
-    "CONTACT DETAILS"
-  );
-
-
-  canvasRows([
-
-    [
-      "Contact Person",
-      safeValue("contact_person")
-    ],
-
-    [
-      "Contact Number",
-      safeValue("phone")
-    ],
-
-    [
-      "Email ID",
-      safeValue("email")
-    ],
-
-    [
-      "Address",
-      safeValue("address") ||
-      safeValue("city")
-    ]
-
-  ]);
-
-
-  if(
-    safeValue("about")
-  ){
-
-    canvasSection(
-      "ABOUT ME"
-    );
-
-    ctx.fillStyle =
-      "#4f4748";
-
-    ctx.font =
-      "19px Arial";
-
-    wrapCanvas(
-      ctx,
-      safeValue("about"),
-      100,
-      y,
-      W - 200,
-      30
-    );
-
-    y += 120;
-
-  }
-
-
-  const a =
-    document.createElement("a");
-
-  a.download =
-    `vivahbio-${
-      (
-        safeValue("name") ||
-        "biodata"
-      ).replace(
-        /\s+/g,
-        "-"
-      )
-    }.jpg`;
-
-  a.href =
-    c.toDataURL(
-      "image/jpeg",
-      0.95
-    );
-
-  a.click();
-
-
-  function canvasSection(title){
-
-    ctx.fillStyle =
-      accent;
-
-    ctx.textAlign =
-      "left";
-
-    ctx.font =
-      "bold 17px Arial";
-
-    ctx.fillText(
-      title,
-      100,
-      y
-    );
-
-    y += 42;
-
-  }
-
-
-  function canvasRows(arr){
-
-    ctx.font =
-      "17px Arial";
-
-    for(
-      const [label,value]
-      of arr
-    ){
-
-      if(!value) continue;
-
-      ctx.fillStyle =
-        "#777071";
-
-      ctx.textAlign =
-        "left";
-
-      ctx.fillText(
-        label,
-        100,
-        y
-      );
-
-
-      ctx.fillStyle =
-        "#292425";
-
-      ctx.textAlign =
-        "right";
-
-      ctx.fillText(
-        String(value),
-        W - 100,
-        y
-      );
-
-
-      ctx.textAlign =
-        "left";
-
-      ctx.strokeStyle =
-        "#eee7e4";
-
-      ctx.beginPath();
-
-      ctx.moveTo(
-        100,
-        y + 14
-      );
-
-      ctx.lineTo(
-        W - 100,
-        y + 14
-      );
-
-      ctx.stroke();
-
-
-      y += 48;
-
-
-      if(
-        y > H - 130
-      ){
-        break;
-      }
-
+      image.style.display =
+        "block";
     }
 
-    y += 15;
+    if(placeholder){
 
-  }
-
-}
-
-
-/* =========================================================
-   DRAW IMAGE
-========================================================= */
-
-function drawImage(
-  url,
-  x,
-  y,
-  w,
-  h,
-  ctx
-){
-
-  return new Promise(
-    resolve => {
-
-      const im =
-        new Image();
-
-      im.onload = () => {
-
-        const r =
-          Math.max(
-            w / im.width,
-            h / im.height
-          );
-
-        const nw =
-          im.width * r;
-
-        const nh =
-          im.height * r;
-
-
-        ctx.save();
-
-        ctx.beginPath();
-
-        ctx.rect(
-          x,
-          y,
-          w,
-          h
-        );
-
-        ctx.clip();
-
-
-        ctx.drawImage(
-          im,
-          x + (w - nw) / 2,
-          y + (h - nh) / 2,
-          nw,
-          nh
-        );
-
-
-        ctx.restore();
-
-        resolve();
-
-      };
-
-      im.src =
-        url;
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   TEXT WRAP
-========================================================= */
-
-function wrapCanvas(
-  ctx,
-  text,
-  x,
-  y,
-  max,
-  lh
-){
-
-  const words =
-    String(text)
-      .split(/\s+/);
-
-  const lines = [];
-
-  let line = "";
-
-
-  for(
-    const w of words
-  ){
-
-    const test =
-      line
-        ? line + " " + w
-        : w;
-
-
-    if(
-      ctx.measureText(test).width >
-        max &&
-      line
-    ){
-
-      lines.push(line);
-
-      line =
-        w;
-
-    }else{
-
-      line =
-        test;
-
-    }
-
-  }
-
-
-  if(line){
-    lines.push(line);
-  }
-
-
-  for(
-    const l
-    of lines.slice(0,5)
-  ){
-
-    ctx.fillText(
-      l,
-      x,
-      y
-    );
-
-    y += lh;
-
-  }
-
-}
-
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-function toast(s){
-
-  const t =
-    $("toast");
-
-  if(!t) return;
-
-  t.textContent =
-    s;
-
-  t.style.display =
-    "block";
-
-
-  setTimeout(
-    () => {
-
-      t.style.display =
+      placeholder.style.display =
         "none";
+    }
+  }
+}
 
-    },
-    2600
-  );
 
+function bioRow(
+  label,
+  value
+){
+
+  return `
+    <div class="bio-row">
+
+      <span>
+        ${escapeHtml(label)}
+      </span>
+
+      <b>
+        ${escapeHtml(value || "—")}
+      </b>
+
+    </div>
+  `;
 }
 
 
 /* =========================================================
-   FORM STORAGE
+   LOCAL DRAFT
 ========================================================= */
 
-const formIds = [
+const formFields = [
 
   "name",
   "dob",
@@ -1920,36 +735,99 @@ const formIds = [
 ];
 
 
-formIds.forEach(
-  id => {
+function loadDraft(){
 
-    const el =
-      $(id);
+  formFields.forEach(
+    id => {
 
-    if(!el) return;
+      const input =
+        $(id);
 
+      if(!input) return;
 
-    const saved =
-      localStorage.getItem(
-        "vivah_" + id
-      );
+      const saved =
+        localStorage.getItem(
+          "vivah_" + id
+        );
 
+      if(saved !== null){
 
-    if(saved !== null){
-
-      el.value =
-        saved;
+        input.value =
+          saved;
+      }
 
     }
+  );
 
 
-    el.addEventListener(
+  const savedTemplate =
+    localStorage.getItem(
+      "vivah_selected_template"
+    );
+
+  if(savedTemplate !== null){
+
+    const index =
+      Number(savedTemplate);
+
+    if(
+      Number.isInteger(index) &&
+      index >= 0 &&
+      index < templates.length
+    ){
+
+      selected =
+        index;
+    }
+  }
+
+
+  /*
+    Photo is intentionally not stored
+    in localStorage because large images
+    can exceed browser storage limits.
+  */
+}
+
+
+function saveDraftMeta(){
+
+  localStorage.setItem(
+    "vivah_selected_template",
+    String(selected)
+  );
+}
+
+
+formFields.forEach(
+  id => {
+
+    const input =
+      $(id);
+
+    if(!input) return;
+
+    input.addEventListener(
       "input",
       () => {
 
         localStorage.setItem(
           "vivah_" + id,
-          el.value
+          input.value
+        );
+
+        updatePreview();
+
+      }
+    );
+
+    input.addEventListener(
+      "change",
+      () => {
+
+        localStorage.setItem(
+          "vivah_" + id,
+          input.value
         );
 
         updatePreview();
@@ -1962,70 +840,188 @@ formIds.forEach(
 
 
 /* =========================================================
-   PHOTO UPLOAD
+   PHOTO
 ========================================================= */
 
 $("photo")?.addEventListener(
   "change",
-  e => {
+  event => {
 
-    const f =
-      e.target.files[0];
+    const file =
+      event.target.files?.[0];
 
-    if(!f) return;
+    if(!file) return;
 
 
-    const r =
+    if(
+      !file.type.startsWith("image/")
+    ){
+
+      toast(
+        "Please choose an image file."
+      );
+
+      return;
+    }
+
+
+    if(
+      file.size > 8 * 1024 * 1024
+    ){
+
+      toast(
+        "Photo should be smaller than 8 MB."
+      );
+
+      return;
+    }
+
+
+    const reader =
       new FileReader();
 
 
-    r.onload = () => {
+    reader.onload =
+      () => {
 
-      profileDataUrl =
-        r.result;
+        profileDataUrl =
+          reader.result;
 
-      updatePreview();
+        updatePreview();
 
-    };
+        toast(
+          "Photo added to biodata."
+        );
+      };
 
 
-    r.readAsDataURL(f);
+    reader.onerror =
+      () => {
+
+        toast(
+          "Could not read photo."
+        );
+      };
+
+
+    reader.readAsDataURL(
+      file
+    );
 
   }
 );
 
 
 /* =========================================================
-   RAZORPAY
+   PROFILE DATA FOR BACKEND
 ========================================================= */
 
-const PREMIUM_PRICE_PAISE =
-  1900;
+function getProfilePayload(){
 
-const PREMIUM_UNLOCK_KEY =
-  "vivah_premium_unlocked";
+  return {
+
+    name:
+      safeValue("name") || null,
+
+    date_of_birth:
+      safeValue("dob") || null,
+
+    time_of_birth:
+      safeValue("time_of_birth") || null,
+
+    place_of_birth:
+      safeValue("place_of_birth") || null,
+
+    height:
+      safeValue("height") || null,
+
+    religion:
+      safeValue("religion") || null,
+
+    caste:
+      safeValue("caste") || null,
+
+    gotra:
+      safeValue("gotra") || null,
+
+    rashi:
+      safeValue("rashi") || null,
+
+    nakshatra:
+      safeValue("nakshatra") || null,
+
+    complexion:
+      safeValue("complexion") || null,
+
+    education:
+      safeValue("education") || null,
+
+    profession:
+      safeValue("profession") || null,
+
+    company:
+      safeValue("company") || null,
+
+    languages:
+      safeValue("languages") || null,
+
+    hobbies:
+      safeValue("hobbies") || null,
+
+    father_name:
+      safeValue("father") || null,
+
+    father_occupation:
+      safeValue("father_occupation") || null,
+
+    mother_name:
+      safeValue("mother") || null,
+
+    mother_occupation:
+      safeValue("mother_occupation") || null,
+
+    siblings:
+      safeValue("siblings") || null,
+
+    contact_person:
+      safeValue("contact_person") || null,
+
+    phone:
+      safeValue("phone") || null,
+
+    email:
+      safeValue("email") || null,
+
+    city:
+      safeValue("city") || null,
+
+    address:
+      safeValue("address") || null,
+
+    about_me:
+      safeValue("about") || null,
+
+    template_id:
+      templates[selected]?.[0] ||
+      "Elegant Gold"
+
+  };
+
+}
+
+
+/* =========================================================
+   PROFILE ID
+========================================================= */
 
 const PROFILE_ID_KEY =
   "vivah_profile_id";
 
+const PAYMENT_ID_KEY =
+  "vivah_payment_id";
 
-function premiumUnlocked(){
-
-  return localStorage.getItem(
-    PREMIUM_UNLOCK_KEY
-  ) === "true";
-
-}
-
-
-function setPremiumUnlocked(){
-
-  localStorage.setItem(
-    PREMIUM_UNLOCK_KEY,
-    "true"
-  );
-
-}
+const PREMIUM_UNLOCK_KEY =
+  "vivah_premium_unlocked";
 
 
 function getProfileId(){
@@ -2033,7 +1029,6 @@ function getProfileId(){
   return localStorage.getItem(
     PROFILE_ID_KEY
   ) || "";
-
 }
 
 
@@ -2043,16 +1038,67 @@ function setProfileId(id){
 
     localStorage.setItem(
       PROFILE_ID_KEY,
-      id
+      String(id)
     );
-
   }
+}
 
+
+function getPaymentId(){
+
+  return localStorage.getItem(
+    PAYMENT_ID_KEY
+  ) || "";
+}
+
+
+function setPaymentId(id){
+
+  if(id){
+
+    localStorage.setItem(
+      PAYMENT_ID_KEY,
+      String(id)
+    );
+  }
 }
 
 
 /* =========================================================
-   PHOTO API
+   PREMIUM
+========================================================= */
+
+function premiumUnlocked(){
+
+  return (
+    localStorage.getItem(
+      PREMIUM_UNLOCK_KEY
+    ) === "true" &&
+    !!getPaymentId()
+  );
+}
+
+
+function setPremiumUnlocked(
+  paymentId
+){
+
+  localStorage.setItem(
+    PREMIUM_UNLOCK_KEY,
+    "true"
+  );
+
+  if(paymentId){
+
+    setPaymentId(
+      paymentId
+    );
+  }
+}
+
+
+/* =========================================================
+   PHOTO UPLOAD API
 ========================================================= */
 
 async function uploadProfilePhoto(
@@ -2065,7 +1111,6 @@ async function uploadProfilePhoto(
   ){
 
     return null;
-
   }
 
 
@@ -2081,15 +1126,16 @@ async function uploadProfilePhoto(
             "application/json"
         },
 
-        body: JSON.stringify({
+        body:
+          JSON.stringify({
 
-          profile_id:
-            profileId,
+            profile_id:
+              profileId,
 
-          image_data:
-            profileDataUrl
+            image_data:
+              profileDataUrl
 
-        })
+          })
 
       }
     );
@@ -2110,9 +1156,8 @@ async function uploadProfilePhoto(
 
     throw new Error(
       data.error ||
-      "Photo upload failed"
+      "Photo upload failed."
     );
-
   }
 
 
@@ -2125,19 +1170,24 @@ async function uploadProfilePhoto(
 
 
 /* =========================================================
-   PAYMENT
+   RAZORPAY
 ========================================================= */
+
+const PREMIUM_PRICE_PAISE =
+  1900;
+
 
 async function startRazorpayPayment(){
 
-  if(premiumUnlocked()){
+  if(
+    premiumUnlocked()
+  ){
 
     toast(
       "Premium already unlocked. You can download now."
     );
 
     return true;
-
   }
 
 
@@ -2151,7 +1201,6 @@ async function startRazorpayPayment(){
     );
 
     return false;
-
   }
 
 
@@ -2166,7 +1215,6 @@ async function startRazorpayPayment(){
 
     payBtn.textContent =
       "Opening payment…";
-
   }
 
 
@@ -2177,126 +1225,24 @@ async function startRazorpayPayment(){
         "/api/create-order",
         {
 
-          method: "POST",
+          method:
+            "POST",
 
           headers: {
             "Content-Type":
               "application/json"
           },
 
-          body: JSON.stringify({
+          body:
+            JSON.stringify({
 
-            amount:
-              PREMIUM_PRICE_PAISE,
+              amount:
+                PREMIUM_PRICE_PAISE,
 
-            profile: {
+              profile:
+                getProfilePayload()
 
-              name:
-                safeValue("name"),
-
-              date_of_birth:
-                safeValue("dob"),
-
-              time_of_birth:
-                safeValue(
-                  "time_of_birth"
-                ),
-
-              place_of_birth:
-                safeValue(
-                  "place_of_birth"
-                ),
-
-              height:
-                safeValue("height"),
-
-              religion:
-                safeValue("religion"),
-
-              caste:
-                safeValue("caste"),
-
-              gotra:
-                safeValue("gotra"),
-
-              rashi:
-                safeValue("rashi"),
-
-              nakshatra:
-                safeValue("nakshatra"),
-
-              complexion:
-                safeValue(
-                  "complexion"
-                ),
-
-              education:
-                safeValue(
-                  "education"
-                ),
-
-              profession:
-                safeValue(
-                  "profession"
-                ),
-
-              company:
-                safeValue("company"),
-
-              languages:
-                safeValue(
-                  "languages"
-                ),
-
-              hobbies:
-                safeValue("hobbies"),
-
-              father_name:
-                safeValue("father"),
-
-              father_occupation:
-                safeValue(
-                  "father_occupation"
-                ),
-
-              mother_name:
-                safeValue("mother"),
-
-              mother_occupation:
-                safeValue(
-                  "mother_occupation"
-                ),
-
-              siblings:
-                safeValue("siblings"),
-
-              contact_person:
-                safeValue(
-                  "contact_person"
-                ),
-
-              phone:
-                safeValue("phone"),
-
-              email:
-                safeValue("email"),
-
-              city:
-                safeValue("city"),
-
-              address:
-                safeValue("address"),
-
-              about_me:
-                safeValue("about"),
-
-              template_id:
-                templates[selected]?.[1] ||
-                "classic"
-
-            }
-
-          })
+            })
 
         }
       );
@@ -2318,11 +1264,15 @@ async function startRazorpayPayment(){
 
       throw new Error(
         orderData.error ||
-        "Unable to create payment order"
+        "Unable to create payment order."
       );
-
     }
 
+
+    /*
+      create-order.js already creates
+      the profile and returns profileId.
+    */
 
     if(
       orderData.profileId
@@ -2331,7 +1281,6 @@ async function startRazorpayPayment(){
       setProfileId(
         orderData.profileId
       );
-
     }
 
 
@@ -2356,21 +1305,18 @@ async function startRazorpayPayment(){
       order_id:
         orderData.orderId,
 
-
       prefill: {
 
         name:
-          val("name") === "—"
-            ? ""
-            : val("name"),
+          safeValue("name"),
 
         contact:
-          val("phone") === "—"
-            ? ""
-            : val("phone")
+          safeValue("phone"),
+
+        email:
+          safeValue("email")
 
       },
-
 
       theme: {
         color:
@@ -2379,7 +1325,9 @@ async function startRazorpayPayment(){
 
 
       handler:
-        async function(response){
+        async function(
+          response
+        ){
 
           try{
 
@@ -2424,20 +1372,43 @@ async function startRazorpayPayment(){
 
             if(
               !verifyRes.ok ||
-              !verifyData.verified
+              !verifyData.verified ||
+              !verifyData.paymentId
             ){
 
               throw new Error(
                 verifyData.error ||
-                "Payment verification failed"
+                "Payment verification failed."
               );
-
             }
 
 
-            setPremiumUnlocked();
+            /*
+              IMPORTANT:
+              paymentId returned by backend is
+              the Supabase payments.id UUID.
+              log-download.js expects this.
+            */
+
+            setPaymentId(
+              verifyData.paymentId
+            );
+
+
+            setPremiumUnlocked(
+              verifyData.paymentId
+            );
+
 
             updatePremiumButtons();
+
+
+            /*
+              Upload photo after successful payment.
+            */
+
+            let photoSaved =
+              false;
 
 
             try{
@@ -2445,7 +1416,6 @@ async function startRazorpayPayment(){
               const profileId =
                 getProfileId() ||
                 orderData.profileId ||
-                verifyData.profileId ||
                 "";
 
 
@@ -2462,46 +1432,46 @@ async function startRazorpayPayment(){
 
                 if(photoUrl){
 
-                  toast(
-                    "Payment successful! Photo saved. PDF/JPG unlocked."
-                  );
-
-                }else{
-
-                  toast(
-                    "Payment successful! PDF/JPG unlocked."
-                  );
-
+                  photoSaved =
+                    true;
                 }
-
-              }else{
-
-                toast(
-                  "Payment successful! PDF/JPG unlocked."
-                );
-
               }
 
             }catch(photoError){
 
               console.error(
-                "photo upload:",
+                "Photo upload:",
                 photoError
-              );
-
-              toast(
-                "Payment successful! PDF/JPG unlocked, but photo save failed."
               );
 
             }
 
 
-          }catch(err){
+            if(photoSaved){
 
-            console.error(err);
+              toast(
+                "Payment successful! Photo saved. PDF/JPG unlocked."
+              );
+
+            }else{
+
+              toast(
+                "Payment successful! PDF/JPG unlocked."
+              );
+            }
+
+
+          }catch(error){
+
+            console.error(
+              "Payment verification:",
+              error
+            );
+
 
             toast(
-              "Payment hua, lekin verification fail hua. Please try again."
+              error.message ||
+              "Payment verification failed."
             );
 
           }finally{
@@ -2531,13 +1501,13 @@ async function startRazorpayPayment(){
     };
 
 
-    const rzp =
+    const razorpay =
       new Razorpay(
         options
       );
 
 
-    rzp.on(
+    razorpay.on(
       "payment.failed",
       function(){
 
@@ -2551,50 +1521,54 @@ async function startRazorpayPayment(){
     );
 
 
-    rzp.open();
+    razorpay.open();
+
 
     return true;
 
 
-  }catch(err){
+  }catch(error){
 
-    console.error(err);
+    console.error(
+      "Payment:",
+      error
+    );
+
 
     toast(
-      err.message ||
+      error.message ||
       "Payment start nahi ho paya."
     );
+
 
     resetPayButton();
 
     return false;
-
   }
 
 }
 
 
 /* =========================================================
-   PAYMENT BUTTONS
+   PAYMENT BUTTON UI
 ========================================================= */
 
 function resetPayButton(){
 
-  const payBtn =
+  const button =
     $("payBtn");
 
+  if(!button) return;
 
-  if(payBtn){
 
-    payBtn.disabled =
-      false;
+  button.disabled =
+    false;
 
-    payBtn.textContent =
-      premiumUnlocked()
-        ? "Premium Unlocked ✓"
-        : "Unlock Premium ₹19";
 
-  }
+  button.textContent =
+    premiumUnlocked()
+      ? "Premium Unlocked ✓"
+      : "Unlock Premium ₹19";
 
 }
 
@@ -2611,7 +1585,6 @@ function updatePremiumButtons(){
       unlocked
         ? "Download PDF"
         : "Unlock to Download PDF";
-
   }
 
 
@@ -2621,23 +1594,583 @@ function updatePremiumButtons(){
       unlocked
         ? "Download JPG"
         : "Unlock to Download JPG";
-
   }
 
 
   resetPayButton();
+}
+
+
+/* =========================================================
+   DOWNLOAD LOGGING
+========================================================= */
+
+async function logDownload(
+  fileType
+){
+
+  const paymentId =
+    getPaymentId();
+
+
+  if(!paymentId){
+
+    console.warn(
+      "No payment ID. Download not logged."
+    );
+
+    return false;
+  }
+
+
+  try{
+
+    const response =
+      await fetch(
+        "/api/log-download",
+        {
+
+          method:
+            "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+
+              payment_id:
+                paymentId,
+
+              file_type:
+                fileType
+
+            })
+
+        }
+      );
+
+
+    const data =
+      await response
+        .json()
+        .catch(
+          () => ({})
+        );
+
+
+    if(
+      !response.ok ||
+      !data.logged
+    ){
+
+      console.error(
+        "Download logging failed:",
+        data.error
+      );
+
+      return false;
+    }
+
+
+    return true;
+
+
+  }catch(error){
+
+    console.error(
+      "Download logging error:",
+      error
+    );
+
+    return false;
+  }
+}
+
+
+/* =========================================================
+   LOAD EXTERNAL LIBRARY
+   html2canvas = exact preview image
+   jsPDF = PDF generation
+========================================================= */
+
+function loadScript(
+  src
+){
+
+  return new Promise(
+    (resolve,reject) => {
+
+      const existing =
+        document.querySelector(
+          `script[src="${src}"]`
+        );
+
+      if(existing){
+
+        if(
+          existing.dataset.loaded ===
+          "true"
+        ){
+
+          resolve();
+
+        }else{
+
+          existing.addEventListener(
+            "load",
+            resolve,
+            {once:true}
+          );
+
+          existing.addEventListener(
+            "error",
+            reject,
+            {once:true}
+          );
+        }
+
+        return;
+      }
+
+
+      const script =
+        document.createElement(
+          "script"
+        );
+
+      script.src =
+        src;
+
+      script.onload =
+        () => {
+
+          script.dataset.loaded =
+            "true";
+
+          resolve();
+
+        };
+
+      script.onerror =
+        () => {
+
+          reject(
+            new Error(
+              "Required download library could not be loaded."
+            )
+          );
+        };
+
+
+      document.head.appendChild(
+        script
+      );
+
+    }
+  );
+}
+
+
+async function ensureExportLibraries(){
+
+  if(
+    typeof html2canvas ===
+    "undefined"
+  ){
+
+    await loadScript(
+      "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+    );
+  }
+
+
+  if(
+    typeof window.jspdf ===
+    "undefined"
+  ){
+
+    await loadScript(
+      "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+    );
+  }
 
 }
 
 
-function requirePremium(action){
+/* =========================================================
+   PREPARE PREVIEW FOR EXPORT
+========================================================= */
 
-  if(premiumUnlocked()){
+async function createPreviewCanvas(){
 
-    action();
+  const preview =
+    $("preview");
+
+  if(!preview){
+
+    throw new Error(
+      "Biodata preview not found."
+    );
+  }
+
+
+  /*
+    Wait for browser fonts/images
+    before capturing.
+  */
+
+  if(
+    document.fonts &&
+    document.fonts.ready
+  ){
+
+    await document.fonts.ready;
+  }
+
+
+  const images =
+    Array.from(
+      preview.querySelectorAll(
+        "img"
+      )
+    );
+
+
+  await Promise.all(
+    images.map(
+      image =>
+        new Promise(
+          resolve => {
+
+            if(image.complete){
+
+              resolve();
+
+              return;
+            }
+
+
+            image.onload =
+              resolve;
+
+            image.onerror =
+              resolve;
+
+          }
+        )
+    )
+  );
+
+
+  /*
+    Temporarily remove preview
+    animation/transition effects.
+  */
+
+  const oldTransition =
+    preview.style.transition;
+
+  const oldTransform =
+    preview.style.transform;
+
+
+  preview.style.transition =
+    "none";
+
+  preview.style.transform =
+    "none";
+
+
+  let canvas;
+
+
+  try{
+
+    canvas =
+      await html2canvas(
+        preview,
+        {
+
+          scale:
+            Math.min(
+              3,
+              Math.max(
+                2,
+                window.devicePixelRatio ||
+                1
+              )
+            ),
+
+          useCORS:
+            true,
+
+          allowTaint:
+            false,
+
+          backgroundColor:
+            null,
+
+          logging:
+            false,
+
+          imageTimeout:
+            15000
+
+        }
+      );
+
+
+  }finally{
+
+    preview.style.transition =
+      oldTransition;
+
+    preview.style.transform =
+      oldTransform;
+  }
+
+
+  return canvas;
+}
+
+
+/* =========================================================
+   JPG DOWNLOAD
+========================================================= */
+
+async function downloadJpg(){
+
+  toast(
+    "Preparing JPG…"
+  );
+
+
+  await ensureExportLibraries();
+
+
+  const canvas =
+    await createPreviewCanvas();
+
+
+  const link =
+    document.createElement(
+      "a"
+    );
+
+
+  link.download =
+    "vivahbio-marriage-biodata.jpg";
+
+
+  link.href =
+    canvas.toDataURL(
+      "image/jpeg",
+      0.95
+    );
+
+
+  document.body.appendChild(
+    link
+  );
+
+
+  link.click();
+
+
+  link.remove();
+
+
+  await logDownload(
+    "jpg"
+  );
+
+
+  toast(
+    "JPG downloaded successfully."
+  );
+
+}
+
+
+/* =========================================================
+   PDF DOWNLOAD
+========================================================= */
+
+async function downloadPdf(){
+
+  toast(
+    "Preparing PDF…"
+  );
+
+
+  await ensureExportLibraries();
+
+
+  const canvas =
+    await createPreviewCanvas();
+
+
+  const imageData =
+    canvas.toDataURL(
+      "image/jpeg",
+      0.95
+    );
+
+
+  const jsPDF =
+    window.jspdf?.jsPDF;
+
+
+  if(!jsPDF){
+
+    throw new Error(
+      "PDF library could not be loaded."
+    );
+  }
+
+
+  /*
+    A4 dimensions in mm.
+  */
+
+  const pdf =
+    new jsPDF({
+      orientation:
+        "portrait",
+
+      unit:
+        "mm",
+
+      format:
+        "a4",
+
+      compress:
+        true
+    });
+
+
+  const pageWidth =
+    pdf.internal.pageSize.getWidth();
+
+  const pageHeight =
+    pdf.internal.pageSize.getHeight();
+
+
+  /*
+    Keep the entire biodata on one A4 page.
+  */
+
+  const margin =
+    5;
+
+  const availableWidth =
+    pageWidth -
+    margin * 2;
+
+  const availableHeight =
+    pageHeight -
+    margin * 2;
+
+
+  const imageRatio =
+    canvas.width /
+    canvas.height;
+
+
+  let imageWidth =
+    availableWidth;
+
+  let imageHeight =
+    imageWidth /
+    imageRatio;
+
+
+  if(
+    imageHeight >
+    availableHeight
+  ){
+
+    imageHeight =
+      availableHeight;
+
+    imageWidth =
+      imageHeight *
+      imageRatio;
+  }
+
+
+  const x =
+    (pageWidth -
+      imageWidth) / 2;
+
+
+  const y =
+    (pageHeight -
+      imageHeight) / 2;
+
+
+  pdf.addImage(
+    imageData,
+    "JPEG",
+    x,
+    y,
+    imageWidth,
+    imageHeight,
+    undefined,
+    "FAST"
+  );
+
+
+  pdf.save(
+    "vivahbio-marriage-biodata.pdf"
+  );
+
+
+  await logDownload(
+    "pdf"
+  );
+
+
+  toast(
+    "PDF downloaded successfully."
+  );
+
+}
+
+
+/* =========================================================
+   PREMIUM GATE
+========================================================= */
+
+async function requirePremium(
+  action
+){
+
+  if(
+    premiumUnlocked()
+  ){
+
+    try{
+
+      await action();
+
+    }catch(error){
+
+      console.error(
+        "Download:",
+        error
+      );
+
+      toast(
+        error.message ||
+        "Download failed."
+      );
+    }
 
     return;
-
   }
 
 
@@ -2646,13 +2179,13 @@ function requirePremium(action){
   );
 
 
-  startRazorpayPayment();
+  await startRazorpayPayment();
 
 }
 
 
 /* =========================================================
-   PDF
+   DOWNLOAD BUTTONS
 ========================================================= */
 
 $("pdfBtn")?.addEventListener(
@@ -2660,62 +2193,24 @@ $("pdfBtn")?.addEventListener(
   () => {
 
     requirePremium(
-      () => {
-
-        localStorage.setItem(
-          "vivah_downloads",
-
-          +(
-            localStorage.getItem(
-              "vivah_downloads"
-            ) || 0
-          ) + 1
-        );
-
-
-        window.print();
-
-      }
+      downloadPdf
     );
 
   }
 );
 
-
-/* =========================================================
-   JPG
-========================================================= */
 
 $("jpgBtn")?.addEventListener(
   "click",
-  async () => {
+  () => {
 
     requirePremium(
-      async () => {
-
-        await downloadJpg();
-
-
-        localStorage.setItem(
-          "vivah_downloads",
-
-          +(
-            localStorage.getItem(
-              "vivah_downloads"
-            ) || 0
-          ) + 1
-        );
-
-      }
+      downloadJpg
     );
 
   }
 );
 
-
-/* =========================================================
-   PREMIUM BUTTON
-========================================================= */
 
 $("payBtn")?.addEventListener(
   "click",
@@ -2728,120 +2223,37 @@ $("payBtn")?.addEventListener(
 ========================================================= */
 
 document
-  .querySelectorAll(".filter")
+  .querySelectorAll(
+    ".filter"
+  )
   .forEach(
     button => {
 
       button.addEventListener(
         "click",
-        function(){
+        () => {
 
           document
             .querySelectorAll(
               ".filter"
             )
             .forEach(
-              x =>
-                x.classList.remove(
+              item =>
+                item.classList.remove(
                   "active"
                 )
             );
 
 
-          this.classList.add(
+          button.classList.add(
             "active"
           );
 
 
           renderTemplates(
-            this.dataset.filter
+            button.dataset.filter ||
+            "all"
           );
-
-        }
-      );
-
-    }
-  );
-
-
-/* =========================================================
-   BROWSE TEMPLATES BUTTON
-========================================================= */
-
-document
-  .querySelectorAll(
-    'a[href="#templates"]'
-  )
-  .forEach(
-    button => {
-
-      button.addEventListener(
-        "click",
-        function(e){
-
-          e.preventDefault();
-
-
-          const templatesSection =
-            $("templates");
-
-
-          if(templatesSection){
-
-            templatesSection.scrollIntoView({
-
-              behavior:
-                "smooth",
-
-              block:
-                "start"
-
-            });
-
-          }
-
-        }
-      );
-
-    }
-  );
-
-
-/* =========================================================
-   CREATE BIODATA BUTTON
-========================================================= */
-
-document
-  .querySelectorAll(
-    'a[href="#maker"]'
-  )
-  .forEach(
-    button => {
-
-      button.addEventListener(
-        "click",
-        function(e){
-
-          e.preventDefault();
-
-
-          const maker =
-            $("maker");
-
-
-          if(maker){
-
-            maker.scrollIntoView({
-
-              behavior:
-                "smooth",
-
-              block:
-                "start"
-
-            });
-
-          }
 
         }
       );
@@ -2859,7 +2271,7 @@ $("langBtn")?.addEventListener(
   () => {
 
     toast(
-      "Hindi/English UI toggle is ready; template text can be localized next."
+      "Hindi/English UI localization is coming next."
     );
 
   }
@@ -2867,32 +2279,19 @@ $("langBtn")?.addEventListener(
 
 
 /* =========================================================
-   INITIAL LOAD
+   INITIALIZE
 ========================================================= */
 
-updatePremiumButtons();
+loadDraft();
 
 renderTemplates();
 
 renderMini();
 
+selectTemplate(
+  selected
+);
+
 updatePreview();
 
-// ===== HERO BIODATA CLICK =====
-const heroPaper = document.getElementById("heroPaper");
-
-if (heroPaper) {
-  heroPaper.style.cursor = "pointer";
-  heroPaper.setAttribute("title", "Create your biodata");
-
-  heroPaper.addEventListener("click", function () {
-    const maker = document.getElementById("maker");
-
-    if (maker) {
-      maker.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }
-  });
-}
+updatePremiumButtons();
