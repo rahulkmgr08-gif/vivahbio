@@ -1646,3 +1646,21 @@ footer .brand{
   font-size: 14px;
   border-top: 1px solid #eee;
 }
+/* Footer gap fix */
+.site-footer {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+.site-footer p {
+  margin: 0 !important;
+}
+
+footer {
+  margin-bottom: 0 !important;
+}
+
+footer + * {
+  margin-top: 0 !important;
+}
