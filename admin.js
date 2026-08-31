@@ -131,7 +131,9 @@ async function loadSupabaseLibrary() {
             )
           );
 
-      document.head.appendChild(script);
+      document.head.appendChild(
+        script
+      );
 
     }
   );
@@ -162,7 +164,7 @@ async function loadSupabaseLibrary() {
 
 
 /* =========================================================
-   HIDE ADMIN PAGE INITIALLY
+   LOCK ADMIN PAGE
 ========================================================= */
 
 function lockAdminPage() {
@@ -196,8 +198,14 @@ function showLoginScreen(message = "") {
         "adminLoginError"
       );
 
-    if (errorBox && message) {
-      errorBox.textContent = message;
+    if (
+      errorBox &&
+      message
+    ) {
+
+      errorBox.textContent =
+        message;
+
     }
 
     return;
@@ -206,7 +214,9 @@ function showLoginScreen(message = "") {
 
 
   wrapper =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
 
 
   wrapper.id =
@@ -269,7 +279,9 @@ function showLoginScreen(message = "") {
   `;
 
 
-  document.body.appendChild(wrapper);
+  document.body.appendChild(
+    wrapper
+  );
 
 
   addLoginStyles();
@@ -290,7 +302,7 @@ function showLoginScreen(message = "") {
 
 
 /* =========================================================
-   HIDE LOGIN
+   HIDE LOGIN SCREEN
 ========================================================= */
 
 function hideLoginScreen() {
@@ -302,7 +314,9 @@ function hideLoginScreen() {
 
 
   if (login) {
+
     login.remove();
+
   }
 
 }
@@ -330,7 +344,8 @@ async function handleAdminLogin(event) {
   const password =
     document.getElementById(
       "adminLoginPassword"
-    ).value;
+    )
+    .value;
 
 
   const button =
@@ -363,9 +378,9 @@ async function handleAdminLogin(event) {
       await loadSupabaseLibrary();
 
 
-    /* ===============================================
+    /* =====================================================
        SUPABASE LOGIN
-    =============================================== */
+    ===================================================== */
 
     const result =
       await supabase.auth.signInWithPassword({
@@ -399,9 +414,9 @@ async function handleAdminLogin(event) {
     }
 
 
-    /* ===============================================
-       CHECK ADMIN_USERS
-    =============================================== */
+    /* =====================================================
+       CHECK ADMIN USERS TABLE
+    ===================================================== */
 
     const allowed =
       await checkAdminUser(
@@ -421,9 +436,9 @@ async function handleAdminLogin(event) {
     }
 
 
-    /* ===============================================
-       AUTHENTICATION SUCCESS
-    =============================================== */
+    /* =====================================================
+       LOGIN SUCCESS
+    ===================================================== */
 
     hideLoginScreen();
 
@@ -470,7 +485,9 @@ async function handleAdminLogin(event) {
 async function checkAdminUser(user) {
 
   if (!user) {
+
     return false;
+
   }
 
 
@@ -483,7 +500,9 @@ async function checkAdminUser(user) {
 
 
   if (!email) {
+
     return false;
+
   }
 
 
@@ -551,9 +570,9 @@ async function protectAdminPage() {
         ?.session;
 
 
-    /* ===============================================
-       NO LOGIN
-    =============================================== */
+    /* =====================================================
+       NO SESSION
+    ===================================================== */
 
     if (!session) {
 
@@ -564,9 +583,9 @@ async function protectAdminPage() {
     }
 
 
-    /* ===============================================
-       CHECK CURRENT USER
-    =============================================== */
+    /* =====================================================
+       CURRENT USER
+    ===================================================== */
 
     const user =
       session.user;
@@ -578,9 +597,9 @@ async function protectAdminPage() {
       );
 
 
-    /* ===============================================
+    /* =====================================================
        NOT ADMIN
-    =============================================== */
+    ===================================================== */
 
     if (!allowed) {
 
@@ -597,9 +616,9 @@ async function protectAdminPage() {
     }
 
 
-    /* ===============================================
+    /* =====================================================
        ADMIN VERIFIED
-    =============================================== */
+    ===================================================== */
 
     document.body.classList.add(
       "admin-authenticated"
@@ -643,7 +662,9 @@ function addLogoutButton() {
       "adminLogoutButton"
     )
   ) {
+
     return;
+
   }
 
 
@@ -654,7 +675,9 @@ function addLogoutButton() {
 
 
   if (!header) {
+
     return;
+
   }
 
 
@@ -724,29 +747,49 @@ function addLogoutButton() {
 
 /* =========================================================
    TEMPLATE MANAGEMENT
+   CURRENTLY LOCAL STORAGE
 ========================================================= */
 
 const defaultTemplates = [
 
   ["Elegant Gold", "traditional", "gold", false],
+
   ["Modern Rose", "modern", "rose", false],
+
   ["Royal Blue", "royal", "blue", false],
+
   ["Sage Garden", "floral", "green", false],
+
   ["Lavender Love", "floral", "purple", false],
+
   ["Sunset Marigold", "floral", "orange", true],
+
   ["Classic Cream", "traditional", "cream", true],
+
   ["Red Heritage", "traditional", "red", true],
+
   ["Minimal Pearl", "modern", "cream", true],
+
   ["Midnight Royal", "royal", "blue", true],
+
   ["Blush Bloom", "floral", "rose", true],
+
   ["Temple Gold", "traditional", "gold", true],
+
   ["Emerald Grace", "royal", "green", true],
+
   ["Dusty Rose", "modern", "rose", true],
+
   ["Regal Navy", "royal", "blue", true],
+
   ["Peach Petals", "floral", "orange", true],
+
   ["Vintage Ivory", "traditional", "cream", true],
+
   ["Plum Elegance", "royal", "purple", true],
+
   ["Garden Sage", "floral", "green", true],
+
   ["Ruby Classic", "traditional", "red", true]
 
 ];
@@ -773,6 +816,10 @@ function saveTemplates() {
 }
 
 
+/* =========================================================
+   RENDER TEMPLATES
+========================================================= */
+
 function renderTemplates() {
 
   if ($("aTemplates")) {
@@ -788,7 +835,9 @@ function renderTemplates() {
 
 
   if (!container) {
+
     return;
+
   }
 
 
@@ -823,6 +872,7 @@ function renderTemplates() {
           )}
         </div>
 
+
         <div>
 
           <b>
@@ -830,6 +880,7 @@ function renderTemplates() {
               template[0]
             )}
           </b>
+
 
           <small
             style="
@@ -845,6 +896,7 @@ function renderTemplates() {
 
         </div>
 
+
         <span>
 
           ${
@@ -855,6 +907,7 @@ function renderTemplates() {
 
         </span>
 
+
         <div class="admin-actions">
 
           <button
@@ -863,15 +916,19 @@ function renderTemplates() {
             Edit
           </button>
 
+
           <button
             onclick="togglePremium(${index})"
           >
+
             ${
               template[3]
                 ? "Make Free"
                 : "Make Premium"
             }
+
           </button>
+
 
           <button
             onclick="removeTemplate(${index})"
@@ -1126,9 +1183,9 @@ async function loadDashboardStats() {
       await loadSupabaseLibrary();
 
 
-    /* ===============================================
+    /* =====================================================
        GET CURRENT SESSION
-    =============================================== */
+    ===================================================== */
 
     const sessionResult =
       await supabase.auth.getSession();
@@ -1149,9 +1206,9 @@ async function loadDashboardStats() {
     }
 
 
-    /* ===============================================
+    /* =====================================================
        SECURE ADMIN API
-    =============================================== */
+    ===================================================== */
 
     const response =
       await fetch(
@@ -1208,9 +1265,9 @@ async function loadDashboardStats() {
     }
 
 
-    /* ===============================================
+    /* =====================================================
        TEMPLATES
-    =============================================== */
+    ===================================================== */
 
     if ($("aTemplates")) {
 
@@ -1220,9 +1277,9 @@ async function loadDashboardStats() {
     }
 
 
-    /* ===============================================
+    /* =====================================================
        SAVED PROFILES
-    =============================================== */
+    ===================================================== */
 
     if ($("aUsers")) {
 
@@ -1232,9 +1289,9 @@ async function loadDashboardStats() {
     }
 
 
-    /* ===============================================
+    /* =====================================================
        DOWNLOADS
-    =============================================== */
+    ===================================================== */
 
     if ($("aDownloads")) {
 
@@ -1244,9 +1301,9 @@ async function loadDashboardStats() {
     }
 
 
-    /* ===============================================
+    /* =====================================================
        PAID PAYMENTS
-    =============================================== */
+    ===================================================== */
 
     if ($("aPaidPayments")) {
 
@@ -1256,9 +1313,9 @@ async function loadDashboardStats() {
     }
 
 
-    /* ===============================================
+    /* =====================================================
        REVENUE
-    =============================================== */
+    ===================================================== */
 
     if ($("aRevenue")) {
 
@@ -1270,9 +1327,9 @@ async function loadDashboardStats() {
     }
 
 
-    /* ===============================================
+    /* =====================================================
        RECENT PAYMENTS
-    =============================================== */
+    ===================================================== */
 
     renderRecentPayments(
       result.recentPayments || []
@@ -1342,7 +1399,9 @@ function ensureRecentPaymentsSection() {
 
 
   if (section) {
+
     return section;
+
   }
 
 
@@ -1369,6 +1428,7 @@ function ensureRecentPaymentsSection() {
       </h2>
 
     </div>
+
 
     <div
       id="recentPayments"
@@ -1437,7 +1497,9 @@ function renderRecentPayments(
 
 
   if (!container) {
+
     return;
+
   }
 
 
@@ -1487,6 +1549,7 @@ function renderRecentPayments(
               ${index + 1}
             </div>
 
+
             <div>
 
               <b>
@@ -1495,6 +1558,7 @@ function renderRecentPayments(
                   "Payment"
                 )}
               </b>
+
 
               <small
                 style="
@@ -1511,22 +1575,28 @@ function renderRecentPayments(
 
             </div>
 
+
             <span>
+
               ${money(
                 Number(
                   payment.amount || 0
                 ) / 100
               )}
+
             </span>
+
 
             <div>
 
               <small>
+
                 Profile:
                 ${esc(
                   payment.profile_id ||
                   "—"
                 )}
+
               </small>
 
             </div>
@@ -1553,7 +1623,9 @@ function addRefreshButton() {
 
 
   if (!header) {
+
     return;
+
   }
 
 
@@ -1562,7 +1634,9 @@ function addRefreshButton() {
       "refreshDashboard"
     )
   ) {
+
     return;
+
   }
 
 
@@ -1625,109 +1699,6 @@ function addRefreshButton() {
 
 
 /* =========================================================
-   EXTRA STAT CARDS
-========================================================= */
-
-function createExtraStatCards() {
-
-  const stats =
-    document.querySelector(
-      ".admin-stats"
-    );
-
-
-  if (!stats) {
-    return;
-  }
-
-
-  /* ===============================================
-     PAID PAYMENTS
-  =============================================== */
-
-  let paymentCard =
-    document.getElementById(
-      "aPaidPaymentsCard"
-    );
-
-
-  if (!paymentCard) {
-
-    paymentCard =
-      document.createElement(
-        "div"
-      );
-
-
-    paymentCard.id =
-      "aPaidPaymentsCard";
-
-
-    paymentCard.innerHTML = `
-
-      <b id="aPaidPayments">
-        —
-      </b>
-
-      <span>
-        Paid Payments
-      </span>
-
-    `;
-
-
-    stats.appendChild(
-      paymentCard
-    );
-
-  }
-
-
-  /* ===============================================
-     REVENUE
-  =============================================== */
-
-  let revenueCard =
-    document.getElementById(
-      "aRevenueCard"
-    );
-
-
-  if (!revenueCard) {
-
-    revenueCard =
-      document.createElement(
-        "div"
-      );
-
-
-    revenueCard.id =
-      "aRevenueCard";
-
-
-    revenueCard.innerHTML = `
-
-      <b id="aRevenue">
-        —
-      </b>
-
-      <span>
-        Revenue
-      </span>
-
-    `;
-
-
-    stats.appendChild(
-      revenueCard
-    );
-
-  }
-
-}
-
-
-/* =========================================================
    ADMIN STYLES
 ========================================================= */
 
@@ -1738,7 +1709,9 @@ function addAdminStyles() {
       "admin-live-styles"
     )
   ) {
+
     return;
+
   }
 
 
@@ -1759,11 +1732,19 @@ function addAdminStyles() {
     ============================================= */
 
     .admin-protected {
-      visibility: hidden;
+
+      visibility:
+        hidden;
+
     }
 
-    body.admin-authenticated .admin-protected {
-      visibility: visible;
+
+    body.admin-authenticated
+    .admin-protected {
+
+      visibility:
+        visible;
+
     }
 
 
@@ -1772,47 +1753,68 @@ function addAdminStyles() {
     ============================================= */
 
     .admin-stats > div {
-      min-width: 130px;
+
+      min-width:
+        130px;
+
     }
 
 
     #refreshDashboard {
-      display: inline-block;
+
+      display:
+        inline-block;
+
     }
 
 
     #recentPaymentsSection {
-      margin-top: 20px;
+
+      margin-top:
+        20px;
+
     }
 
 
     #recentPayments .row {
-      align-items: center;
+
+      align-items:
+        center;
+
     }
 
 
     #recentPayments small {
-      word-break: break-word;
+
+      word-break:
+        break-word;
+
     }
 
 
     /* =============================================
-       LOGIN SCREEN
+       LOGIN
     ============================================= */
 
     #vivahAdminLogin {
 
-      position: fixed;
+      position:
+        fixed;
 
-      inset: 0;
+      inset:
+        0;
 
-      z-index: 999999;
+      z-index:
+        999999;
 
-      display: flex;
+      display:
+        flex;
 
-      align-items: center;
+      align-items:
+        center;
 
-      justify-content: center;
+      justify-content:
+        center;
 
       background:
         linear-gradient(
@@ -1821,146 +1823,189 @@ function addAdminStyles() {
           #ffffff
         );
 
-      padding: 20px;
+      padding:
+        20px;
 
     }
 
 
     .admin-login-box {
 
-      width: 100%;
+      width:
+        100%;
 
-      max-width: 420px;
+      max-width:
+        420px;
 
-      background: #ffffff;
+      background:
+        #ffffff;
 
-      padding: 40px;
+      padding:
+        40px;
 
-      border-radius: 20px;
+      border-radius:
+        20px;
 
       box-shadow:
         0 20px 60px
         rgba(0,0,0,.12);
 
-      text-align: center;
+      text-align:
+        center;
 
     }
 
 
     .admin-login-logo {
 
-      width: 60px;
+      width:
+        60px;
 
-      height: 60px;
+      height:
+        60px;
 
       margin:
         0 auto 15px;
 
-      border-radius: 50%;
+      border-radius:
+        50%;
 
-      display: flex;
+      display:
+        flex;
 
-      align-items: center;
+      align-items:
+        center;
 
-      justify-content: center;
+      justify-content:
+        center;
 
-      background: #f9e8ec;
+      background:
+        #f9e8ec;
 
-      color: #8b1e3f;
+      color:
+        #8b1e3f;
 
-      font-size: 32px;
+      font-size:
+        32px;
 
     }
 
 
     .admin-login-box h1 {
 
-      margin: 0;
+      margin:
+        0;
 
-      color: #8b1e3f;
+      color:
+        #8b1e3f;
 
     }
 
 
     .admin-login-box h2 {
 
-      margin-top: 25px;
+      margin-top:
+        25px;
 
-      margin-bottom: 8px;
+      margin-bottom:
+        8px;
 
     }
 
 
     .admin-login-box p {
 
-      color: #777;
+      color:
+        #777;
 
-      margin-bottom: 25px;
+      margin-bottom:
+        25px;
 
     }
 
 
     .admin-login-box input {
 
-      width: 100%;
+      width:
+        100%;
 
-      box-sizing: border-box;
+      box-sizing:
+        border-box;
 
-      padding: 14px;
+      padding:
+        14px;
 
-      margin-bottom: 14px;
+      margin-bottom:
+        14px;
 
       border:
         1px solid #ddd;
 
-      border-radius: 10px;
+      border-radius:
+        10px;
 
-      font-size: 16px;
+      font-size:
+        16px;
 
     }
 
 
     .admin-login-box button {
 
-      width: 100%;
+      width:
+        100%;
 
-      padding: 14px;
+      padding:
+        14px;
 
-      border: 0;
+      border:
+        0;
 
-      border-radius: 10px;
+      border-radius:
+        10px;
 
-      background: #8b1e3f;
+      background:
+        #8b1e3f;
 
-      color: white;
+      color:
+        white;
 
-      font-size: 16px;
+      font-size:
+        16px;
 
-      font-weight: 600;
+      font-weight:
+        600;
 
-      cursor: pointer;
+      cursor:
+        pointer;
 
     }
 
 
     .admin-login-box button:disabled {
 
-      opacity: .6;
+      opacity:
+        .6;
 
-      cursor: not-allowed;
+      cursor:
+        not-allowed;
 
     }
 
 
     #adminLoginError {
 
-      color: #c62828;
+      color:
+        #c62828;
 
-      margin-top: 15px;
+      margin-top:
+        15px;
 
-      min-height: 20px;
+      min-height:
+        20px;
 
-      font-size: 14px;
+      font-size:
+        14px;
 
     }
 
@@ -1984,14 +2029,17 @@ function addAdminStyles() {
         grid-template-columns:
           35px 1fr;
 
-        gap: 10px;
+        gap:
+          10px;
 
       }
 
 
-      #recentPayments .row > span {
+      #recentPayments
+      .row > span {
 
-        grid-column: 2;
+        grid-column:
+          2;
 
       }
 
@@ -1999,7 +2047,8 @@ function addAdminStyles() {
       #recentPayments
       .row > div:last-child {
 
-        grid-column: 2;
+        grid-column:
+          2;
 
       }
 
@@ -2052,7 +2101,7 @@ async function startDashboard() {
 
 
   /* ===============================================
-     SHOW ADMIN PAGE
+     SHOW DASHBOARD
   =============================================== */
 
   document.body.classList.add(
@@ -2061,34 +2110,10 @@ async function startDashboard() {
 
 
   /* ===============================================
-     RENDER
+     RENDER ADMIN
   =============================================== */
 
   renderTemplates();
-
-
- async function startDashboard() {
-
-  const allowed =
-    await protectAdminPage();
-
-  if (!allowed) {
-    return;
-  }
-
-  document.body.classList.add(
-    "admin-authenticated"
-  );
-
-  renderTemplates();
-
-  addAdminStyles();
-
-  addRefreshButton();
-
-  await loadDashboardStats();
-
-}
 
 
   addAdminStyles();
@@ -2098,7 +2123,7 @@ async function startDashboard() {
 
 
   /* ===============================================
-     LOAD DATABASE DATA
+     LOAD REAL DATA
   =============================================== */
 
   await loadDashboardStats();
@@ -2113,14 +2138,14 @@ async function startDashboard() {
 (function initAdmin() {
 
   /* ===============================================
-     LOCK PAGE IMMEDIATELY
+     LOCK PAGE FIRST
   =============================================== */
 
   lockAdminPage();
 
 
   /* ===============================================
-     ADD STYLES IMMEDIATELY
+     ADD SECURITY STYLES
   =============================================== */
 
   addAdminStyles();
