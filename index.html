@@ -407,6 +407,13 @@
 </footer>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="app.js"></script>
+<footer class="site-footer">
+  <p>© <span id="currentYear"></span> VivahBio. All rights reserved.</p>
+</footer>
 
+<script>
+  document.getElementById("currentYear").textContent =
+    new Date().getFullYear();
+</script>
 </body>
 </html>
