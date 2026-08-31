@@ -5,12 +5,11 @@
    - Live preview
    - Local draft
    - Razorpay payment
-   - Profile saving through create-order
-   - Compressed photo upload
-   - Supabase photo storage through API
-   - Exact preview JPG
-   - Exact preview PDF
+   - Supabase profile saving
+   - Supabase photo storage
+   - PDF/JPG export
    - Download logging
+   - PREMIUM RESET FIX
 ========================================================= */
 
 
@@ -75,9 +74,11 @@ function getTemplates(){
       "Template load error:",
       error
     );
+
   }
 
   return defaultTemplates.slice();
+
 }
 
 
@@ -90,6 +91,7 @@ function saveTemplates(){
     "vivah_templates",
     JSON.stringify(templates)
   );
+
 }
 
 
@@ -111,6 +113,7 @@ function escapeHtml(value){
           "'":"&#039;"
         })[char]
     );
+
 }
 
 
@@ -123,6 +126,7 @@ function safeValue(id){
   return String(
     el.value || ""
   ).trim();
+
 }
 
 
@@ -132,6 +136,7 @@ function val(id){
     safeValue(id);
 
   return value || "—";
+
 }
 
 
@@ -141,6 +146,7 @@ function cap(value){
 
   return value.charAt(0).toUpperCase() +
     value.slice(1);
+
 }
 
 
@@ -154,6 +160,7 @@ function toast(message){
     alert(message);
 
     return;
+
   }
 
   box.textContent =
@@ -176,6 +183,7 @@ function toast(message){
       },
       3000
     );
+
 }
 
 
@@ -199,12 +207,11 @@ function artClass(index){
   return colors[
     index % colors.length
   ];
+
 }
 
 
-function renderTemplates(
-  filter = "all"
-){
+function renderTemplates(filter = "all"){
 
   const grid =
     $("templateGrid");
@@ -223,13 +230,12 @@ function renderTemplates(
       ){
 
         return;
+
       }
 
 
       const card =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
 
       card.className =
@@ -263,7 +269,6 @@ function renderTemplates(
           <div class="lines"></div>
 
         </div>
-
 
         <footer>
 
@@ -303,6 +308,7 @@ function renderTemplates(
               },
               100
             );
+
           }
 
         };
@@ -351,9 +357,7 @@ function renderMini(){
     (template,index) => {
 
       const button =
-        document.createElement(
-          "button"
-        );
+        document.createElement("button");
 
 
       button.type =
@@ -390,56 +394,311 @@ function renderMini(){
 
 
 /* =========================================================
-   TEMPLATE SELECTION
+   PROFILE / PAYMENT STORAGE KEYS
 ========================================================= */
 
-function selectTemplate(index){
+const PROFILE_ID_KEY =
+  "vivah_profile_id";
+
+const PAYMENT_ID_KEY =
+  "vivah_payment_id";
+
+const PREMIUM_UNLOCK_KEY =
+  "vivah_premium_unlocked";
+
+const PREMIUM_PROFILE_KEY =
+  "vivah_premium_profile_id";
+
+const PREMIUM_DRAFT_KEY =
+  "vivah_premium_draft_signature";
+
+const PHOTO_VERSION_KEY =
+  "vivah_photo_version";
+
+
+/* =========================================================
+   PROFILE ID
+========================================================= */
+
+function getProfileId(){
+
+  return localStorage.getItem(
+    PROFILE_ID_KEY
+  ) || "";
+
+}
+
+
+function setProfileId(id){
+
+  if(!id) return;
+
+  const newProfileId =
+    String(id);
+
+  const oldProfileId =
+    getProfileId();
+
+
+  /*
+    If backend creates a new profile,
+    old payment must NEVER unlock it.
+  */
 
   if(
-    index < 0 ||
-    index >= templates.length
+    oldProfileId &&
+    oldProfileId !== newProfileId
   ){
 
-    return;
-  }
-
-
-  selected =
-    index;
-
-
-  const selectedName =
-    $("selectedName");
-
-
-  if(selectedName){
-
-    selectedName.textContent =
-      templates[index][0];
+    invalidatePremium(false);
 
   }
 
 
-  const preview =
-    $("preview");
+  localStorage.setItem(
+    PROFILE_ID_KEY,
+    newProfileId
+  );
+
+}
 
 
-  if(preview){
+/* =========================================================
+   PAYMENT ID
+========================================================= */
 
-    preview.className =
-      "bio-preview design-" +
-      ((index % 10) + 1);
+function getPaymentId(){
+
+  return localStorage.getItem(
+    PAYMENT_ID_KEY
+  ) || "";
+
+}
+
+
+function setPaymentId(id){
+
+  if(id){
+
+    localStorage.setItem(
+      PAYMENT_ID_KEY,
+      String(id)
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CURRENT DRAFT SIGNATURE
+   Used to detect if user changed biodata
+   after payment.
+========================================================= */
+
+const signatureFields = [
+
+  "name",
+  "dob",
+  "time_of_birth",
+  "place_of_birth",
+  "height",
+  "religion",
+  "caste",
+  "gotra",
+  "rashi",
+  "nakshatra",
+  "complexion",
+  "education",
+  "profession",
+  "company",
+  "languages",
+  "hobbies",
+  "father",
+  "father_occupation",
+  "mother",
+  "mother_occupation",
+  "siblings",
+  "contact_person",
+  "city",
+  "phone",
+  "email",
+  "address",
+  "about"
+
+];
+
+
+function getDraftSignature(){
+
+  const data = {};
+
+  signatureFields.forEach(
+    id => {
+
+      data[id] =
+        safeValue(id);
+
+    }
+  );
+
+
+  data.template =
+    templates[selected]?.[0] ||
+    "Elegant Gold";
+
+
+  return JSON.stringify(data);
+
+}
+
+
+/* =========================================================
+   INVALIDATE PREMIUM
+========================================================= */
+
+function invalidatePremium(showMessage = false){
+
+  localStorage.removeItem(
+    PREMIUM_UNLOCK_KEY
+  );
+
+  localStorage.removeItem(
+    PAYMENT_ID_KEY
+  );
+
+  localStorage.removeItem(
+    PREMIUM_PROFILE_KEY
+  );
+
+  localStorage.removeItem(
+    PREMIUM_DRAFT_KEY
+  );
+
+
+  updatePremiumButtons();
+
+
+  if(showMessage){
+
+    toast(
+      "Biodata change hua hai. New payment required."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   PREMIUM CHECK
+========================================================= */
+
+function premiumUnlocked(){
+
+  const unlocked =
+    localStorage.getItem(
+      PREMIUM_UNLOCK_KEY
+    ) === "true";
+
+
+  const paymentId =
+    getPaymentId();
+
+
+  const paidProfileId =
+    localStorage.getItem(
+      PREMIUM_PROFILE_KEY
+    ) || "";
+
+
+  const currentProfileId =
+    getProfileId();
+
+
+  const paidDraftSignature =
+    localStorage.getItem(
+      PREMIUM_DRAFT_KEY
+    ) || "";
+
+
+  const currentDraftSignature =
+    getDraftSignature();
+
+
+  /*
+    Premium is valid ONLY when:
+    1. Premium flag exists
+    2. Payment ID exists
+    3. Profile ID exists
+    4. Paid profile == current profile
+    5. Current biodata == paid biodata
+  */
+
+  return (
+
+    unlocked &&
+
+    !!paymentId &&
+
+    !!paidProfileId &&
+
+    !!currentProfileId &&
+
+    paidProfileId === currentProfileId &&
+
+    !!paidDraftSignature &&
+
+    paidDraftSignature === currentDraftSignature
+
+  );
+
+}
+
+
+/* =========================================================
+   SET PREMIUM
+========================================================= */
+
+function setPremiumUnlocked(paymentId){
+
+  localStorage.setItem(
+    PREMIUM_UNLOCK_KEY,
+    "true"
+  );
+
+
+  if(paymentId){
+
+    setPaymentId(
+      paymentId
+    );
 
   }
 
 
-  renderMini();
+  const profileId =
+    getProfileId();
 
 
-  updatePreview();
+  if(profileId){
+
+    localStorage.setItem(
+      PREMIUM_PROFILE_KEY,
+      String(profileId)
+    );
+
+  }
 
 
-  saveDraftMeta();
+  /*
+    Save exact biodata state that was paid for.
+  */
+
+  localStorage.setItem(
+    PREMIUM_DRAFT_KEY,
+    getDraftSignature()
+  );
 
 }
 
@@ -447,6 +706,27 @@ function selectTemplate(index){
 /* =========================================================
    BIODATA PREVIEW
 ========================================================= */
+
+function bioRow(label,value){
+
+  return `
+
+    <div class="bio-row">
+
+      <span>
+        ${escapeHtml(label)}
+      </span>
+
+      <b>
+        ${escapeHtml(value || "—")}
+      </b>
+
+    </div>
+
+  `;
+
+}
+
 
 function updatePreview(){
 
@@ -477,24 +757,6 @@ function updatePreview(){
     );
 
 
-  const photoHtml = `
-
-    <div class="profile">
-
-      <img
-        id="pimg"
-        alt="Profile photo"
-      >
-
-      <span id="ph">
-        PHOTO
-      </span>
-
-    </div>
-
-  `;
-
-
   preview.innerHTML = `
 
     <div class="bio-ornament">
@@ -521,7 +783,18 @@ function updatePreview(){
       </div>
 
 
-      ${photoHtml}
+      <div class="profile">
+
+        <img
+          id="pimg"
+          alt="Profile photo"
+        >
+
+        <span id="ph">
+          PHOTO
+        </span>
+
+      </div>
 
     </div>
 
@@ -531,7 +804,6 @@ function updatePreview(){
       <h5>
         PERSONAL DETAILS
       </h5>
-
 
       <div class="bio-section-body">
 
@@ -621,7 +893,6 @@ function updatePreview(){
         FAMILY DETAILS
       </h5>
 
-
       <div class="bio-section-body">
 
         ${bioRow(
@@ -665,13 +936,10 @@ function updatePreview(){
         ABOUT ME
       </h5>
 
-
       <p class="bio-about">
-
         ${escapeHtml(
           safeValue("about") || "—"
         )}
-
       </p>
 
     </div>
@@ -682,7 +950,6 @@ function updatePreview(){
       <h5>
         CONTACT DETAILS
       </h5>
-
 
       <div class="bio-section-body">
 
@@ -733,7 +1000,6 @@ function updatePreview(){
     const image =
       $("pimg");
 
-
     const placeholder =
       $("ph");
 
@@ -742,7 +1008,6 @@ function updatePreview(){
 
       image.src =
         profileDataUrl;
-
 
       image.style.display =
         "block";
@@ -758,30 +1023,6 @@ function updatePreview(){
     }
 
   }
-
-}
-
-
-function bioRow(
-  label,
-  value
-){
-
-  return `
-
-    <div class="bio-row">
-
-      <span>
-        ${escapeHtml(label)}
-      </span>
-
-      <b>
-        ${escapeHtml(value || "—")}
-      </b>
-
-    </div>
-
-  `;
 
 }
 
@@ -889,18 +1130,23 @@ function saveDraftMeta(){
 }
 
 
+/* =========================================================
+   FORM CHANGE HANDLERS
+   IMPORTANT:
+   Any biodata change after payment
+   invalidates old premium.
+========================================================= */
+
 formFields.forEach(
   id => {
 
     const input =
       $(id);
 
-
     if(!input) return;
 
 
-    input.addEventListener(
-      "input",
+    const handleChange =
       () => {
 
         localStorage.setItem(
@@ -909,29 +1155,115 @@ formFields.forEach(
         );
 
 
+        /*
+          If user changes biodata after payment,
+          old payment cannot unlock modified biodata.
+        */
+
+        if(
+          localStorage.getItem(
+            PREMIUM_UNLOCK_KEY
+          ) === "true"
+        ){
+
+          invalidatePremium();
+
+        }
+
+
         updatePreview();
 
-      }
+      };
+
+
+    input.addEventListener(
+      "input",
+      handleChange
     );
 
 
     input.addEventListener(
       "change",
-      () => {
-
-        localStorage.setItem(
-          "vivah_" + id,
-          input.value
-        );
-
-
-        updatePreview();
-
-      }
+      handleChange
     );
 
   }
 );
+
+
+/* =========================================================
+   TEMPLATE SELECTION
+========================================================= */
+
+function selectTemplate(index){
+
+  if(
+    index < 0 ||
+    index >= templates.length
+  ){
+
+    return;
+
+  }
+
+
+  const previous =
+    selected;
+
+
+  selected =
+    index;
+
+
+  /*
+    Changing template means current
+    paid biodata has changed.
+  */
+
+  if(
+    previous !== index &&
+    localStorage.getItem(
+      PREMIUM_UNLOCK_KEY
+    ) === "true"
+  ){
+
+    invalidatePremium();
+
+  }
+
+
+  const selectedName =
+    $("selectedName");
+
+
+  if(selectedName){
+
+    selectedName.textContent =
+      templates[index][0];
+
+  }
+
+
+  const preview =
+    $("preview");
+
+
+  if(preview){
+
+    preview.className =
+      "bio-preview design-" +
+      ((index % 10) + 1);
+
+  }
+
+
+  renderMini();
+
+  updatePreview();
+
+  saveDraftMeta();
+
+}
 
 
 /* =========================================================
@@ -961,6 +1293,7 @@ $("photo")?.addEventListener(
         "";
 
       return;
+
     }
 
 
@@ -976,43 +1309,67 @@ $("photo")?.addEventListener(
         "";
 
       return;
+
     }
 
 
-    compressPhoto(
-      file
-    )
-    .then(
-      compressedData => {
+    /*
+      New photo = modified biodata.
+      Old payment must not unlock it.
+    */
 
-        profileDataUrl =
-          compressedData;
-
-
-        updatePreview();
-
-
-        toast(
-          "Photo added successfully."
-        );
-
-      }
-    )
-    .catch(
-      error => {
-
-        console.error(
-          "Photo processing:",
-          error
-        );
+    let photoVersion =
+      Number(
+        localStorage.getItem(
+          PHOTO_VERSION_KEY
+        ) || "0"
+      );
 
 
-        toast(
-          "Photo could not be processed."
-        );
+    photoVersion++;
 
-      }
+
+    localStorage.setItem(
+      PHOTO_VERSION_KEY,
+      String(photoVersion)
     );
+
+
+    invalidatePremium();
+
+
+    compressPhoto(file)
+      .then(
+        compressedData => {
+
+          profileDataUrl =
+            compressedData;
+
+
+          updatePreview();
+
+
+          toast(
+            "Photo added successfully."
+          );
+
+        }
+      )
+      .catch(
+        error => {
+
+          console.error(
+            "Photo processing:",
+            error
+          );
+
+
+          toast(
+            "Photo could not be processed."
+          );
+
+        }
+      );
 
   }
 );
@@ -1020,9 +1377,6 @@ $("photo")?.addEventListener(
 
 /* =========================================================
    COMPRESS PHOTO
-   Important:
-   Prevents large base64 request
-   from failing server/API limits.
 ========================================================= */
 
 function compressPhoto(file){
@@ -1119,6 +1473,7 @@ function compressPhoto(file){
                 );
 
                 return;
+
               }
 
 
@@ -1178,7 +1533,7 @@ function compressPhoto(file){
 
 
 /* =========================================================
-   PROFILE DATA FOR BACKEND
+   PROFILE PAYLOAD
 ========================================================= */
 
 function getProfilePayload(){
@@ -1266,11 +1621,6 @@ function getProfilePayload(){
     about_me:
       safeValue("about") || null,
 
-    /*
-      IMPORTANT:
-      Save actual selected template name.
-    */
-
     template_id:
       templates[selected]?.[0] ||
       "Elegant Gold"
@@ -1281,115 +1631,12 @@ function getProfilePayload(){
 
 
 /* =========================================================
-   PROFILE ID
-========================================================= */
-
-const PROFILE_ID_KEY =
-  "vivah_profile_id";
-
-
-const PAYMENT_ID_KEY =
-  "vivah_payment_id";
-
-
-const PREMIUM_UNLOCK_KEY =
-  "vivah_premium_unlocked";
-
-
-function getProfileId(){
-
-  return localStorage.getItem(
-    PROFILE_ID_KEY
-  ) || "";
-
-}
-
-
-function setProfileId(id){
-
-  if(id){
-
-    localStorage.setItem(
-      PROFILE_ID_KEY,
-      String(id)
-    );
-
-  }
-
-}
-
-
-function getPaymentId(){
-
-  return localStorage.getItem(
-    PAYMENT_ID_KEY
-  ) || "";
-
-}
-
-
-function setPaymentId(id){
-
-  if(id){
-
-    localStorage.setItem(
-      PAYMENT_ID_KEY,
-      String(id)
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   PREMIUM
-========================================================= */
-
-function premiumUnlocked(){
-
-  return (
-    localStorage.getItem(
-      PREMIUM_UNLOCK_KEY
-    ) === "true" &&
-    !!getPaymentId()
-  );
-
-}
-
-
-function setPremiumUnlocked(
-  paymentId
-){
-
-  localStorage.setItem(
-    PREMIUM_UNLOCK_KEY,
-    "true"
-  );
-
-
-  if(paymentId){
-
-    setPaymentId(
-      paymentId
-    );
-
-  }
-
-}
-
-
-/* =========================================================
    PHOTO UPLOAD API
 ========================================================= */
 
-async function uploadProfilePhoto(
-  profileId
-){
+async function uploadProfilePhoto(profileId){
 
-  if(
-    !profileId
-  ){
+  if(!profileId){
 
     throw new Error(
       "Profile ID missing."
@@ -1398,19 +1645,12 @@ async function uploadProfilePhoto(
   }
 
 
-  if(
-    !profileDataUrl
-  ){
+  if(!profileDataUrl){
 
     return null;
 
   }
 
-
-  /*
-    Photo has already been compressed
-    before reaching this function.
-  */
 
   const response =
     await fetch(
@@ -1421,10 +1661,8 @@ async function uploadProfilePhoto(
           "POST",
 
         headers: {
-
           "Content-Type":
             "application/json"
-
         },
 
         body:
@@ -1477,23 +1715,6 @@ async function uploadProfilePhoto(
     );
 
   }
-
-
-  if(
-    !data.photoUrl
-  ){
-
-    throw new Error(
-      "Photo uploaded but storage path was not returned."
-    );
-
-  }
-
-
-  console.log(
-    "Photo uploaded successfully:",
-    data.photoUrl
-  );
 
 
   return data.photoUrl;
@@ -1555,11 +1776,6 @@ async function startRazorpayPayment(){
 
   try{
 
-    /*
-      Make sure selected template
-      is saved locally before payment.
-    */
-
     saveDraftMeta();
 
 
@@ -1572,10 +1788,8 @@ async function startRazorpayPayment(){
             "POST",
 
           headers: {
-
             "Content-Type":
               "application/json"
-
           },
 
           body:
@@ -1616,8 +1830,7 @@ async function startRazorpayPayment(){
 
 
     /*
-      create-order.js creates the
-      Supabase profile.
+      New payment creates a new profile.
     */
 
     if(
@@ -1676,15 +1889,12 @@ async function startRazorpayPayment(){
 
 
       handler:
-        async function(
-          response
-        ){
+        async function(response){
 
           try{
 
             /*
-              STEP 1:
-              Verify payment on server.
+              VERIFY PAYMENT
             */
 
             const verifyRes =
@@ -1696,10 +1906,8 @@ async function startRazorpayPayment(){
                     "POST",
 
                   headers: {
-
                     "Content-Type":
                       "application/json"
-
                   },
 
                   body:
@@ -1743,14 +1951,19 @@ async function startRazorpayPayment(){
 
 
             /*
-              STEP 2:
-              Save Supabase payment UUID.
+              SAVE PAYMENT ID
             */
 
             setPaymentId(
               verifyData.paymentId
             );
 
+
+            /*
+              IMPORTANT:
+              Store premium against CURRENT profile
+              and CURRENT biodata.
+            */
 
             setPremiumUnlocked(
               verifyData.paymentId
@@ -1761,16 +1974,11 @@ async function startRazorpayPayment(){
 
 
             /*
-              STEP 3:
-              Upload photo to Supabase Storage.
+              UPLOAD PHOTO
             */
 
             let photoSaved =
               false;
-
-
-            let photoError =
-              "";
 
 
             try{
@@ -1801,13 +2009,7 @@ async function startRazorpayPayment(){
 
               }
 
-
             }catch(error){
-
-              photoError =
-                error.message ||
-                "Photo upload failed.";
-
 
               console.error(
                 "Photo upload error:",
@@ -1817,44 +2019,22 @@ async function startRazorpayPayment(){
             }
 
 
-            /*
-              STEP 4:
-              Final message.
-            */
-
             if(photoSaved){
 
               toast(
                 "Payment successful! Photo saved. PDF/JPG unlocked."
               );
 
-            }else if(
-              profileDataUrl
-            ){
+            }else if(profileDataUrl){
 
               toast(
-                "Payment successful, but photo could not be saved. Please try again."
+                "Payment successful, but photo could not be saved."
               );
 
             }else{
 
               toast(
                 "Payment successful! PDF/JPG unlocked."
-              );
-
-            }
-
-
-            /*
-              Keep error available in console
-              for debugging.
-            */
-
-            if(photoError){
-
-              console.error(
-                "Photo save failed:",
-                photoError
               );
 
             }
@@ -1890,7 +2070,6 @@ async function startRazorpayPayment(){
 
             resetPayButton();
 
-
             toast(
               "Payment cancelled."
             );
@@ -1913,7 +2092,6 @@ async function startRazorpayPayment(){
       function(){
 
         resetPayButton();
-
 
         toast(
           "Payment failed. Please try again."
@@ -2013,9 +2191,7 @@ function updatePremiumButtons(){
    DOWNLOAD LOGGING
 ========================================================= */
 
-async function logDownload(
-  fileType
-){
+async function logDownload(fileType){
 
   const paymentId =
     getPaymentId();
@@ -2026,7 +2202,6 @@ async function logDownload(
     console.warn(
       "No payment ID. Download not logged."
     );
-
 
     return false;
 
@@ -2044,10 +2219,8 @@ async function logDownload(
             "POST",
 
           headers: {
-
             "Content-Type":
               "application/json"
-
           },
 
           body:
@@ -2083,7 +2256,6 @@ async function logDownload(
         data.error
       );
 
-
       return false;
 
     }
@@ -2099,7 +2271,6 @@ async function logDownload(
       error
     );
 
-
     return false;
 
   }
@@ -2108,12 +2279,10 @@ async function logDownload(
 
 
 /* =========================================================
-   LOAD EXTERNAL LIBRARY
+   LOAD EXPORT LIBRARIES
 ========================================================= */
 
-function loadScript(
-  src
-){
+function loadScript(src){
 
   return new Promise(
     (resolve,reject) => {
@@ -2141,7 +2310,6 @@ function loadScript(
             {once:true}
           );
 
-
           existing.addEventListener(
             "error",
             reject,
@@ -2149,7 +2317,6 @@ function loadScript(
           );
 
         }
-
 
         return;
 
@@ -2171,7 +2338,6 @@ function loadScript(
 
           script.dataset.loaded =
             "true";
-
 
           resolve();
 
@@ -2229,7 +2395,7 @@ async function ensureExportLibraries(){
 
 
 /* =========================================================
-   PREPARE PREVIEW FOR EXPORT
+   CREATE PREVIEW CANVAS
 ========================================================= */
 
 async function createPreviewCanvas(){
@@ -2259,9 +2425,7 @@ async function createPreviewCanvas(){
 
   const images =
     Array.from(
-      preview.querySelectorAll(
-        "img"
-      )
+      preview.querySelectorAll("img")
     );
 
 
@@ -2346,7 +2510,6 @@ async function createPreviewCanvas(){
 
         }
       );
-
 
   }finally{
 
@@ -2574,9 +2737,13 @@ async function downloadPdf(){
    PREMIUM GATE
 ========================================================= */
 
-async function requirePremium(
-  action
-){
+async function requirePremium(action){
+
+  /*
+    THIS IS THE IMPORTANT PART.
+    Every download checks current profile +
+    current biodata + paid payment.
+  */
 
   if(
     premiumUnlocked()
@@ -2656,9 +2823,7 @@ $("payBtn")?.addEventListener(
 ========================================================= */
 
 document
-  .querySelectorAll(
-    ".filter"
-  )
+  .querySelectorAll(".filter")
   .forEach(
     button => {
 
@@ -2667,9 +2832,7 @@ document
         () => {
 
           document
-            .querySelectorAll(
-              ".filter"
-            )
+            .querySelectorAll(".filter")
             .forEach(
               item =>
                 item.classList.remove(
@@ -2689,10 +2852,6 @@ document
           );
 
 
-          /*
-            Re-activate cards after filtering.
-          */
-
           setTimeout(
             activateTemplateClickFix,
             50
@@ -2706,7 +2865,7 @@ document
 
 
 /* =========================================================
-   LANGUAGE BUTTON
+   LANGUAGE
 ========================================================= */
 
 $("langBtn")?.addEventListener(
@@ -2767,7 +2926,7 @@ if(heroPaper){
 
 
 /* =========================================================
-   TEMPLATE CARD CLICK FIX
+   TEMPLATE CLICK FIX
 ========================================================= */
 
 function activateTemplateClickFix(){
@@ -2802,29 +2961,8 @@ function activateTemplateClickFix(){
 
           event.preventDefault();
 
-
           event.stopPropagation();
 
-
-          const allCards =
-            Array.from(
-              document.querySelectorAll(
-                "#templateGrid .template-card"
-              )
-            );
-
-
-          const visibleIndex =
-            allCards.indexOf(
-              card
-            );
-
-
-          /*
-            Find template by its name
-            rather than relying on visible
-            card index when filters are active.
-          */
 
           const title =
             card.querySelector(
@@ -2844,8 +2982,16 @@ function activateTemplateClickFix(){
             templateIndex < 0
           ){
 
+            const allCards =
+              Array.from(
+                document.querySelectorAll(
+                  "#templateGrid .template-card"
+                )
+              );
+
+
             templateIndex =
-              visibleIndex;
+              allCards.indexOf(card);
 
           }
 
@@ -2917,7 +3063,6 @@ function activateTemplateClickFix(){
 
             event.preventDefault();
 
-
             card.click();
 
           }
@@ -2931,7 +3076,7 @@ function activateTemplateClickFix(){
 
 
 /* =========================================================
-   SELECTED TEMPLATE STYLE
+   TEMPLATE STYLE
 ========================================================= */
 
 if(
