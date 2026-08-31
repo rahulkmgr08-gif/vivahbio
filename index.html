@@ -327,58 +327,75 @@
 
   </div>
 </section>
-
-<footer class="site-footer"
+  <footer class="site-footer"
   style="
-    display:grid;
-    grid-template-columns:auto auto 1fr;
+    display:flex;
     align-items:center;
     gap:35px;
     width:100%;
     box-sizing:border-box;
-    padding:40px 70px;
+    padding:40px 30px;
+    overflow:hidden;
   ">
 
-  <div class="brand" style="white-space:nowrap;">
+  <!-- Logo -->
+  <div class="brand" style="white-space:nowrap; flex-shrink:0;">
     <span class="brand-icon">♡</span>
     Vivah<span>Bio</span>
   </div>
 
-  <div style="white-space:nowrap;">
+  <!-- Description -->
+  <div style="
+    white-space:nowrap;
+    flex-shrink:0;
+    font-size:18px;
+  ">
     Beautiful marriage biodata, made simple.
   </div>
 
+  <!-- Links -->
   <div class="footer-links"
        style="
+         flex:1;
+         min-width:0;
+         display:flex;
+         justify-content:flex-end;
+         align-items:center;
+         flex-wrap:wrap;
+         gap:0;
          line-height:1.8;
-         text-align:right;
-         white-space:nowrap;
+         font-size:16px;
        ">
 
     <a href="about.html"
        style="color:#eadfd5 !important;text-decoration:none !important;">
       About Us
-    </a> ·
+    </a>
+    <span> · </span>
 
     <a href="contact.html"
        style="color:#eadfd5 !important;text-decoration:none !important;">
       Contact Us
-    </a> ·
+    </a>
+    <span> · </span>
 
     <a href="privacy.html"
        style="color:#eadfd5 !important;text-decoration:none !important;">
       Privacy Policy
-    </a> ·
+    </a>
+    <span> · </span>
 
     <a href="terms.html"
        style="color:#eadfd5 !important;text-decoration:none !important;">
       Terms &amp; Conditions
-    </a> ·
+    </a>
+    <span> · </span>
 
     <a href="refund.html"
        style="color:#eadfd5 !important;text-decoration:none !important;">
       Refund / Cancellation
-    </a> ·
+    </a>
+    <span> · </span>
 
     <a href="admin.html"
        style="color:#eadfd5 !important;text-decoration:none !important;">
