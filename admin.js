@@ -1,177 +1,66 @@
 /* =========================================================
    VIVAHBIO ADMIN PANEL
-   Real Supabase Dashboard
+   Supabase connected admin dashboard
    ========================================================= */
-
-
-/* =========================================================
-   SUPABASE CONFIG
-   Publishable key only.
-   NEVER put Supabase secret/service key here.
-========================================================= */
-
-const SUPABASE_URL =
-  "https://puljgsgaycutybhxwbbo.supabase.co";
-
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_BYdv27Q8icGmARWVLmta8A_zuuVH1WE";
 
 
 /* =========================================================
    HELPERS
 ========================================================= */
 
-const $ = id =>
-  document.getElementById(id);
+const $ = (id) => document.getElementById(id);
 
 
-function esc(value){
+function esc(value) {
 
-  return String(value ?? "")
-    .replace(
-      /[&<>"']/g,
-      char =>
-        ({
-          "&":"&amp;",
-          "<":"&lt;",
-          ">":"&gt;",
-          '"':"&quot;",
-          "'":"&#039;"
-        })[char]
-    );
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[char]
+  );
 
 }
 
 
-function money(value){
+function money(value) {
 
-  const number =
-    Number(value || 0) / 100;
+  const number = Number(value || 0);
 
-  return "₹" +
-    number.toLocaleString(
-      "en-IN",
-      {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
-      }
-    );
-
-}
-
-
-function formatDate(value){
-
-  if(!value){
-
-    return "—";
-
-  }
-
-
-  const date =
-    new Date(value);
-
-
-  if(
-    Number.isNaN(
-      date.getTime()
-    )
-  ){
-
-    return "—";
-
-  }
-
-
-  return date.toLocaleString(
+  return "₹" + number.toLocaleString(
     "en-IN",
     {
-      dateStyle:"medium",
-      timeStyle:"short"
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
     }
   );
 
 }
 
 
-/* =========================================================
-   SUPABASE REST API
-========================================================= */
+function formatDate(value) {
 
-async function supabaseFetch(
-  path,
-  options = {}
-){
-
-  const response =
-    await fetch(
-      `${SUPABASE_URL}/rest/v1/${path}`,
-      {
-
-        ...options,
-
-        headers: {
-
-          "apikey":
-            SUPABASE_PUBLISHABLE_KEY,
-
-          "Authorization":
-            `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
-
-          "Content-Type":
-            "application/json",
-
-          ...(options.headers || {})
-
-        }
-
-      }
-    );
-
-
-  const text =
-    await response.text();
-
-
-  let data =
-    null;
-
-
-  try{
-
-    data =
-      text
-        ? JSON.parse(text)
-        : null;
-
-  }catch(error){
-
-    data =
-      null;
-
+  if (!value) {
+    return "—";
   }
 
+  const date = new Date(value);
 
-  if(
-    !response.ok
-  ){
-
-    throw new Error(
-      `Supabase ${response.status}: ${text}`
-    );
-
+  if (Number.isNaN(date.getTime())) {
+    return "—";
   }
 
-
-  return {
-
-    data,
-
-    headers:
-      response.headers
-
-  };
+  return date.toLocaleString(
+    "en-IN",
+    {
+      dateStyle: "medium",
+      timeStyle: "short"
+    }
+  );
 
 }
 
@@ -182,45 +71,45 @@ async function supabaseFetch(
 
 const defaultTemplates = [
 
-  ["Elegant Gold","traditional","gold",false],
+  ["Elegant Gold", "traditional", "gold", false],
 
-  ["Modern Rose","modern","rose",false],
+  ["Modern Rose", "modern", "rose", false],
 
-  ["Royal Blue","royal","blue",false],
+  ["Royal Blue", "royal", "blue", false],
 
-  ["Sage Garden","floral","green",false],
+  ["Sage Garden", "floral", "green", false],
 
-  ["Lavender Love","floral","purple",false],
+  ["Lavender Love", "floral", "purple", false],
 
-  ["Sunset Marigold","floral","orange",true],
+  ["Sunset Marigold", "floral", "orange", true],
 
-  ["Classic Cream","traditional","cream",true],
+  ["Classic Cream", "traditional", "cream", true],
 
-  ["Red Heritage","traditional","red",true],
+  ["Red Heritage", "traditional", "red", true],
 
-  ["Minimal Pearl","modern","cream",true],
+  ["Minimal Pearl", "modern", "cream", true],
 
-  ["Midnight Royal","royal","blue",true],
+  ["Midnight Royal", "royal", "blue", true],
 
-  ["Blush Bloom","floral","rose",true],
+  ["Blush Bloom", "floral", "rose", true],
 
-  ["Temple Gold","traditional","gold",true],
+  ["Temple Gold", "traditional", "gold", true],
 
-  ["Emerald Grace","royal","green",true],
+  ["Emerald Grace", "royal", "green", true],
 
-  ["Dusty Rose","modern","rose",true],
+  ["Dusty Rose", "modern", "rose", true],
 
-  ["Regal Navy","royal","blue",true],
+  ["Regal Navy", "royal", "blue", true],
 
-  ["Peach Petals","floral","orange",true],
+  ["Peach Petals", "floral", "orange", true],
 
-  ["Vintage Ivory","traditional","cream",true],
+  ["Vintage Ivory", "traditional", "cream", true],
 
-  ["Plum Elegance","royal","purple",true],
+  ["Plum Elegance", "royal", "purple", true],
 
-  ["Garden Sage","floral","green",true],
+  ["Garden Sage", "floral", "green", true],
 
-  ["Ruby Classic","traditional","red",true]
+  ["Ruby Classic", "traditional", "red", true]
 
 ];
 
@@ -234,7 +123,7 @@ let templates =
   defaultTemplates.slice();
 
 
-function saveTemplates(){
+function saveTemplates() {
 
   localStorage.setItem(
     "vivah_templates",
@@ -244,9 +133,9 @@ function saveTemplates(){
 }
 
 
-function renderTemplates(){
+function renderTemplates() {
 
-  if($("aTemplates")){
+  if ($("aTemplates")) {
 
     $("aTemplates").textContent =
       templates.length;
@@ -258,30 +147,28 @@ function renderTemplates(){
     $("adminTemplates");
 
 
-  if(!container) return;
+  if (!container) {
+    return;
+  }
 
 
-  container.innerHTML =
-    "";
+  container.innerHTML = "";
 
 
   templates.forEach(
-    (template,index) => {
+    (template, index) => {
 
       const row =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
 
-      row.className =
-        "row";
+      row.className = "row";
 
 
       row.innerHTML = `
 
         <div>
-          ${String(index + 1).padStart(2,"0")}
+          ${String(index + 1).padStart(2, "0")}
         </div>
 
 
@@ -344,9 +231,7 @@ function renderTemplates(){
       `;
 
 
-      container.appendChild(
-        row
-      );
+      container.appendChild(row);
 
     }
   );
@@ -354,7 +239,7 @@ function renderTemplates(){
 }
 
 
-function editName(index){
+function editName(index) {
 
   const newName =
     prompt(
@@ -363,14 +248,13 @@ function editName(index){
     );
 
 
-  if(
+  if (
     newName &&
     newName.trim()
-  ){
+  ) {
 
     templates[index][0] =
       newName.trim();
-
 
     saveTemplates();
 
@@ -381,11 +265,10 @@ function editName(index){
 }
 
 
-function togglePremium(index){
+function togglePremium(index) {
 
   templates[index][3] =
     !templates[index][3];
-
 
   saveTemplates();
 
@@ -394,11 +277,11 @@ function togglePremium(index){
 }
 
 
-function removeTemplate(index){
+function removeTemplate(index) {
 
-  if(
+  if (
     templates.length <= 1
-  ){
+  ) {
 
     alert(
       "Keep at least one template."
@@ -409,17 +292,16 @@ function removeTemplate(index){
   }
 
 
-  if(
+  if (
     confirm(
       "Delete this template?"
     )
-  ){
+  ) {
 
     templates.splice(
       index,
       1
     );
-
 
     saveTemplates();
 
@@ -430,42 +312,36 @@ function removeTemplate(index){
 }
 
 
-if(
-  $("addTemplate")
-){
+if ($("addTemplate")) {
 
-  $("addTemplate").onclick =
-    () => {
+  $("addTemplate").onclick = () => {
 
-      const name =
-        prompt(
-          "New template name",
-          "My New Design"
-        );
+    const name =
+      prompt(
+        "New template name",
+        "My New Design"
+      );
 
 
-      if(
-        name &&
-        name.trim()
-      ){
+    if (
+      name &&
+      name.trim()
+    ) {
 
-        templates.push(
-          [
-            name.trim(),
-            "modern",
-            "rose",
-            true
-          ]
-        );
+      templates.push([
+        name.trim(),
+        "modern",
+        "rose",
+        true
+      ]);
 
+      saveTemplates();
 
-        saveTemplates();
+      renderTemplates();
 
-        renderTemplates();
+    }
 
-      }
-
-    };
+  };
 
 }
 
@@ -482,9 +358,7 @@ const settings =
   );
 
 
-if(
-  $("razorpayKey")
-){
+if ($("razorpayKey")) {
 
   $("razorpayKey").value =
     settings.key || "";
@@ -492,9 +366,7 @@ if(
 }
 
 
-if(
-  $("price")
-){
+if ($("price")) {
 
   $("price").value =
     settings.price || 19;
@@ -502,271 +374,178 @@ if(
 }
 
 
-if(
-  $("saveSetup")
-){
+if ($("saveSetup")) {
 
-  $("saveSetup").onclick =
-    () => {
+  $("saveSetup").onclick = () => {
 
-      localStorage.setItem(
-        "vivah_settings",
-        JSON.stringify({
+    localStorage.setItem(
+      "vivah_settings",
+      JSON.stringify({
 
-          key:
-            $("razorpayKey").value,
+        key:
+          $("razorpayKey").value,
 
-          price:
-            $("price").value
+        price:
+          $("price").value
 
-        })
-      );
+      })
+    );
 
 
-      alert(
-        "Saved. Current premium price: ₹" +
-        $("price").value
-      );
+    alert(
+      "Saved. Current premium price: ₹" +
+      $("price").value
+    );
 
-    };
+  };
 
 }
 
 
 /* =========================================================
-   DATABASE COUNT
+   LOAD REAL ADMIN DATA
+   Uses server-side /api/admin-stats
 ========================================================= */
 
-async function getTableCount(
-  table,
-  filter = ""
-){
+async function loadDashboardStats() {
 
-  const path =
-    `${table}?select=id&limit=1${filter}`;
+  try {
 
-
-  const result =
-    await supabaseFetch(
-      path,
-      {
-
-        headers: {
-
-          "Prefer":
-            "count=exact"
-
+    const response =
+      await fetch(
+        "/api/admin-stats",
+        {
+          method: "GET",
+          cache: "no-store"
         }
-
-      }
-    );
-
-
-  const contentRange =
-    result.headers.get(
-      "content-range"
-    );
-
-
-  if(
-    !contentRange
-  ){
-
-    return null;
-
-  }
-
-
-  const match =
-    contentRange.match(
-      /\/(\d+)$/
-    );
-
-
-  return match
-    ? Number(match[1])
-    : null;
-
-}
-
-
-/* =========================================================
-   FETCH PAID PAYMENTS
-========================================================= */
-
-async function getPaidPayments(){
-
-  const result =
-    await supabaseFetch(
-      "payments?select=id,profile_id,razorpay_order_id,razorpay_payment_id,amount,currency,status,created_at,paid_at&status=eq.paid&order=paid_at.desc"
-    );
-
-
-  return result.data || [];
-
-}
-
-
-/* =========================================================
-   DASHBOARD STATS
-========================================================= */
-
-async function loadDashboardStats(){
-
-  /*
-    Templates
-  */
-
-  if(
-    $("aTemplates")
-  ){
-
-    $("aTemplates").textContent =
-      templates.length;
-
-  }
-
-
-  /*
-    Profiles
-  */
-
-  try{
-
-    const count =
-      await getTableCount(
-        "profiles"
       );
 
 
-    if(
-      count !== null &&
-      $("aUsers")
-    ){
+    const result =
+      await response.json();
+
+
+    if (
+      !response.ok ||
+      !result.success
+    ) {
+
+      throw new Error(
+        result.error ||
+        "Could not load dashboard data"
+      );
+
+    }
+
+
+    /* =====================================================
+       TEMPLATES
+    ===================================================== */
+
+    if ($("aTemplates")) {
+
+      $("aTemplates").textContent =
+        templates.length;
+
+    }
+
+
+    /* =====================================================
+       SAVED PROFILES
+    ===================================================== */
+
+    if ($("aUsers")) {
 
       $("aUsers").textContent =
-        count;
+        result.stats.profiles;
 
     }
 
-  }catch(error){
 
-    console.error(
-      "Profiles count error:",
-      error
-    );
+    /* =====================================================
+       DOWNLOADS
+    ===================================================== */
 
-
-    if(
-      $("aUsers")
-    ){
-
-      $("aUsers").textContent =
-        "—";
-
-    }
-
-  }
-
-
-  /*
-    Downloads
-  */
-
-  try{
-
-    const count =
-      await getTableCount(
-        "downloads"
-      );
-
-
-    if(
-      count !== null &&
-      $("aDownloads")
-    ){
+    if ($("aDownloads")) {
 
       $("aDownloads").textContent =
-        count;
+        result.stats.downloads;
 
     }
 
-  }catch(error){
 
-    console.error(
-      "Downloads count error:",
-      error
-    );
+    /* =====================================================
+       PAID PAYMENTS
+    ===================================================== */
 
+    if ($("aPaidPayments")) {
 
-    if(
-      $("aDownloads")
-    ){
-
-      $("aDownloads").textContent =
-        "—";
+      $("aPaidPayments").textContent =
+        result.stats.paidPayments;
 
     }
 
-  }
+
+    /* =====================================================
+       REVENUE
+    ===================================================== */
+
+    if ($("aRevenue")) {
+
+      $("aRevenue").textContent =
+        money(
+          result.stats.revenue
+        );
+
+    }
 
 
-  /*
-    Paid payments
-  */
-
-  try{
-
-    const paidPayments =
-      await getPaidPayments();
-
-
-    const paidCount =
-      paidPayments.length;
-
-
-    const revenue =
-      paidPayments.reduce(
-        (
-          total,
-          payment
-        ) =>
-          total +
-          Number(
-            payment.amount || 0
-          ),
-        0
-      );
-
-
-    /*
-      Existing HTML does not have
-      payment/revenue cards.
-      We create them automatically.
-    */
-
-    createExtraStatCards(
-      paidCount,
-      revenue
-    );
-
+    /* =====================================================
+       RECENT PAYMENTS
+    ===================================================== */
 
     renderRecentPayments(
-      paidPayments
+      result.recentPayments || []
     );
 
 
-  }catch(error){
+    console.log(
+      "VivahBio Admin Data:",
+      result
+    );
+
+
+  } catch (error) {
 
     console.error(
-      "Payment dashboard error:",
+      "Admin stats error:",
       error
     );
 
 
-    createExtraStatCards(
-      "—",
-      null
+    if ($("aUsers")) {
+      $("aUsers").textContent = "—";
+    }
+
+
+    if ($("aDownloads")) {
+      $("aDownloads").textContent = "—";
+    }
+
+
+    if ($("aPaidPayments")) {
+      $("aPaidPayments").textContent = "—";
+    }
+
+
+    if ($("aRevenue")) {
+      $("aRevenue").textContent = "—";
+    }
+
+
+    console.error(
+      "Dashboard data could not be loaded:",
+      error.message
     );
 
   }
@@ -775,13 +554,10 @@ async function loadDashboardStats(){
 
 
 /* =========================================================
-   EXTRA ADMIN STAT CARDS
+   EXTRA STAT CARDS
 ========================================================= */
 
-function createExtraStatCards(
-  paidCount,
-  revenue
-){
+function createExtraStatCards() {
 
   const stats =
     document.querySelector(
@@ -789,12 +565,12 @@ function createExtraStatCards(
     );
 
 
-  if(!stats) return;
+  if (!stats) {
+    return;
+  }
 
 
-  /*
-    Avoid duplicate cards.
-  */
+  /* ---------- PAID PAYMENTS ---------- */
 
   let paymentCard =
     document.getElementById(
@@ -802,18 +578,10 @@ function createExtraStatCards(
     );
 
 
-  let revenueCard =
-    document.getElementById(
-      "aRevenueCard"
-    );
-
-
-  if(!paymentCard){
+  if (!paymentCard) {
 
     paymentCard =
-      document.createElement(
-        "div"
-      );
+      document.createElement("div");
 
 
     paymentCard.id =
@@ -840,12 +608,18 @@ function createExtraStatCards(
   }
 
 
-  if(!revenueCard){
+  /* ---------- REVENUE ---------- */
+
+  let revenueCard =
+    document.getElementById(
+      "aRevenueCard"
+    );
+
+
+  if (!revenueCard) {
 
     revenueCard =
-      document.createElement(
-        "div"
-      );
+      document.createElement("div");
 
 
     revenueCard.id =
@@ -871,28 +645,6 @@ function createExtraStatCards(
 
   }
 
-
-  if(
-    $("aPaidPayments")
-  ){
-
-    $("aPaidPayments").textContent =
-      paidCount;
-
-  }
-
-
-  if(
-    $("aRevenue")
-  ){
-
-    $("aRevenue").textContent =
-      revenue === null
-        ? "—"
-        : money(revenue);
-
-  }
-
 }
 
 
@@ -900,7 +652,7 @@ function createExtraStatCards(
    RECENT PAYMENTS SECTION
 ========================================================= */
 
-function ensureRecentPaymentsSection(){
+function ensureRecentPaymentsSection() {
 
   let section =
     document.getElementById(
@@ -908,7 +660,7 @@ function ensureRecentPaymentsSection(){
     );
 
 
-  if(section){
+  if (section) {
 
     return section;
 
@@ -958,23 +710,31 @@ function ensureRecentPaymentsSection(){
     cards[0];
 
 
-  if(
+  if (
     templateCard &&
     templateCard.parentNode
-  ){
+  ) {
 
     templateCard.parentNode.insertBefore(
       section,
       templateCard.nextSibling
     );
 
-  }else{
+  } else {
 
-    document
-      .querySelector(".admin")
-      ?.appendChild(
+    const admin =
+      document.querySelector(
+        ".admin"
+      );
+
+
+    if (admin) {
+
+      admin.appendChild(
         section
       );
+
+    }
 
   }
 
@@ -984,9 +744,13 @@ function ensureRecentPaymentsSection(){
 }
 
 
+/* =========================================================
+   RENDER RECENT PAYMENTS
+========================================================= */
+
 function renderRecentPayments(
   payments
-){
+) {
 
   const section =
     ensureRecentPaymentsSection();
@@ -998,12 +762,15 @@ function renderRecentPayments(
     );
 
 
-  if(!container) return;
+  if (!container) {
+    return;
+  }
 
 
-  if(
+  if (
+    !payments ||
     !payments.length
-  ){
+  ) {
 
     container.innerHTML = `
 
@@ -1024,10 +791,6 @@ function renderRecentPayments(
 
   }
 
-
-  /*
-    Show latest 10.
-  */
 
   const latest =
     payments.slice(
@@ -1060,6 +823,7 @@ function renderRecentPayments(
                 )}
               </b>
 
+
               <small
                 style="
                   display:block;
@@ -1078,7 +842,9 @@ function renderRecentPayments(
 
             <span>
               ${money(
-                payment.amount
+                Number(
+                  payment.amount || 0
+                ) / 100
               )}
             </span>
 
@@ -1108,7 +874,7 @@ function renderRecentPayments(
    REFRESH BUTTON
 ========================================================= */
 
-function addRefreshButton(){
+function addRefreshButton() {
 
   const header =
     document.querySelector(
@@ -1116,14 +882,16 @@ function addRefreshButton(){
     );
 
 
-  if(!header) return;
+  if (!header) {
+    return;
+  }
 
 
-  if(
+  if (
     document.getElementById(
       "refreshDashboard"
     )
-  ){
+  ) {
 
     return;
 
@@ -1163,11 +931,11 @@ function addRefreshButton(){
         "Refreshing…";
 
 
-      try{
+      try {
 
         await loadDashboardStats();
 
-      }finally{
+      } finally {
 
         button.disabled =
           false;
@@ -1191,41 +959,38 @@ function addRefreshButton(){
    RESET DEMO
 ========================================================= */
 
-if(
-  $("resetDemo")
-){
+if ($("resetDemo")) {
 
-  $("resetDemo").onclick =
-    () => {
+  $("resetDemo").onclick = () => {
 
-      if(
-        confirm(
-          "Reset demo data? This will clear local template/settings data from this browser. Supabase database data will NOT be deleted."
-        )
-      ){
+    if (
+      confirm(
+        "Reset demo data? This will clear local template/settings data from this browser. Supabase database data will NOT be deleted."
+      )
+    ) {
 
-        localStorage.clear();
+      localStorage.clear();
 
-        location.reload();
+      location.reload();
 
-      }
+    }
 
-    };
+  };
 
 }
 
 
 /* =========================================================
-   ADMIN STYLING
+   ADMIN STYLES
 ========================================================= */
 
-function addAdminStyles(){
+function addAdminStyles() {
 
-  if(
+  if (
     document.getElementById(
       "admin-live-styles"
     )
-  ){
+  ) {
 
     return;
 
@@ -1248,21 +1013,26 @@ function addAdminStyles(){
       min-width: 130px;
     }
 
+
     #refreshDashboard {
       display: inline-block;
     }
+
 
     #recentPaymentsSection {
       margin-top: 20px;
     }
 
+
     #recentPayments .row {
       align-items: center;
     }
 
+
     #recentPayments small {
       word-break: break-word;
     }
+
 
     @media (max-width: 700px) {
 
@@ -1270,14 +1040,17 @@ function addAdminStyles(){
         grid-template-columns: repeat(2, 1fr);
       }
 
+
       #recentPayments .row {
         grid-template-columns: 35px 1fr;
         gap: 10px;
       }
 
+
       #recentPayments .row > span {
         grid-column: 2;
       }
+
 
       #recentPayments .row > div:last-child {
         grid-column: 2;
@@ -1299,9 +1072,11 @@ function addAdminStyles(){
    START ADMIN
 ========================================================= */
 
-async function startAdmin(){
+async function startAdmin() {
 
   renderTemplates();
+
+  createExtraStatCards();
 
   addAdminStyles();
 
