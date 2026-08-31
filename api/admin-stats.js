@@ -1,6 +1,6 @@
 /* =========================================================
    VIVAHBIO ADMIN STATS API
-   Server-side Supabase access
+   Secure server-side admin access
    ========================================================= */
 
 async function supabase(path, options = {}) {
@@ -47,11 +47,76 @@ async function supabase(path, options = {}) {
 }
 
 
+/* =========================================================
+   VERIFY SUPABASE AUTH USER
+========================================================= */
+
+async function getAuthUser(accessToken) {
+
+  const response = await fetch(
+    "https://puljgsgaycutybhxwbbo.supabase.co/auth/v1/user",
+    {
+      method: "GET",
+
+      headers: {
+        "apikey": process.env.SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": `Bearer ${accessToken}`
+      }
+    }
+  );
+
+  if (!response.ok) {
+    return null;
+  }
+
+  return await response.json();
+}
+
+
+/* =========================================================
+   ADMIN CHECK
+========================================================= */
+
+async function verifyAdmin(accessToken) {
+
+  if (!accessToken) {
+    return null;
+  }
+
+  const user = await getAuthUser(accessToken);
+
+  if (!user?.id) {
+    return null;
+  }
+
+  const admins = await supabase(
+    `admin_users?id=eq.${encodeURIComponent(user.id)}&active=eq.true&select=id,email,active&limit=1`,
+    {
+      method: "GET"
+    }
+  );
+
+  if (!admins?.length) {
+    return null;
+  }
+
+  return {
+    user,
+    admin: admins[0]
+  };
+}
+
+
+/* =========================================================
+   HANDLER
+========================================================= */
+
 module.exports = async function handler(req, res) {
 
   if (req.method !== "GET") {
 
     return res.status(405).json({
+      success: false,
       error: "Method not allowed"
     });
 
@@ -59,6 +124,47 @@ module.exports = async function handler(req, res) {
 
 
   try {
+
+    /* =====================================================
+       GET ACCESS TOKEN
+    ===================================================== */
+
+    const authorization =
+      req.headers.authorization || "";
+
+    if (!authorization.startsWith("Bearer ")) {
+
+      return res.status(401).json({
+        success: false,
+        error: "Authentication required"
+      });
+
+    }
+
+    const accessToken =
+      authorization.replace(
+        "Bearer ",
+        ""
+      ).trim();
+
+
+    /* =====================================================
+       VERIFY ADMIN
+    ===================================================== */
+
+    const admin =
+      await verifyAdmin(accessToken);
+
+
+    if (!admin) {
+
+      return res.status(403).json({
+        success: false,
+        error: "Admin access denied"
+      });
+
+    }
+
 
     /* =====================================================
        PROFILES
@@ -103,7 +209,7 @@ module.exports = async function handler(req, res) {
 
     /* =====================================================
        REVENUE
-       Razorpay amount is in paise
+       Razorpay amount = paise
     ===================================================== */
 
     const revenuePaise =
@@ -129,6 +235,11 @@ module.exports = async function handler(req, res) {
 
       success: true,
 
+      admin: {
+        id: admin.admin.id,
+        email: admin.admin.email
+      },
+
       stats: {
 
         profiles:
@@ -144,7 +255,6 @@ module.exports = async function handler(req, res) {
           paidPayments.length,
 
         revenue:
-
           revenue
 
       },
