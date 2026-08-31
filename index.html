@@ -329,17 +329,31 @@
 </section>
 
 <footer class="site-footer"
-  style="display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap;">
+  style="
+    display:grid;
+    grid-template-columns:auto auto 1fr;
+    align-items:center;
+    gap:35px;
+    width:100%;
+    box-sizing:border-box;
+    padding:40px 70px;
+  ">
 
-  <div class="brand">
-    <span class="brand-icon">♡</span> Vivah<span>Bio</span>
+  <div class="brand" style="white-space:nowrap;">
+    <span class="brand-icon">♡</span>
+    Vivah<span>Bio</span>
   </div>
 
-  <div>
+  <div style="white-space:nowrap;">
     Beautiful marriage biodata, made simple.
   </div>
 
-  <div class="footer-links" style="line-height:1.8;">
+  <div class="footer-links"
+       style="
+         line-height:1.8;
+         text-align:right;
+         white-space:nowrap;
+       ">
 
     <a href="about.html"
        style="color:#eadfd5 !important;text-decoration:none !important;">
@@ -372,8 +386,8 @@
     </a>
 
   </div>
-</footer>
 
+</footer>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="app.js"></script>
 
