@@ -2295,3 +2295,240 @@ selectTemplate(
 updatePreview();
 
 updatePremiumButtons();
+
+/* =========================================================
+   FINAL CLICK FIX
+   - Hero biodata clickable
+   - Template cards clickable
+   - Selected template opens maker
+========================================================= */
+
+
+/* ---------- HERO BIODATA CLICK ---------- */
+
+const heroPaperFix =
+  document.getElementById("heroPaper");
+
+if (heroPaperFix) {
+
+  heroPaperFix.style.cursor = "pointer";
+
+  heroPaperFix.addEventListener(
+    "click",
+    function () {
+
+      const maker =
+        document.getElementById("maker");
+
+      if (maker) {
+
+        maker.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      }
+
+    }
+  );
+
+}
+
+
+/* ---------- HERO STAGE CLICK ---------- */
+
+const heroStageFix =
+  document.querySelector(".hero-stage");
+
+if (heroStageFix) {
+
+  heroStageFix.style.cursor =
+    "pointer";
+
+}
+
+
+/* ---------- TEMPLATE CARD CLICK ---------- */
+
+function activateTemplateClickFix() {
+
+  const cards =
+    document.querySelectorAll(
+      "#templateGrid .template-card"
+    );
+
+  cards.forEach(
+    (card, index) => {
+
+      /* remove old onclick if any */
+
+      card.style.cursor =
+        "pointer";
+
+      card.setAttribute(
+        "role",
+        "button"
+      );
+
+      card.setAttribute(
+        "tabindex",
+        "0"
+      );
+
+
+      card.onclick =
+        function (event) {
+
+          event.preventDefault();
+
+          event.stopPropagation();
+
+
+          /* Select template */
+
+          if (
+            typeof selectTemplate ===
+            "function"
+          ) {
+
+            selectTemplate(index);
+
+          }
+
+
+          /* Scroll to biodata maker */
+
+          const maker =
+            document.getElementById(
+              "maker"
+            );
+
+          if (maker) {
+
+            setTimeout(
+              function () {
+
+                maker.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start"
+                });
+
+              },
+              100
+            );
+
+          }
+
+
+          /* Visual feedback */
+
+          cards.forEach(
+            c =>
+              c.classList.remove(
+                "selected"
+              )
+          );
+
+
+          card.classList.add(
+            "selected"
+          );
+
+        };
+
+
+      card.onkeydown =
+        function (event) {
+
+          if (
+            event.key === "Enter" ||
+            event.key === " "
+          ) {
+
+            event.preventDefault();
+
+            card.click();
+
+          }
+
+        };
+
+    }
+  );
+
+}
+
+
+/* Run once */
+
+activateTemplateClickFix();
+
+
+/* Run again after template filtering */
+
+document
+  .querySelectorAll(".filter")
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        function () {
+
+          setTimeout(
+            activateTemplateClickFix,
+            50
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+/* =========================================================
+   SELECTED TEMPLATE VISUAL STYLE
+========================================================= */
+
+if (
+  !document.getElementById(
+    "template-click-fix-style"
+  )
+) {
+
+  const style =
+    document.createElement(
+      "style"
+    );
+
+  style.id =
+    "template-click-fix-style";
+
+  style.textContent = `
+
+    #templateGrid .template-card {
+      cursor: pointer !important;
+      position: relative;
+    }
+
+    #templateGrid .template-card:hover {
+      transform: translateY(-4px);
+    }
+
+    #templateGrid .template-card.selected {
+      outline: 3px solid #7b2036;
+      outline-offset: 4px;
+    }
+
+    #heroPaper {
+      cursor: pointer !important;
+    }
+
+  `;
+
+  document.head.appendChild(
+    style
+  );
+
+}
