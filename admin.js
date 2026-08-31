@@ -1,377 +1,150 @@
 /* =========================================================
-   VIVAHBIO ADMIN PANEL
-   SECURE ADMIN AUTH + SUPABASE DASHBOARD
+   VIVAHBIO ADMIN STATS API
+   SECURE SERVER-SIDE ADMIN ACCESS
    ========================================================= */
 
 
 /* =========================================================
-   SUPABASE CONFIG
+   SUPABASE SERVER HELPER
 ========================================================= */
 
-const SUPABASE_URL =
-  "https://puljgsgaycutybhxwbbo.supabase.co";
+async function supabase(path, options = {}) {
 
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_BYdv27Q8icGmARWVLmta8A_zuuVH1WE";
+  const url =
+    process.env.SUPABASE_URL;
 
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-const $ = (id) =>
-  document.getElementById(id);
+  const key =
+    process.env.SUPABASE_SECRET_KEY;
 
 
-function esc(value) {
+  if (!url || !key) {
 
-  return String(value ?? "").replace(
-    /[&<>"']/g,
-    (char) => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    })[char]
-  );
+    throw new Error(
+      "Supabase environment variables are missing"
+    );
 
-}
+  }
 
 
-function money(value) {
-
-  const number =
-    Number(value || 0);
-
-  return "₹" +
-    number.toLocaleString(
-      "en-IN",
+  const response =
+    await fetch(
+      `${url.replace(/\/$/, "")}/rest/v1/${path}`,
       {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
+
+        ...options,
+
+        headers: {
+
+          "Content-Type":
+            "application/json",
+
+          "apikey":
+            key,
+
+          "Authorization":
+            `Bearer ${key}`,
+
+          "Prefer":
+            "return=representation",
+
+          ...(options.headers || {})
+
+        }
+
       }
     );
 
-}
 
+  const text =
+    await response.text();
 
-function formatDate(value) {
 
-  if (!value) {
-    return "—";
-  }
+  let data = null;
 
-  const date =
-    new Date(value);
-
-  if (
-    Number.isNaN(
-      date.getTime()
-    )
-  ) {
-    return "—";
-  }
-
-  return date.toLocaleString(
-    "en-IN",
-    {
-      dateStyle: "medium",
-      timeStyle: "short"
-    }
-  );
-
-}
-
-
-/* =========================================================
-   LOAD SUPABASE JS
-========================================================= */
-
-async function loadSupabaseLibrary() {
-
-  if (
-    window.vivahSupabase
-  ) {
-    return window.vivahSupabase;
-  }
-
-  if (
-    window.supabase
-  ) {
-
-    window.vivahSupabase =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-      );
-
-    return window.vivahSupabase;
-  }
-
-  await new Promise(
-    (resolve, reject) => {
-
-      const script =
-        document.createElement(
-          "script"
-        );
-
-      script.src =
-        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
-
-      script.onload =
-        resolve;
-
-      script.onerror =
-        () =>
-          reject(
-            new Error(
-              "Could not load Supabase library"
-            )
-          );
-
-      document.head.appendChild(
-        script
-      );
-
-    }
-  );
-
-  window.vivahSupabase =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
-    );
-
-  return window.vivahSupabase;
-
-}
-
-
-/* =========================================================
-   ADMIN LOGIN UI
-========================================================= */
-
-function showLoginScreen() {
-
-  if (
-    document.getElementById(
-      "vivahAdminLogin"
-    )
-  ) {
-    return;
-  }
-
-  const wrapper =
-    document.createElement(
-      "div"
-    );
-
-  wrapper.id =
-    "vivahAdminLogin";
-
-  wrapper.innerHTML = `
-
-    <div class="admin-login-box">
-
-      <div class="admin-login-logo">
-        ♡
-      </div>
-
-      <h1>
-        Vivah Bio
-      </h1>
-
-      <h2>
-        Admin Login
-      </h2>
-
-      <p>
-        Login with your authorized admin account.
-      </p>
-
-      <form id="adminLoginForm">
-
-        <input
-          id="adminLoginEmail"
-          type="email"
-          placeholder="Admin email"
-          autocomplete="username"
-          required
-        />
-
-        <input
-          id="adminLoginPassword"
-          type="password"
-          placeholder="Password"
-          autocomplete="current-password"
-          required
-        />
-
-        <button
-          id="adminLoginButton"
-          type="submit"
-        >
-          Login
-        </button>
-
-        <div
-          id="adminLoginError"
-        ></div>
-
-      </form>
-
-    </div>
-
-  `;
-
-  document.body.appendChild(
-    wrapper
-  );
-
-  addLoginStyles();
-
-  const form =
-    document.getElementById(
-      "adminLoginForm"
-    );
-
-  form.addEventListener(
-    "submit",
-    handleAdminLogin
-  );
-
-}
-
-
-function hideLoginScreen() {
-
-  const login =
-    document.getElementById(
-      "vivahAdminLogin"
-    );
-
-  if (login) {
-    login.remove();
-  }
-
-}
-
-
-/* =========================================================
-   ADMIN LOGIN
-========================================================= */
-
-async function handleAdminLogin(event) {
-
-  event.preventDefault();
-
-  const email =
-    document
-      .getElementById(
-        "adminLoginEmail"
-      )
-      .value
-      .trim();
-
-  const password =
-    document
-      .getElementById(
-        "adminLoginPassword"
-      )
-      .value;
-
-  const button =
-    document.getElementById(
-      "adminLoginButton"
-    );
-
-  const errorBox =
-    document.getElementById(
-      "adminLoginError"
-    );
-
-  errorBox.textContent =
-    "";
-
-  button.disabled =
-    true;
-
-  button.textContent =
-    "Logging in...";
 
   try {
 
-    const supabase =
-      await loadSupabaseLibrary();
+    data =
+      text
+        ? JSON.parse(text)
+        : null;
 
-    const result =
-      await supabase.auth.signInWithPassword(
-        {
-          email,
-          password
-        }
-      );
+  } catch {
 
-    if (
-      result.error
-    ) {
-
-      throw result.error;
-
-    }
-
-    const user =
-      result.data?.user;
-
-    if (!user) {
-
-      throw new Error(
-        "Login failed."
-      );
-
-    }
-
-    const allowed =
-      await checkAdminUser(
-        user
-      );
-
-    if (!allowed) {
-
-      await supabase.auth.signOut();
-
-      throw new Error(
-        "You are not authorized to access the Admin Panel."
-      );
-
-    }
-
-    hideLoginScreen();
-
-    await startAdmin();
-
-  } catch (error) {
-
-    console.error(
-      "Admin login error:",
-      error
-    );
-
-    errorBox.textContent =
-      error.message ||
-      "Login failed.";
-
-  } finally {
-
-    button.disabled =
-      false;
-
-    button.textContent =
-      "Login";
+    data = null;
 
   }
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      `Supabase ${response.status}: ${text}`
+    );
+
+  }
+
+
+  return data;
+
+}
+
+
+/* =========================================================
+   VERIFY LOGGED-IN USER
+========================================================= */
+
+async function getAuthenticatedUser(accessToken) {
+
+  const url =
+    process.env.SUPABASE_URL;
+
+  const key =
+    process.env.SUPABASE_SECRET_KEY;
+
+
+  if (!url || !key) {
+
+    throw new Error(
+      "Supabase environment variables are missing"
+    );
+
+  }
+
+
+  const response =
+    await fetch(
+      `${url.replace(/\/$/, "")}/auth/v1/user`,
+      {
+
+        method: "GET",
+
+        headers: {
+
+          "apikey":
+            key,
+
+          "Authorization":
+            `Bearer ${accessToken}`
+
+        }
+
+      }
+    );
+
+
+  if (!response.ok) {
+
+    return null;
+
+  }
+
+
+  const user =
+    await response.json();
+
+
+  return user || null;
 
 }
 
@@ -383,11 +156,11 @@ async function handleAdminLogin(event) {
 async function checkAdminUser(user) {
 
   if (!user) {
+
     return false;
+
   }
 
-  const supabase =
-    await loadSupabaseLibrary();
 
   const email =
     String(
@@ -396,1355 +169,283 @@ async function checkAdminUser(user) {
       .trim()
       .toLowerCase();
 
+
   if (!email) {
+
     return false;
+
   }
 
-  const result =
-    await supabase
-      .from("admin_users")
-      .select(
-        "id,email,active"
-      )
-      .eq(
-        "email",
-        email
-      )
-      .eq(
-        "active",
-        true
-      )
-      .limit(1);
 
-  if (
-    result.error
-  ) {
-
-    console.error(
-      "Admin user check error:",
-      result.error
+  const rows =
+    await supabase(
+      `admin_users?select=id,email,active&email=eq.${encodeURIComponent(email)}&active=eq.true&limit=1`
     );
 
-    return false;
-
-  }
 
   return Boolean(
-    result.data &&
-    result.data.length
+    rows &&
+    rows.length > 0
   );
 
 }
 
 
 /* =========================================================
-   PROTECT ADMIN PAGE
+   MAIN API
 ========================================================= */
 
-async function protectAdminPage() {
+module.exports =
+  async function handler(req, res) {
 
-  try {
 
-    const supabase =
-      await loadSupabaseLibrary();
+    /* =====================================================
+       ONLY GET ALLOWED
+    ===================================================== */
 
-    const sessionResult =
-      await supabase.auth.getSession();
+    if (req.method !== "GET") {
 
-    const session =
-      sessionResult
-        .data
-        ?.session;
+      return res.status(405).json({
 
-    if (!session) {
+        success: false,
 
-      showLoginScreen();
+        error:
+          "Method not allowed"
 
-      return false;
+      });
 
     }
 
-    const user =
-      session.user;
 
-    const allowed =
-      await checkAdminUser(
-        user
-      );
+    try {
 
-    if (!allowed) {
 
-      await supabase.auth.signOut();
+      /* ===================================================
+         GET AUTHORIZATION HEADER
+      =================================================== */
 
-      showLoginScreen();
+      const authorization =
+        req.headers.authorization ||
+        "";
 
-      return false;
-
-    }
-
-    addLogoutButton();
-
-    return true;
-
-  } catch (error) {
-
-    console.error(
-      "Admin protection error:",
-      error
-    );
-
-    showLoginScreen();
-
-    return false;
-
-  }
-
-}
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-function addLogoutButton() {
-
-  if (
-    document.getElementById(
-      "adminLogoutButton"
-    )
-  ) {
-    return;
-  }
-
-  const header =
-    document.querySelector(
-      ".admin-head"
-    );
-
-  if (!header) {
-    return;
-  }
-
-  const button =
-    document.createElement(
-      "button"
-    );
-
-  button.id =
-    "adminLogoutButton";
-
-  button.className =
-    "secondary-btn";
-
-  button.textContent =
-    "Logout";
-
-  button.style.marginLeft =
-    "10px";
-
-  button.onclick =
-    async () => {
-
-      try {
-
-        const supabase =
-          await loadSupabaseLibrary();
-
-        await supabase.auth.signOut();
-
-        location.reload();
-
-      } catch (error) {
-
-        console.error(
-          "Logout error:",
-          error
-        );
-
-      }
-
-    };
-
-  header.appendChild(
-    button
-  );
-
-}
-
-
-/* =========================================================
-   TEMPLATE MANAGEMENT
-========================================================= */
-
-const defaultTemplates = [
-
-  ["Elegant Gold", "traditional", "gold", false],
-  ["Modern Rose", "modern", "rose", false],
-  ["Royal Blue", "royal", "blue", false],
-  ["Sage Garden", "floral", "green", false],
-  ["Lavender Love", "floral", "purple", false],
-  ["Sunset Marigold", "floral", "orange", true],
-  ["Classic Cream", "traditional", "cream", true],
-  ["Red Heritage", "traditional", "red", true],
-  ["Minimal Pearl", "modern", "cream", true],
-  ["Midnight Royal", "royal", "blue", true],
-  ["Blush Bloom", "floral", "rose", true],
-  ["Temple Gold", "traditional", "gold", true],
-  ["Emerald Grace", "royal", "green", true],
-  ["Dusty Rose", "modern", "rose", true],
-  ["Regal Navy", "royal", "blue", true],
-  ["Peach Petals", "floral", "orange", true],
-  ["Vintage Ivory", "traditional", "cream", true],
-  ["Plum Elegance", "royal", "purple", true],
-  ["Garden Sage", "floral", "green", true],
-  ["Ruby Classic", "traditional", "red", true]
-
-];
-
-
-let templates =
-  JSON.parse(
-    localStorage.getItem(
-      "vivah_templates"
-    ) || "null"
-  ) ||
-  defaultTemplates.slice();
-
-
-function saveTemplates() {
-
-  localStorage.setItem(
-    "vivah_templates",
-    JSON.stringify(
-      templates
-    )
-  );
-
-}
-
-
-function renderTemplates() {
-
-  if ($("aTemplates")) {
-
-    $("aTemplates").textContent =
-      templates.length;
-
-  }
-
-  const container =
-    $("adminTemplates");
-
-  if (!container) {
-    return;
-  }
-
-  container.innerHTML =
-    "";
-
-  templates.forEach(
-    (
-      template,
-      index
-    ) => {
-
-      const row =
-        document.createElement(
-          "div"
-        );
-
-      row.className =
-        "row";
-
-      row.innerHTML = `
-
-        <div>
-          ${String(index + 1).padStart(2, "0")}
-        </div>
-
-        <div>
-
-          <b>
-            ${esc(template[0])}
-          </b>
-
-          <small
-            style="
-              display:block;
-              color:#8b7d7f;
-              margin-top:4px;
-            "
-          >
-            ${esc(template[1])}
-          </small>
-
-        </div>
-
-        <span>
-          ${
-            template[3]
-              ? "Premium"
-              : "Free"
-          }
-        </span>
-
-        <div class="admin-actions">
-
-          <button
-            onclick="editName(${index})"
-          >
-            Edit
-          </button>
-
-          <button
-            onclick="togglePremium(${index})"
-          >
-            ${
-              template[3]
-                ? "Make Free"
-                : "Make Premium"
-            }
-          </button>
-
-          <button
-            onclick="removeTemplate(${index})"
-          >
-            Delete
-          </button>
-
-        </div>
-
-      `;
-
-      container.appendChild(
-        row
-      );
-
-    }
-  );
-
-}
-
-
-function editName(index) {
-
-  const newName =
-    prompt(
-      "Template name",
-      templates[index][0]
-    );
-
-  if (
-    newName &&
-    newName.trim()
-  ) {
-
-    templates[index][0] =
-      newName.trim();
-
-    saveTemplates();
-
-    renderTemplates();
-
-  }
-
-}
-
-
-function togglePremium(index) {
-
-  templates[index][3] =
-    !templates[index][3];
-
-  saveTemplates();
-
-  renderTemplates();
-
-}
-
-
-function removeTemplate(index) {
-
-  if (
-    templates.length <= 1
-  ) {
-
-    alert(
-      "Keep at least one template."
-    );
-
-    return;
-
-  }
-
-  if (
-    confirm(
-      "Delete this template?"
-    )
-  ) {
-
-    templates.splice(
-      index,
-      1
-    );
-
-    saveTemplates();
-
-    renderTemplates();
-
-  }
-
-}
-
-
-if ($("addTemplate")) {
-
-  $("addTemplate").onclick =
-    () => {
-
-      const name =
-        prompt(
-          "New template name",
-          "My New Design"
-        );
 
       if (
-        name &&
-        name.trim()
-      ) {
-
-        templates.push([
-          name.trim(),
-          "modern",
-          "rose",
-          true
-        ]);
-
-        saveTemplates();
-
-        renderTemplates();
-
-      }
-
-    };
-
-}
-
-
-/* =========================================================
-   PAYMENT SETTINGS
-========================================================= */
-
-const settings =
-  JSON.parse(
-    localStorage.getItem(
-      "vivah_settings"
-    ) || "{}"
-  );
-
-
-if ($("razorpayKey")) {
-
-  $("razorpayKey").value =
-    settings.key || "";
-
-}
-
-
-if ($("price")) {
-
-  $("price").value =
-    settings.price || 19;
-
-}
-
-
-if ($("saveSetup")) {
-
-  $("saveSetup").onclick =
-    () => {
-
-      localStorage.setItem(
-        "vivah_settings",
-        JSON.stringify(
-          {
-            key:
-              $("razorpayKey").value,
-
-            price:
-              $("price").value
-          }
-        )
-      );
-
-      alert(
-        "Saved. Current premium price: ₹" +
-        $("price").value
-      );
-
-    };
-
-}
-
-
-/* =========================================================
-   LOAD REAL ADMIN DATA
-   IMPORTANT:
-   Send Supabase access token to secure API
-========================================================= */
-
-async function loadDashboardStats() {
-
-  try {
-
-    const supabase =
-      await loadSupabaseLibrary();
-
-
-    /* =====================================================
-       GET CURRENT SESSION
-    ===================================================== */
-
-    const sessionResult =
-      await supabase.auth.getSession();
-
-    const session =
-      sessionResult
-        .data
-        ?.session;
-
-
-    if (!session?.access_token) {
-
-      throw new Error(
-        "Admin session expired. Please login again."
-      );
-
-    }
-
-
-    /* =====================================================
-       CALL SECURE ADMIN API
-    ===================================================== */
-
-    const response =
-      await fetch(
-        "/api/admin-stats",
-        {
-          method: "GET",
-
-          cache: "no-store",
-
-          headers: {
-
-            "Authorization":
-              `Bearer ${session.access_token}`,
-
-            "Content-Type":
-              "application/json"
-
-          }
-
-        }
-      );
-
-
-    const result =
-      await response.json();
-
-
-    if (
-      !response.ok ||
-      !result.success
-    ) {
-
-      throw new Error(
-        result.error ||
-        "Could not load dashboard data"
-      );
-
-    }
-
-
-    /* =====================================================
-       TEMPLATES
-    ===================================================== */
-
-    if ($("aTemplates")) {
-
-      $("aTemplates").textContent =
-        templates.length;
-
-    }
-
-
-    /* =====================================================
-       SAVED PROFILES
-    ===================================================== */
-
-    if ($("aUsers")) {
-
-      $("aUsers").textContent =
-        result.stats.profiles;
-
-    }
-
-
-    /* =====================================================
-       DOWNLOADS
-    ===================================================== */
-
-    if ($("aDownloads")) {
-
-      $("aDownloads").textContent =
-        result.stats.downloads;
-
-    }
-
-
-    /* =====================================================
-       PAID PAYMENTS
-    ===================================================== */
-
-    if ($("aPaidPayments")) {
-
-      $("aPaidPayments").textContent =
-        result.stats.paidPayments;
-
-    }
-
-
-    /* =====================================================
-       REVENUE
-    ===================================================== */
-
-    if ($("aRevenue")) {
-
-      $("aRevenue").textContent =
-        money(
-          result.stats.revenue
-        );
-
-    }
-
-
-    /* =====================================================
-       RECENT PAYMENTS
-    ===================================================== */
-
-    renderRecentPayments(
-      result.recentPayments || []
-    );
-
-
-    console.log(
-      "VivahBio Admin Data:",
-      result
-    );
-
-
-  } catch (error) {
-
-    console.error(
-      "Admin stats error:",
-      error
-    );
-
-
-    if ($("aUsers")) {
-
-      $("aUsers").textContent =
-        "—";
-
-    }
-
-    if ($("aDownloads")) {
-
-      $("aDownloads").textContent =
-        "—";
-
-    }
-
-    if ($("aPaidPayments")) {
-
-      $("aPaidPayments").textContent =
-        "—";
-
-    }
-
-    if ($("aRevenue")) {
-
-      $("aRevenue").textContent =
-        "—";
-
-    }
-
-  }
-
-}
-
-
-/* =========================================================
-   EXTRA STAT CARDS
-========================================================= */
-
-function createExtraStatCards() {
-
-  const stats =
-    document.querySelector(
-      ".admin-stats"
-    );
-
-  if (!stats) {
-    return;
-  }
-
-
-  /* PAID PAYMENTS */
-
-  let paymentCard =
-    document.getElementById(
-      "aPaidPaymentsCard"
-    );
-
-  if (!paymentCard) {
-
-    paymentCard =
-      document.createElement(
-        "div"
-      );
-
-    paymentCard.id =
-      "aPaidPaymentsCard";
-
-    paymentCard.innerHTML = `
-
-      <b id="aPaidPayments">
-        —
-      </b>
-
-      <span>
-        Paid Payments
-      </span>
-
-    `;
-
-    stats.appendChild(
-      paymentCard
-    );
-
-  }
-
-
-  /* REVENUE */
-
-  let revenueCard =
-    document.getElementById(
-      "aRevenueCard"
-    );
-
-  if (!revenueCard) {
-
-    revenueCard =
-      document.createElement(
-        "div"
-      );
-
-    revenueCard.id =
-      "aRevenueCard";
-
-    revenueCard.innerHTML = `
-
-      <b id="aRevenue">
-        —
-      </b>
-
-      <span>
-        Revenue
-      </span>
-
-    `;
-
-    stats.appendChild(
-      revenueCard
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   RECENT PAYMENTS
-========================================================= */
-
-function ensureRecentPaymentsSection() {
-
-  let section =
-    document.getElementById(
-      "recentPaymentsSection"
-    );
-
-  if (section) {
-    return section;
-  }
-
-  section =
-    document.createElement(
-      "section"
-    );
-
-  section.id =
-    "recentPaymentsSection";
-
-  section.className =
-    "admin-card";
-
-  section.innerHTML = `
-
-    <div class="admin-card-head">
-
-      <h2>
-        Recent Paid Payments
-      </h2>
-
-    </div>
-
-    <div
-      id="recentPayments"
-      class="admin-table"
-    ></div>
-
-  `;
-
-  const cards =
-    document.querySelectorAll(
-      ".admin-card"
-    );
-
-  const templateCard =
-    cards[0];
-
-  if (
-    templateCard &&
-    templateCard.parentNode
-  ) {
-
-    templateCard.parentNode.insertBefore(
-      section,
-      templateCard.nextSibling
-    );
-
-  } else {
-
-    const admin =
-      document.querySelector(
-        ".admin"
-      );
-
-    if (admin) {
-
-      admin.appendChild(
-        section
-      );
-
-    }
-
-  }
-
-  return section;
-
-}
-
-
-function renderRecentPayments(
-  payments
-) {
-
-  const section =
-    ensureRecentPaymentsSection();
-
-  const container =
-    section.querySelector(
-      "#recentPayments"
-    );
-
-  if (!container) {
-    return;
-  }
-
-  if (
-    !payments ||
-    !payments.length
-  ) {
-
-    container.innerHTML = `
-
-      <div
-        style="
-          padding:20px;
-          color:#8b7d7f;
-          text-align:center;
-        "
-      >
-        No paid payments yet.
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-  const latest =
-    payments.slice(
-      0,
-      10
-    );
-
-  container.innerHTML =
-    latest
-      .map(
-        (
-          payment,
-          index
-        ) => `
-
-          <div class="row">
-
-            <div>
-              ${index + 1}
-            </div>
-
-            <div>
-
-              <b>
-                ${esc(
-                  payment.razorpay_payment_id ||
-                  "Payment"
-                )}
-              </b>
-
-              <small
-                style="
-                  display:block;
-                  color:#8b7d7f;
-                  margin-top:4px;
-                "
-              >
-                ${formatDate(
-                  payment.paid_at ||
-                  payment.created_at
-                )}
-              </small>
-
-            </div>
-
-            <span>
-              ${money(
-                Number(
-                  payment.amount || 0
-                ) / 100
-              )}
-            </span>
-
-            <div>
-
-              <small>
-                Profile:
-                ${esc(
-                  payment.profile_id ||
-                  "—"
-                )}
-              </small>
-
-            </div>
-
-          </div>
-
-        `
-      )
-      .join("");
-
-}
-
-
-/* =========================================================
-   REFRESH BUTTON
-========================================================= */
-
-function addRefreshButton() {
-
-  const header =
-    document.querySelector(
-      ".admin-head"
-    );
-
-  if (!header) {
-    return;
-  }
-
-  if (
-    document.getElementById(
-      "refreshDashboard"
-    )
-  ) {
-    return;
-  }
-
-  const button =
-    document.createElement(
-      "button"
-    );
-
-  button.id =
-    "refreshDashboard";
-
-  button.className =
-    "secondary-btn";
-
-  button.textContent =
-    "↻ Refresh Data";
-
-  button.style.marginTop =
-    "15px";
-
-  button.onclick =
-    async () => {
-
-      button.disabled =
-        true;
-
-      button.textContent =
-        "Refreshing…";
-
-      try {
-
-        await loadDashboardStats();
-
-      } finally {
-
-        button.disabled =
-          false;
-
-        button.textContent =
-          "↻ Refresh Data";
-
-      }
-
-    };
-
-  header.appendChild(
-    button
-  );
-
-}
-
-
-/* =========================================================
-   RESET DEMO
-========================================================= */
-
-if ($("resetDemo")) {
-
-  $("resetDemo").onclick =
-    () => {
-
-      if (
-        confirm(
-          "Reset demo data? This will clear local template/settings data from this browser. Supabase database data will NOT be deleted."
+        !authorization.startsWith(
+          "Bearer "
         )
       ) {
 
-        localStorage.clear();
+        return res.status(401).json({
 
-        location.reload();
+          success: false,
+
+          error:
+            "Authentication required"
+
+        });
 
       }
 
-    };
 
-}
+      const accessToken =
+        authorization
+          .replace(
+            "Bearer ",
+            ""
+          )
+          .trim();
 
 
-/* =========================================================
-   ADMIN STYLES
-========================================================= */
+      if (!accessToken) {
 
-function addAdminStyles() {
+        return res.status(401).json({
 
-  if (
-    document.getElementById(
-      "admin-live-styles"
-    )
-  ) {
-    return;
-  }
+          success: false,
 
-  const style =
-    document.createElement(
-      "style"
-    );
+          error:
+            "Invalid authentication token"
 
-  style.id =
-    "admin-live-styles";
+        });
 
-  style.textContent = `
+      }
 
-    .admin-stats > div {
-      min-width: 130px;
-    }
 
-    #refreshDashboard {
-      display: inline-block;
-    }
+      /* ===================================================
+         VERIFY TOKEN WITH SUPABASE
+      =================================================== */
 
-    #recentPaymentsSection {
-      margin-top: 20px;
-    }
-
-    #recentPayments .row {
-      align-items: center;
-    }
-
-    #recentPayments small {
-      word-break: break-word;
-    }
-
-    #vivahAdminLogin {
-
-      position: fixed;
-      inset: 0;
-
-      z-index: 999999;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: center;
-
-      background:
-        linear-gradient(
-          135deg,
-          #f8efeb,
-          #fff
+      const user =
+        await getAuthenticatedUser(
+          accessToken
         );
 
-      padding: 20px;
 
-    }
+      if (!user) {
 
-    .admin-login-box {
+        return res.status(401).json({
 
-      width: 100%;
+          success: false,
 
-      max-width: 420px;
+          error:
+            "Invalid or expired session"
 
-      background: #fff;
-
-      padding: 40px;
-
-      border-radius: 20px;
-
-      box-shadow:
-        0 20px 60px
-        rgba(0,0,0,.12);
-
-      text-align: center;
-
-    }
-
-    .admin-login-logo {
-
-      width: 60px;
-
-      height: 60px;
-
-      margin: 0 auto 15px;
-
-      border-radius: 50%;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: center;
-
-      background: #f9e8ec;
-
-      color: #8b1e3f;
-
-      font-size: 32px;
-
-    }
-
-    .admin-login-box h1 {
-
-      margin: 0;
-
-      color: #8b1e3f;
-
-    }
-
-    .admin-login-box h2 {
-
-      margin-top: 25px;
-
-      margin-bottom: 8px;
-
-    }
-
-    .admin-login-box p {
-
-      color: #777;
-
-      margin-bottom: 25px;
-
-    }
-
-    .admin-login-box input {
-
-      width: 100%;
-
-      box-sizing: border-box;
-
-      padding: 14px;
-
-      margin-bottom: 14px;
-
-      border: 1px solid #ddd;
-
-      border-radius: 10px;
-
-      font-size: 16px;
-
-    }
-
-    .admin-login-box button {
-
-      width: 100%;
-
-      padding: 14px;
-
-      border: 0;
-
-      border-radius: 10px;
-
-      background: #8b1e3f;
-
-      color: white;
-
-      font-size: 16px;
-
-      font-weight: 600;
-
-      cursor: pointer;
-
-    }
-
-    .admin-login-box button:disabled {
-
-      opacity: .6;
-
-      cursor: not-allowed;
-
-    }
-
-    #adminLoginError {
-
-      color: #c62828;
-
-      margin-top: 15px;
-
-      min-height: 20px;
-
-      font-size: 14px;
-
-    }
-
-    @media (max-width: 700px) {
-
-      .admin-stats {
-
-        grid-template-columns:
-          repeat(2, 1fr);
+        });
 
       }
 
-      #recentPayments .row {
 
-        grid-template-columns:
-          35px 1fr;
+      /* ===================================================
+         CHECK ADMIN_USERS TABLE
+      =================================================== */
 
-        gap: 10px;
+      const isAdmin =
+        await checkAdminUser(
+          user
+        );
 
-      }
 
-      #recentPayments .row > span {
+      if (!isAdmin) {
 
-        grid-column: 2;
+        return res.status(403).json({
 
-      }
+          success: false,
 
-      #recentPayments .row > div:last-child {
+          error:
+            "You are not authorized to access admin data"
 
-        grid-column: 2;
-
-      }
-
-      .admin-login-box {
-
-        padding: 30px 20px;
+        });
 
       }
+
+
+      /* ===================================================
+         PROFILES
+      =================================================== */
+
+      const profiles =
+        await supabase(
+          "profiles?select=id,name,phone,email,template_id,premium,created_at,photo_url&order=created_at.desc"
+        );
+
+
+      /* ===================================================
+         PAYMENTS
+      =================================================== */
+
+      const payments =
+        await supabase(
+          "payments?select=id,profile_id,razorpay_order_id,razorpay_payment_id,amount,currency,status,created_at,paid_at&order=created_at.desc"
+        );
+
+
+      /* ===================================================
+         DOWNLOADS
+      =================================================== */
+
+      const downloads =
+        await supabase(
+          "downloads?select=id,profile_id,payment_id,file_type,created_at&order=created_at.desc"
+        );
+
+
+      /* ===================================================
+         PAID PAYMENTS
+      =================================================== */
+
+      const paidPayments =
+        payments.filter(
+          payment =>
+            payment.status === "paid"
+        );
+
+
+      /* ===================================================
+         REVENUE
+         Razorpay amount is stored in paise
+      =================================================== */
+
+      const revenuePaise =
+        paidPayments.reduce(
+          (total, payment) =>
+            total +
+            Number(
+              payment.amount || 0
+            ),
+          0
+        );
+
+
+      const revenue =
+        revenuePaise / 100;
+
+
+      /* ===================================================
+         SUCCESS RESPONSE
+      =================================================== */
+
+      return res.status(200).json({
+
+        success: true,
+
+        stats: {
+
+          profiles:
+            profiles.length,
+
+          downloads:
+            downloads.length,
+
+          payments:
+            payments.length,
+
+          paidPayments:
+            paidPayments.length,
+
+          revenue:
+            revenue
+
+        },
+
+        recentProfiles:
+          profiles.slice(
+            0,
+            10
+          ),
+
+        recentPayments:
+          paidPayments.slice(
+            0,
+            10
+          ),
+
+        recentDownloads:
+          downloads.slice(
+            0,
+            10
+          )
+
+      });
+
+
+    } catch (error) {
+
+
+      console.error(
+        "admin-stats:",
+        error
+      );
+
+
+      return res.status(500).json({
+
+        success: false,
+
+        error:
+          error.message ||
+          "Could not load admin statistics"
+
+      });
 
     }
 
-  `;
-
-  document.head.appendChild(
-    style
-  );
-
-}
-
-
-function addLoginStyles() {
-
-  addAdminStyles();
-
-}
-
-
-/* =========================================================
-   START ADMIN
-========================================================= */
-
-async function startAdmin() {
-
-  const allowed =
-    await protectAdminPage();
-
-  if (!allowed) {
-    return;
-  }
-
-  renderTemplates();
-
-  createExtraStatCards();
-
-  addAdminStyles();
-
-  addRefreshButton();
-
-  await loadDashboardStats();
-
-}
-
-
-/* =========================================================
-   START
-========================================================= */
-
-startAdmin();
+  };
