@@ -2877,3 +2877,22 @@ renderTemplates();
 renderMini();
 
 updatePreview();
+
+// ===== HERO BIODATA CLICK =====
+const heroPaper = document.getElementById("heroPaper");
+
+if (heroPaper) {
+  heroPaper.style.cursor = "pointer";
+  heroPaper.setAttribute("title", "Create your biodata");
+
+  heroPaper.addEventListener("click", function () {
+    const maker = document.getElementById("maker");
+
+    if (maker) {
+      maker.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+  });
+}
