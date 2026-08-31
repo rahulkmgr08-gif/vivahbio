@@ -1750,3 +1750,45 @@ textarea:focus {
   }
 
 }
+/* =====================================================
+   FINAL FOOTER + BOTTOM GAP FIX
+===================================================== */
+
+html,
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.site-footer {
+  margin: 0 !important;
+}
+
+/* Remove unwanted space immediately before footer */
+.site-footer {
+  position: relative;
+  clear: both;
+}
+
+.site-footer::before {
+  display: none !important;
+}
+
+/* Remove bottom margin from the section before footer */
+.maker {
+  margin-bottom: 0 !important;
+}
+
+/* Prevent extra whitespace from last elements */
+.maker-layout,
+.preview-wrap,
+.form-card {
+  margin-bottom: 0 !important;
+}
+
+/* Mobile footer */
+@media (max-width: 700px) {
+  .site-footer {
+    margin: 0 !important;
+  }
+}
