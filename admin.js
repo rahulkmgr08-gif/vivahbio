@@ -99,6 +99,7 @@ async function loadSupabaseLibrary() {
   if (
     window.supabase
   ) {
+
     window.vivahSupabase =
       window.supabase.createClient(
         SUPABASE_URL,
@@ -252,13 +253,15 @@ function hideLoginScreen() {
     );
 
   if (login) {
-
     login.remove();
-
   }
 
 }
 
+
+/* =========================================================
+   ADMIN LOGIN
+========================================================= */
 
 async function handleAdminLogin(event) {
 
@@ -377,14 +380,10 @@ async function handleAdminLogin(event) {
    CHECK ADMIN USER
 ========================================================= */
 
-async function checkAdminUser(
-  user
-) {
+async function checkAdminUser(user) {
 
   if (!user) {
-
     return false;
-
   }
 
   const supabase =
@@ -398,9 +397,7 @@ async function checkAdminUser(
       .toLowerCase();
 
   if (!email) {
-
     return false;
-
   }
 
   const result =
@@ -516,9 +513,7 @@ function addLogoutButton() {
       "adminLogoutButton"
     )
   ) {
-
     return;
-
   }
 
   const header =
@@ -527,9 +522,7 @@ function addLogoutButton() {
     );
 
   if (!header) {
-
     return;
-
   }
 
   const button =
@@ -586,43 +579,24 @@ function addLogoutButton() {
 const defaultTemplates = [
 
   ["Elegant Gold", "traditional", "gold", false],
-
   ["Modern Rose", "modern", "rose", false],
-
   ["Royal Blue", "royal", "blue", false],
-
   ["Sage Garden", "floral", "green", false],
-
   ["Lavender Love", "floral", "purple", false],
-
   ["Sunset Marigold", "floral", "orange", true],
-
   ["Classic Cream", "traditional", "cream", true],
-
   ["Red Heritage", "traditional", "red", true],
-
   ["Minimal Pearl", "modern", "cream", true],
-
   ["Midnight Royal", "royal", "blue", true],
-
   ["Blush Bloom", "floral", "rose", true],
-
   ["Temple Gold", "traditional", "gold", true],
-
   ["Emerald Grace", "royal", "green", true],
-
   ["Dusty Rose", "modern", "rose", true],
-
   ["Regal Navy", "royal", "blue", true],
-
   ["Peach Petals", "floral", "orange", true],
-
   ["Vintage Ivory", "traditional", "cream", true],
-
   ["Plum Elegance", "royal", "purple", true],
-
   ["Garden Sage", "floral", "green", true],
-
   ["Ruby Classic", "traditional", "red", true]
 
 ];
@@ -662,9 +636,7 @@ function renderTemplates() {
     $("adminTemplates");
 
   if (!container) {
-
     return;
-
   }
 
   container.innerHTML =
@@ -917,23 +889,69 @@ if ($("saveSetup")) {
 
 /* =========================================================
    LOAD REAL ADMIN DATA
+   IMPORTANT:
+   Send Supabase access token to secure API
 ========================================================= */
 
 async function loadDashboardStats() {
 
   try {
 
+    const supabase =
+      await loadSupabaseLibrary();
+
+
+    /* =====================================================
+       GET CURRENT SESSION
+    ===================================================== */
+
+    const sessionResult =
+      await supabase.auth.getSession();
+
+    const session =
+      sessionResult
+        .data
+        ?.session;
+
+
+    if (!session?.access_token) {
+
+      throw new Error(
+        "Admin session expired. Please login again."
+      );
+
+    }
+
+
+    /* =====================================================
+       CALL SECURE ADMIN API
+    ===================================================== */
+
     const response =
       await fetch(
         "/api/admin-stats",
         {
           method: "GET",
-          cache: "no-store"
+
+          cache: "no-store",
+
+          headers: {
+
+            "Authorization":
+              `Bearer ${session.access_token}`,
+
+            "Content-Type":
+              "application/json"
+
+          }
+
         }
       );
 
+
     const result =
       await response.json();
+
 
     if (
       !response.ok ||
@@ -948,7 +966,9 @@ async function loadDashboardStats() {
     }
 
 
-    /* TEMPLATES */
+    /* =====================================================
+       TEMPLATES
+    ===================================================== */
 
     if ($("aTemplates")) {
 
@@ -958,7 +978,9 @@ async function loadDashboardStats() {
     }
 
 
-    /* SAVED PROFILES */
+    /* =====================================================
+       SAVED PROFILES
+    ===================================================== */
 
     if ($("aUsers")) {
 
@@ -968,7 +990,9 @@ async function loadDashboardStats() {
     }
 
 
-    /* DOWNLOADS */
+    /* =====================================================
+       DOWNLOADS
+    ===================================================== */
 
     if ($("aDownloads")) {
 
@@ -978,7 +1002,9 @@ async function loadDashboardStats() {
     }
 
 
-    /* PAID PAYMENTS */
+    /* =====================================================
+       PAID PAYMENTS
+    ===================================================== */
 
     if ($("aPaidPayments")) {
 
@@ -988,7 +1014,9 @@ async function loadDashboardStats() {
     }
 
 
-    /* REVENUE */
+    /* =====================================================
+       REVENUE
+    ===================================================== */
 
     if ($("aRevenue")) {
 
@@ -1000,7 +1028,9 @@ async function loadDashboardStats() {
     }
 
 
-    /* RECENT PAYMENTS */
+    /* =====================================================
+       RECENT PAYMENTS
+    ===================================================== */
 
     renderRecentPayments(
       result.recentPayments || []
@@ -1019,6 +1049,7 @@ async function loadDashboardStats() {
       "Admin stats error:",
       error
     );
+
 
     if ($("aUsers")) {
 
@@ -1065,9 +1096,7 @@ function createExtraStatCards() {
     );
 
   if (!stats) {
-
     return;
-
   }
 
 
@@ -1157,9 +1186,7 @@ function ensureRecentPaymentsSection() {
     );
 
   if (section) {
-
     return section;
-
   }
 
   section =
@@ -1243,9 +1270,7 @@ function renderRecentPayments(
     );
 
   if (!container) {
-
     return;
-
   }
 
   if (
@@ -1356,9 +1381,7 @@ function addRefreshButton() {
     );
 
   if (!header) {
-
     return;
-
   }
 
   if (
@@ -1366,9 +1389,7 @@ function addRefreshButton() {
       "refreshDashboard"
     )
   ) {
-
     return;
-
   }
 
   const button =
@@ -1457,9 +1478,7 @@ function addAdminStyles() {
       "admin-live-styles"
     )
   ) {
-
     return;
-
   }
 
   const style =
@@ -1708,9 +1727,7 @@ async function startAdmin() {
     await protectAdminPage();
 
   if (!allowed) {
-
     return;
-
   }
 
   renderTemplates();
