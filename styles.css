@@ -1636,6 +1636,5 @@ footer .brand{
 }
 
 .hero-stage .decor {
-  z-index: 0;
-  pointer-events: none;
+  display: none !important;
 }
