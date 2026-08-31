@@ -6,7 +6,8 @@
    - Local draft
    - Razorpay payment
    - Profile saving through create-order
-   - Photo upload
+   - Compressed photo upload
+   - Supabase photo storage through API
    - Exact preview JPG
    - Exact preview PDF
    - Download logging
@@ -119,7 +120,9 @@ function safeValue(id){
 
   if(!el) return "";
 
-  return String(el.value || "").trim();
+  return String(
+    el.value || ""
+  ).trim();
 }
 
 
@@ -146,7 +149,12 @@ function toast(message){
   const box =
     $("toast");
 
-  if(!box) return;
+  if(!box){
+
+    alert(message);
+
+    return;
+  }
 
   box.textContent =
     message;
@@ -161,10 +169,12 @@ function toast(message){
   window.__vivahToastTimer =
     setTimeout(
       () => {
+
         box.style.display =
           "none";
+
       },
-      2800
+      3000
     );
 }
 
@@ -203,6 +213,7 @@ function renderTemplates(
 
   grid.innerHTML = "";
 
+
   templates.forEach(
     (template,index) => {
 
@@ -214,25 +225,31 @@ function renderTemplates(
         return;
       }
 
+
       const card =
         document.createElement(
           "div"
         );
 
+
       card.className =
         "template-card";
+
 
       card.setAttribute(
         "role",
         "button"
       );
 
+
       card.setAttribute(
         "tabindex",
         "0"
       );
 
+
       card.innerHTML = `
+
         <div class="template-art ${artClass(index)}">
 
           <div class="tp"></div>
@@ -247,6 +264,7 @@ function renderTemplates(
 
         </div>
 
+
         <footer>
 
           <b>
@@ -260,13 +278,38 @@ function renderTemplates(
           </small>
 
         </footer>
+
       `;
 
+
       card.onclick =
-        () => selectTemplate(index);
+        function(){
+
+          selectTemplate(index);
+
+          const maker =
+            $("maker");
+
+          if(maker){
+
+            setTimeout(
+              () => {
+
+                maker.scrollIntoView({
+                  behavior:"smooth",
+                  block:"start"
+                });
+
+              },
+              100
+            );
+          }
+
+        };
+
 
       card.onkeydown =
-        event => {
+        function(event){
 
           if(
             event.key === "Enter" ||
@@ -275,14 +318,18 @@ function renderTemplates(
 
             event.preventDefault();
 
-            selectTemplate(index);
+            card.click();
+
           }
+
         };
+
 
       grid.appendChild(card);
 
     }
   );
+
 }
 
 
@@ -299,6 +346,7 @@ function renderMini(){
 
   box.innerHTML = "";
 
+
   templates.forEach(
     (template,index) => {
 
@@ -307,8 +355,10 @@ function renderMini(){
           "button"
         );
 
+
       button.type =
         "button";
+
 
       button.className =
         "mini" +
@@ -318,19 +368,24 @@ function renderMini(){
             : ""
         );
 
+
       button.textContent =
         template[0];
+
 
       button.title =
         template[0];
 
+
       button.onclick =
         () => selectTemplate(index);
+
 
       box.appendChild(button);
 
     }
   );
+
 }
 
 
@@ -348,33 +403,44 @@ function selectTemplate(index){
     return;
   }
 
+
   selected =
     index;
 
+
   const selectedName =
     $("selectedName");
+
 
   if(selectedName){
 
     selectedName.textContent =
       templates[index][0];
+
   }
+
 
   const preview =
     $("preview");
+
 
   if(preview){
 
     preview.className =
       "bio-preview design-" +
       ((index % 10) + 1);
+
   }
+
 
   renderMini();
 
+
   updatePreview();
 
+
   saveDraftMeta();
+
 }
 
 
@@ -404,12 +470,15 @@ function updatePreview(){
       val("name")
     );
 
+
   const profession =
     escapeHtml(
       val("profession")
     );
 
+
   const photoHtml = `
+
     <div class="profile">
 
       <img
@@ -422,6 +491,7 @@ function updatePreview(){
       </span>
 
     </div>
+
   `;
 
 
@@ -450,6 +520,7 @@ function updatePreview(){
 
       </div>
 
+
       ${photoHtml}
 
     </div>
@@ -460,6 +531,7 @@ function updatePreview(){
       <h5>
         PERSONAL DETAILS
       </h5>
+
 
       <div class="bio-section-body">
 
@@ -549,6 +621,7 @@ function updatePreview(){
         FAMILY DETAILS
       </h5>
 
+
       <div class="bio-section-body">
 
         ${bioRow(
@@ -592,10 +665,13 @@ function updatePreview(){
         ABOUT ME
       </h5>
 
+
       <p class="bio-about">
+
         ${escapeHtml(
           safeValue("about") || "—"
         )}
+
       </p>
 
     </div>
@@ -606,6 +682,7 @@ function updatePreview(){
       <h5>
         CONTACT DETAILS
       </h5>
+
 
       <div class="bio-section-body">
 
@@ -656,24 +733,32 @@ function updatePreview(){
     const image =
       $("pimg");
 
+
     const placeholder =
       $("ph");
+
 
     if(image){
 
       image.src =
         profileDataUrl;
 
+
       image.style.display =
         "block";
+
     }
+
 
     if(placeholder){
 
       placeholder.style.display =
         "none";
+
     }
+
   }
+
 }
 
 
@@ -683,6 +768,7 @@ function bioRow(
 ){
 
   return `
+
     <div class="bio-row">
 
       <span>
@@ -694,7 +780,9 @@ function bioRow(
       </b>
 
     </div>
+
   `;
+
 }
 
 
@@ -745,15 +833,18 @@ function loadDraft(){
 
       if(!input) return;
 
+
       const saved =
         localStorage.getItem(
           "vivah_" + id
         );
 
+
       if(saved !== null){
 
         input.value =
           saved;
+
       }
 
     }
@@ -765,10 +856,12 @@ function loadDraft(){
       "vivah_selected_template"
     );
 
+
   if(savedTemplate !== null){
 
     const index =
       Number(savedTemplate);
+
 
     if(
       Number.isInteger(index) &&
@@ -778,15 +871,11 @@ function loadDraft(){
 
       selected =
         index;
+
     }
+
   }
 
-
-  /*
-    Photo is intentionally not stored
-    in localStorage because large images
-    can exceed browser storage limits.
-  */
 }
 
 
@@ -796,6 +885,7 @@ function saveDraftMeta(){
     "vivah_selected_template",
     String(selected)
   );
+
 }
 
 
@@ -805,7 +895,9 @@ formFields.forEach(
     const input =
       $(id);
 
+
     if(!input) return;
+
 
     input.addEventListener(
       "input",
@@ -816,10 +908,12 @@ formFields.forEach(
           input.value
         );
 
+
         updatePreview();
 
       }
     );
+
 
     input.addEventListener(
       "change",
@@ -829,6 +923,7 @@ formFields.forEach(
           "vivah_" + id,
           input.value
         );
+
 
         updatePreview();
 
@@ -850,6 +945,7 @@ $("photo")?.addEventListener(
     const file =
       event.target.files?.[0];
 
+
     if(!file) return;
 
 
@@ -861,55 +957,224 @@ $("photo")?.addEventListener(
         "Please choose an image file."
       );
 
+      event.target.value =
+        "";
+
       return;
     }
 
 
     if(
-      file.size > 8 * 1024 * 1024
+      file.size > 12 * 1024 * 1024
     ){
 
       toast(
-        "Photo should be smaller than 8 MB."
+        "Photo should be smaller than 12 MB."
       );
+
+      event.target.value =
+        "";
 
       return;
     }
 
 
-    const reader =
-      new FileReader();
-
-
-    reader.onload =
-      () => {
+    compressPhoto(
+      file
+    )
+    .then(
+      compressedData => {
 
         profileDataUrl =
-          reader.result;
+          compressedData;
+
 
         updatePreview();
 
-        toast(
-          "Photo added to biodata."
-        );
-      };
-
-
-    reader.onerror =
-      () => {
 
         toast(
-          "Could not read photo."
+          "Photo added successfully."
         );
-      };
+
+      }
+    )
+    .catch(
+      error => {
+
+        console.error(
+          "Photo processing:",
+          error
+        );
 
 
-    reader.readAsDataURL(
-      file
+        toast(
+          "Photo could not be processed."
+        );
+
+      }
     );
 
   }
 );
+
+
+/* =========================================================
+   COMPRESS PHOTO
+   Important:
+   Prevents large base64 request
+   from failing server/API limits.
+========================================================= */
+
+function compressPhoto(file){
+
+  return new Promise(
+    (resolve,reject) => {
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload =
+        function(){
+
+          const img =
+            new Image();
+
+
+          img.onload =
+            function(){
+
+              const maxSize =
+                1600;
+
+
+              let width =
+                img.width;
+
+
+              let height =
+                img.height;
+
+
+              if(
+                width > maxSize ||
+                height > maxSize
+              ){
+
+                if(width > height){
+
+                  height =
+                    Math.round(
+                      height *
+                      maxSize /
+                      width
+                    );
+
+                  width =
+                    maxSize;
+
+                }else{
+
+                  width =
+                    Math.round(
+                      width *
+                      maxSize /
+                      height
+                    );
+
+                  height =
+                    maxSize;
+
+                }
+
+              }
+
+
+              const canvas =
+                document.createElement(
+                  "canvas"
+                );
+
+
+              canvas.width =
+                width;
+
+
+              canvas.height =
+                height;
+
+
+              const ctx =
+                canvas.getContext(
+                  "2d"
+                );
+
+
+              if(!ctx){
+
+                reject(
+                  new Error(
+                    "Canvas not supported"
+                  )
+                );
+
+                return;
+              }
+
+
+              ctx.drawImage(
+                img,
+                0,
+                0,
+                width,
+                height
+              );
+
+
+              const dataUrl =
+                canvas.toDataURL(
+                  "image/jpeg",
+                  0.82
+                );
+
+
+              resolve(
+                dataUrl
+              );
+
+            };
+
+
+          img.onerror =
+            () => reject(
+              new Error(
+                "Invalid image"
+              )
+            );
+
+
+          img.src =
+            reader.result;
+
+        };
+
+
+      reader.onerror =
+        () => reject(
+          new Error(
+            "Could not read image"
+          )
+        );
+
+
+      reader.readAsDataURL(
+        file
+      );
+
+    }
+  );
+
+}
 
 
 /* =========================================================
@@ -1001,6 +1266,11 @@ function getProfilePayload(){
     about_me:
       safeValue("about") || null,
 
+    /*
+      IMPORTANT:
+      Save actual selected template name.
+    */
+
     template_id:
       templates[selected]?.[0] ||
       "Elegant Gold"
@@ -1017,8 +1287,10 @@ function getProfilePayload(){
 const PROFILE_ID_KEY =
   "vivah_profile_id";
 
+
 const PAYMENT_ID_KEY =
   "vivah_payment_id";
+
 
 const PREMIUM_UNLOCK_KEY =
   "vivah_premium_unlocked";
@@ -1029,6 +1301,7 @@ function getProfileId(){
   return localStorage.getItem(
     PROFILE_ID_KEY
   ) || "";
+
 }
 
 
@@ -1040,7 +1313,9 @@ function setProfileId(id){
       PROFILE_ID_KEY,
       String(id)
     );
+
   }
+
 }
 
 
@@ -1049,6 +1324,7 @@ function getPaymentId(){
   return localStorage.getItem(
     PAYMENT_ID_KEY
   ) || "";
+
 }
 
 
@@ -1060,7 +1336,9 @@ function setPaymentId(id){
       PAYMENT_ID_KEY,
       String(id)
     );
+
   }
+
 }
 
 
@@ -1076,6 +1354,7 @@ function premiumUnlocked(){
     ) === "true" &&
     !!getPaymentId()
   );
+
 }
 
 
@@ -1088,12 +1367,15 @@ function setPremiumUnlocked(
     "true"
   );
 
+
   if(paymentId){
 
     setPaymentId(
       paymentId
     );
+
   }
+
 }
 
 
@@ -1106,24 +1388,43 @@ async function uploadProfilePhoto(
 ){
 
   if(
-    !profileId ||
+    !profileId
+  ){
+
+    throw new Error(
+      "Profile ID missing."
+    );
+
+  }
+
+
+  if(
     !profileDataUrl
   ){
 
     return null;
+
   }
 
+
+  /*
+    Photo has already been compressed
+    before reaching this function.
+  */
 
   const response =
     await fetch(
       "/api/upload-photo",
       {
 
-        method: "POST",
+        method:
+          "POST",
 
         headers: {
+
           "Content-Type":
             "application/json"
+
         },
 
         body:
@@ -1141,12 +1442,28 @@ async function uploadProfilePhoto(
     );
 
 
-  const data =
-    await response
-      .json()
-      .catch(
-        () => ({})
-      );
+  const rawText =
+    await response.text();
+
+
+  let data = {};
+
+
+  try{
+
+    data =
+      rawText
+        ? JSON.parse(rawText)
+        : {};
+
+  }catch(error){
+
+    console.error(
+      "Photo API invalid response:",
+      rawText
+    );
+
+  }
 
 
   if(
@@ -1156,15 +1473,30 @@ async function uploadProfilePhoto(
 
     throw new Error(
       data.error ||
-      "Photo upload failed."
+      `Photo upload failed (${response.status})`
     );
+
   }
 
 
-  return (
-    data.photoUrl ||
-    null
+  if(
+    !data.photoUrl
+  ){
+
+    throw new Error(
+      "Photo uploaded but storage path was not returned."
+    );
+
+  }
+
+
+  console.log(
+    "Photo uploaded successfully:",
+    data.photoUrl
   );
+
+
+  return data.photoUrl;
 
 }
 
@@ -1188,6 +1520,7 @@ async function startRazorpayPayment(){
     );
 
     return true;
+
   }
 
 
@@ -1201,6 +1534,7 @@ async function startRazorpayPayment(){
     );
 
     return false;
+
   }
 
 
@@ -1215,10 +1549,19 @@ async function startRazorpayPayment(){
 
     payBtn.textContent =
       "Opening payment…";
+
   }
 
 
   try{
+
+    /*
+      Make sure selected template
+      is saved locally before payment.
+    */
+
+    saveDraftMeta();
+
 
     const orderRes =
       await fetch(
@@ -1229,8 +1572,10 @@ async function startRazorpayPayment(){
             "POST",
 
           headers: {
+
             "Content-Type":
               "application/json"
+
           },
 
           body:
@@ -1266,12 +1611,13 @@ async function startRazorpayPayment(){
         orderData.error ||
         "Unable to create payment order."
       );
+
     }
 
 
     /*
-      create-order.js already creates
-      the profile and returns profileId.
+      create-order.js creates the
+      Supabase profile.
     */
 
     if(
@@ -1281,6 +1627,7 @@ async function startRazorpayPayment(){
       setProfileId(
         orderData.profileId
       );
+
     }
 
 
@@ -1305,6 +1652,7 @@ async function startRazorpayPayment(){
       order_id:
         orderData.orderId,
 
+
       prefill: {
 
         name:
@@ -1318,9 +1666,12 @@ async function startRazorpayPayment(){
 
       },
 
+
       theme: {
+
         color:
           "#7b2036"
+
       },
 
 
@@ -1331,6 +1682,11 @@ async function startRazorpayPayment(){
 
           try{
 
+            /*
+              STEP 1:
+              Verify payment on server.
+            */
+
             const verifyRes =
               await fetch(
                 "/api/verify-payment",
@@ -1340,8 +1696,10 @@ async function startRazorpayPayment(){
                     "POST",
 
                   headers: {
+
                     "Content-Type":
                       "application/json"
+
                   },
 
                   body:
@@ -1380,14 +1738,13 @@ async function startRazorpayPayment(){
                 verifyData.error ||
                 "Payment verification failed."
               );
+
             }
 
 
             /*
-              IMPORTANT:
-              paymentId returned by backend is
-              the Supabase payments.id UUID.
-              log-download.js expects this.
+              STEP 2:
+              Save Supabase payment UUID.
             */
 
             setPaymentId(
@@ -1404,11 +1761,16 @@ async function startRazorpayPayment(){
 
 
             /*
-              Upload photo after successful payment.
+              STEP 3:
+              Upload photo to Supabase Storage.
             */
 
             let photoSaved =
               false;
+
+
+            let photoError =
+              "";
 
 
             try{
@@ -1434,18 +1796,31 @@ async function startRazorpayPayment(){
 
                   photoSaved =
                     true;
+
                 }
+
               }
 
-            }catch(photoError){
+
+            }catch(error){
+
+              photoError =
+                error.message ||
+                "Photo upload failed.";
+
 
               console.error(
-                "Photo upload:",
-                photoError
+                "Photo upload error:",
+                error
               );
 
             }
 
+
+            /*
+              STEP 4:
+              Final message.
+            */
 
             if(photoSaved){
 
@@ -1453,11 +1828,35 @@ async function startRazorpayPayment(){
                 "Payment successful! Photo saved. PDF/JPG unlocked."
               );
 
+            }else if(
+              profileDataUrl
+            ){
+
+              toast(
+                "Payment successful, but photo could not be saved. Please try again."
+              );
+
             }else{
 
               toast(
                 "Payment successful! PDF/JPG unlocked."
               );
+
+            }
+
+
+            /*
+              Keep error available in console
+              for debugging.
+            */
+
+            if(photoError){
+
+              console.error(
+                "Photo save failed:",
+                photoError
+              );
+
             }
 
 
@@ -1474,6 +1873,7 @@ async function startRazorpayPayment(){
               "Payment verification failed."
             );
 
+
           }finally{
 
             resetPayButton();
@@ -1489,6 +1889,7 @@ async function startRazorpayPayment(){
           function(){
 
             resetPayButton();
+
 
             toast(
               "Payment cancelled."
@@ -1512,6 +1913,7 @@ async function startRazorpayPayment(){
       function(){
 
         resetPayButton();
+
 
         toast(
           "Payment failed. Please try again."
@@ -1543,7 +1945,9 @@ async function startRazorpayPayment(){
 
     resetPayButton();
 
+
     return false;
+
   }
 
 }
@@ -1557,6 +1961,7 @@ function resetPayButton(){
 
   const button =
     $("payBtn");
+
 
   if(!button) return;
 
@@ -1585,6 +1990,7 @@ function updatePremiumButtons(){
       unlocked
         ? "Download PDF"
         : "Unlock to Download PDF";
+
   }
 
 
@@ -1594,10 +2000,12 @@ function updatePremiumButtons(){
       unlocked
         ? "Download JPG"
         : "Unlock to Download JPG";
+
   }
 
 
   resetPayButton();
+
 }
 
 
@@ -1619,7 +2027,9 @@ async function logDownload(
       "No payment ID. Download not logged."
     );
 
+
     return false;
+
   }
 
 
@@ -1634,8 +2044,10 @@ async function logDownload(
             "POST",
 
           headers: {
+
             "Content-Type":
               "application/json"
+
           },
 
           body:
@@ -1671,7 +2083,9 @@ async function logDownload(
         data.error
       );
 
+
       return false;
+
     }
 
 
@@ -1685,15 +2099,16 @@ async function logDownload(
       error
     );
 
+
     return false;
+
   }
+
 }
 
 
 /* =========================================================
    LOAD EXTERNAL LIBRARY
-   html2canvas = exact preview image
-   jsPDF = PDF generation
 ========================================================= */
 
 function loadScript(
@@ -1707,6 +2122,7 @@ function loadScript(
         document.querySelector(
           `script[src="${src}"]`
         );
+
 
       if(existing){
 
@@ -1725,14 +2141,18 @@ function loadScript(
             {once:true}
           );
 
+
           existing.addEventListener(
             "error",
             reject,
             {once:true}
           );
+
         }
 
+
         return;
+
       }
 
 
@@ -1741,8 +2161,10 @@ function loadScript(
           "script"
         );
 
+
       script.src =
         src;
+
 
       script.onload =
         () => {
@@ -1750,9 +2172,11 @@ function loadScript(
           script.dataset.loaded =
             "true";
 
+
           resolve();
 
         };
+
 
       script.onerror =
         () => {
@@ -1762,6 +2186,7 @@ function loadScript(
               "Required download library could not be loaded."
             )
           );
+
         };
 
 
@@ -1771,6 +2196,7 @@ function loadScript(
 
     }
   );
+
 }
 
 
@@ -1784,6 +2210,7 @@ async function ensureExportLibraries(){
     await loadScript(
       "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
     );
+
   }
 
 
@@ -1795,6 +2222,7 @@ async function ensureExportLibraries(){
     await loadScript(
       "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
     );
+
   }
 
 }
@@ -1809,18 +2237,15 @@ async function createPreviewCanvas(){
   const preview =
     $("preview");
 
+
   if(!preview){
 
     throw new Error(
       "Biodata preview not found."
     );
+
   }
 
-
-  /*
-    Wait for browser fonts/images
-    before capturing.
-  */
 
   if(
     document.fonts &&
@@ -1828,6 +2253,7 @@ async function createPreviewCanvas(){
   ){
 
     await document.fonts.ready;
+
   }
 
 
@@ -1850,11 +2276,13 @@ async function createPreviewCanvas(){
               resolve();
 
               return;
+
             }
 
 
             image.onload =
               resolve;
+
 
             image.onerror =
               resolve;
@@ -1865,13 +2293,9 @@ async function createPreviewCanvas(){
   );
 
 
-  /*
-    Temporarily remove preview
-    animation/transition effects.
-  */
-
   const oldTransition =
     preview.style.transition;
+
 
   const oldTransform =
     preview.style.transform;
@@ -1879,6 +2303,7 @@ async function createPreviewCanvas(){
 
   preview.style.transition =
     "none";
+
 
   preview.style.transform =
     "none";
@@ -1928,12 +2353,15 @@ async function createPreviewCanvas(){
     preview.style.transition =
       oldTransition;
 
+
     preview.style.transform =
       oldTransform;
+
   }
 
 
   return canvas;
+
 }
 
 
@@ -2029,15 +2457,13 @@ async function downloadPdf(){
     throw new Error(
       "PDF library could not be loaded."
     );
+
   }
 
 
-  /*
-    A4 dimensions in mm.
-  */
-
   const pdf =
     new jsPDF({
+
       orientation:
         "portrait",
 
@@ -2049,26 +2475,26 @@ async function downloadPdf(){
 
       compress:
         true
+
     });
 
 
   const pageWidth =
     pdf.internal.pageSize.getWidth();
 
+
   const pageHeight =
     pdf.internal.pageSize.getHeight();
 
 
-  /*
-    Keep the entire biodata on one A4 page.
-  */
-
   const margin =
     5;
+
 
   const availableWidth =
     pageWidth -
     margin * 2;
+
 
   const availableHeight =
     pageHeight -
@@ -2083,6 +2509,7 @@ async function downloadPdf(){
   let imageWidth =
     availableWidth;
 
+
   let imageHeight =
     imageWidth /
     imageRatio;
@@ -2096,9 +2523,11 @@ async function downloadPdf(){
     imageHeight =
       availableHeight;
 
+
     imageWidth =
       imageHeight *
       imageRatio;
+
   }
 
 
@@ -2164,13 +2593,17 @@ async function requirePremium(
         error
       );
 
+
       toast(
         error.message ||
         "Download failed."
       );
+
     }
 
+
     return;
+
   }
 
 
@@ -2255,6 +2688,16 @@ document
             "all"
           );
 
+
+          /*
+            Re-activate cards after filtering.
+          */
+
+          setTimeout(
+            activateTemplateClickFix,
+            50
+          );
+
         }
       );
 
@@ -2279,52 +2722,40 @@ $("langBtn")?.addEventListener(
 
 
 /* =========================================================
-   INITIALIZE
+   HERO BIODATA CLICK
 ========================================================= */
 
-loadDraft();
-
-renderTemplates();
-
-renderMini();
-
-selectTemplate(
-  selected
-);
-
-updatePreview();
-
-updatePremiumButtons();
-
-/* =========================================================
-   FINAL CLICK FIX
-   - Hero biodata clickable
-   - Template cards clickable
-   - Selected template opens maker
-========================================================= */
+const heroPaper =
+  document.getElementById(
+    "heroPaper"
+  );
 
 
-/* ---------- HERO BIODATA CLICK ---------- */
+if(heroPaper){
 
-const heroPaperFix =
-  document.getElementById("heroPaper");
+  heroPaper.style.cursor =
+    "pointer";
 
-if (heroPaperFix) {
 
-  heroPaperFix.style.cursor = "pointer";
-
-  heroPaperFix.addEventListener(
+  heroPaper.addEventListener(
     "click",
-    function () {
+    function(){
 
       const maker =
-        document.getElementById("maker");
+        document.getElementById(
+          "maker"
+        );
 
-      if (maker) {
+
+      if(maker){
 
         maker.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
+          behavior:
+            "smooth",
+
+          block:
+            "start"
+
         });
 
       }
@@ -2335,40 +2766,30 @@ if (heroPaperFix) {
 }
 
 
-/* ---------- HERO STAGE CLICK ---------- */
+/* =========================================================
+   TEMPLATE CARD CLICK FIX
+========================================================= */
 
-const heroStageFix =
-  document.querySelector(".hero-stage");
-
-if (heroStageFix) {
-
-  heroStageFix.style.cursor =
-    "pointer";
-
-}
-
-
-/* ---------- TEMPLATE CARD CLICK ---------- */
-
-function activateTemplateClickFix() {
+function activateTemplateClickFix(){
 
   const cards =
     document.querySelectorAll(
       "#templateGrid .template-card"
     );
 
-  cards.forEach(
-    (card, index) => {
 
-      /* remove old onclick if any */
+  cards.forEach(
+    card => {
 
       card.style.cursor =
         "pointer";
+
 
       card.setAttribute(
         "role",
         "button"
       );
+
 
       card.setAttribute(
         "tabindex",
@@ -2377,40 +2798,87 @@ function activateTemplateClickFix() {
 
 
       card.onclick =
-        function (event) {
+        function(event){
 
           event.preventDefault();
+
 
           event.stopPropagation();
 
 
-          /* Select template */
+          const allCards =
+            Array.from(
+              document.querySelectorAll(
+                "#templateGrid .template-card"
+              )
+            );
 
-          if (
-            typeof selectTemplate ===
-            "function"
-          ) {
 
-            selectTemplate(index);
+          const visibleIndex =
+            allCards.indexOf(
+              card
+            );
+
+
+          /*
+            Find template by its name
+            rather than relying on visible
+            card index when filters are active.
+          */
+
+          const title =
+            card.querySelector(
+              "footer b"
+            )?.textContent
+              ?.trim();
+
+
+          let templateIndex =
+            templates.findIndex(
+              template =>
+                template[0] === title
+            );
+
+
+          if(
+            templateIndex < 0
+          ){
+
+            templateIndex =
+              visibleIndex;
 
           }
 
 
-          /* Scroll to biodata maker */
+          if(
+            templateIndex >= 0
+          ){
+
+            selectTemplate(
+              templateIndex
+            );
+
+          }
+
 
           const maker =
             document.getElementById(
               "maker"
             );
 
-          if (maker) {
+
+          if(maker){
 
             setTimeout(
-              function () {
+              function(){
 
                 maker.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start"
+                  behavior:
+                    "smooth",
+
+                  block:
+                    "start"
+
                 });
 
               },
@@ -2420,14 +2888,16 @@ function activateTemplateClickFix() {
           }
 
 
-          /* Visual feedback */
-
-          cards.forEach(
-            c =>
-              c.classList.remove(
-                "selected"
-              )
-          );
+          document
+            .querySelectorAll(
+              "#templateGrid .template-card"
+            )
+            .forEach(
+              c =>
+                c.classList.remove(
+                  "selected"
+                )
+            );
 
 
           card.classList.add(
@@ -2438,14 +2908,15 @@ function activateTemplateClickFix() {
 
 
       card.onkeydown =
-        function (event) {
+        function(event){
 
-          if (
+          if(
             event.key === "Enter" ||
             event.key === " "
-          ) {
+          ){
 
             event.preventDefault();
+
 
             card.click();
 
@@ -2459,51 +2930,25 @@ function activateTemplateClickFix() {
 }
 
 
-/* Run once */
-
-activateTemplateClickFix();
-
-
-/* Run again after template filtering */
-
-document
-  .querySelectorAll(".filter")
-  .forEach(
-    button => {
-
-      button.addEventListener(
-        "click",
-        function () {
-
-          setTimeout(
-            activateTemplateClickFix,
-            50
-          );
-
-        }
-      );
-
-    }
-  );
-
-
 /* =========================================================
-   SELECTED TEMPLATE VISUAL STYLE
+   SELECTED TEMPLATE STYLE
 ========================================================= */
 
-if (
+if(
   !document.getElementById(
     "template-click-fix-style"
   )
-) {
+){
 
   const style =
     document.createElement(
       "style"
     );
 
+
   style.id =
     "template-click-fix-style";
+
 
   style.textContent = `
 
@@ -2527,8 +2972,30 @@ if (
 
   `;
 
+
   document.head.appendChild(
     style
   );
 
 }
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+loadDraft();
+
+renderTemplates();
+
+renderMini();
+
+selectTemplate(
+  selected
+);
+
+updatePreview();
+
+updatePremiumButtons();
+
+activateTemplateClickFix();
