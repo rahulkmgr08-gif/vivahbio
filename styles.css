@@ -1924,7 +1924,7 @@ body {
   }
 
   .site-footer > div:last-child::before {
-    width: 60% !important;
+    width: 16% !important;
     margin-bottom: 7px !important;
   }
 }
