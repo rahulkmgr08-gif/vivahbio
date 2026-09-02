@@ -1439,85 +1439,102 @@ textarea:focus {
 
 
 /* =====================================================
-   FOOTER
+   FOOTER - COMPACT / NO EXTRA HEIGHT
 ===================================================== */
 
 .site-footer {
-  width: 100%;
-  background: #241a1d;
-  color: #fff;
+  width: 100% !important;
+  background: #241a1d !important;
+  color: #fff !important;
   margin: 0 !important;
-  padding: 40px 7% 25px;
+  padding: 18px 4% !important;
   border: 0 !important;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 30px;
-  flex-wrap: wrap;
-  overflow: hidden;
-  position: relative;
-  clear: both;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 18px !important;
+  flex-wrap: wrap !important;
+  overflow: hidden !important;
+  position: relative !important;
+  clear: both !important;
+  box-sizing: border-box !important;
+  min-height: 0 !important;
+}
+
+.site-footer > div {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .site-footer .brand {
-  color: #fff;
-  white-space: nowrap;
-  flex-shrink: 0;
+  color: #fff !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+}
+
+.site-footer .brand-icon {
+  flex-shrink: 0 !important;
 }
 
 .site-footer .footer-description {
-  color: #eadfd5;
-  font-size: 18px;
-  white-space: nowrap;
-  flex-shrink: 0;
+  color: #eadfd5 !important;
+  font-size: 15px !important;
+  line-height: 1.3 !important;
+  white-space: nowrap !important;
+  flex-shrink: 1 !important;
+  margin: 0 !important;
 }
 
 .site-footer .footer-links {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0;
-  line-height: 1.8;
-  font-size: 16px;
-  margin-left: auto;
-  text-align: right;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 0 !important;
+  line-height: 1.4 !important;
+  font-size: 14px !important;
+  margin: 0 0 0 auto !important;
+  padding: 0 !important;
+  text-align: right !important;
 }
 
 .site-footer .footer-links a {
   color: #eadfd5 !important;
   text-decoration: none !important;
+  white-space: nowrap !important;
 }
 
 .site-footer .footer-links a:hover {
-  color: #ffffff !important;
+  color: #fff !important;
   text-decoration: underline !important;
 }
 
 .site-footer .footer-links span {
-  color: #eadfd5;
-  margin: 0 3px;
+  color: #eadfd5 !important;
+  margin: 0 3px !important;
 }
 
 .site-footer-copyright {
-  width: 100%;
-  background: #241a1d;
-  color: #eadfd5;
-  padding: 20px 7% 30px;
+  width: 100% !important;
+  background: #241a1d !important;
+  color: #eadfd5 !important;
+  padding: 10px 4% !important;
   margin: 0 !important;
-  border: 0;
-  font-size: 14px;
-  text-align: center;
+  border: 0 !important;
+  border-top: 1px solid rgba(234,223,213,.16) !important;
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
 }
 
 .site-footer-copyright p {
-  margin: 0;
+  margin: 0 !important;
+  padding: 0 !important;
 }
-
-
-/* =====================================================
-   REMOVE EXTRA SPACE BEFORE FOOTER
-===================================================== */
 
 .maker {
   margin-bottom: 0 !important;
@@ -1534,11 +1551,7 @@ textarea:focus {
 }
 
 .preview-wrap {
-  padding-bottom: 25px;
-}
-
-.site-footer {
-  margin-top: 0 !important;
+  padding-bottom: 25px !important;
 }
 
 .site-footer + .site-footer {
@@ -1548,6 +1561,8 @@ textarea:focus {
 
 /* =====================================================
    TABLET
+===================================================== */
+
 ===================================================== */
 
 @media (max-width: 900px) {
@@ -1694,42 +1709,47 @@ textarea:focus {
   }
 
 
-  /* MOBILE FOOTER */
+  /* COMPACT MOBILE FOOTER */
 
   .site-footer {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 30px 20px 20px;
-    gap: 18px;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 18px 15px !important;
+    gap: 10px !important;
     margin: 0 !important;
   }
 
+  .site-footer > div {
+    width: 100% !important;
+  }
+
   .site-footer .brand {
-    justify-content: center;
+    justify-content: center !important;
   }
 
   .site-footer .footer-description {
-    white-space: normal;
-    font-size: 15px;
+    white-space: normal !important;
+    font-size: 14px !important;
+    line-height: 1.3 !important;
   }
 
   .site-footer .footer-links {
-    width: 100%;
-    justify-content: center;
-    text-align: center;
-    font-size: 14px;
-    line-height: 2;
-    margin-left: 0;
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    font-size: 13px !important;
+    line-height: 1.7 !important;
+    margin: 0 !important;
   }
 
   .site-footer-copyright {
-    text-align: center;
-    padding: 15px 20px 25px;
-    font-size: 13px;
+    text-align: center !important;
+    padding: 8px 15px !important;
+    font-size: 12px !important;
   }
 
   .admin-stats {
@@ -1790,20 +1810,33 @@ textarea:focus {
 
 
 /* =====================================================
-   FINAL SAFETY FIX
+   FINAL FOOTER SAFETY
 ===================================================== */
 
 html,
-body,
-main,
-section {
-  margin-bottom: 0;
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden;
 }
 
-.site-footer:first-of-type {
-  margin-top: 0 !important;
-}
-
-.site-footer:last-of-type {
+.maker {
   margin-bottom: 0 !important;
+}
+
+.site-footer {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.site-footer,
+.site-footer * {
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  .site-footer {
+    margin: 0 !important;
+    padding: 18px 15px !important;
+  }
 }
