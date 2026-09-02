@@ -1855,3 +1855,76 @@ body {
     padding: 24px 15px !important;
   }
 }
+
+/* =====================================================
+   ACTUAL HTML FOOTER OVERRIDE
+   The copyright is the last direct DIV inside .site-footer.
+   This overrides the inline footer spacing from index.html.
+===================================================== */
+
+.site-footer {
+  padding: 18px 4% 12px !important;
+  gap: 12px !important;
+  min-height: 0 !important;
+}
+
+/* Main footer content row */
+.site-footer > div:first-child {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+}
+
+/* Copyright DIV in the current index.html */
+.site-footer > div:last-child {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 10px 0 0 !important;
+  padding: 10px 0 0 !important;
+  border-top: 0 !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+}
+
+/* Short separator instead of full-width border */
+.site-footer > div:last-child::before {
+  content: "" !important;
+  display: block !important;
+  width: 40% !important;
+  height: 1px !important;
+  background: rgba(234,223,213,.16) !important;
+  margin: 0 auto 9px !important;
+}
+
+/* Copyright text */
+.site-footer > div:last-child p {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+}
+
+/* Make the large inline sizes in the HTML harmless */
+.site-footer > div:last-child[style] {
+  margin-top: 10px !important;
+  padding-top: 10px !important;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  .site-footer {
+    padding: 16px 15px 10px !important;
+    gap: 9px !important;
+  }
+
+  .site-footer > div:last-child {
+    margin-top: 8px !important;
+    padding-top: 8px !important;
+  }
+
+  .site-footer > div:last-child::before {
+    width: 60% !important;
+    margin-bottom: 7px !important;
+  }
+}
