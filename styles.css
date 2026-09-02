@@ -1447,7 +1447,7 @@ textarea:focus {
   background: #241a1d !important;
   color: #fff !important;
   margin: 0 !important;
-  padding: 18px 4% !important;
+  padding: 28px 4% !important;
   border: 0 !important;
   display: flex !important;
   justify-content: space-between !important;
@@ -1521,7 +1521,7 @@ textarea:focus {
   width: 100% !important;
   background: #241a1d !important;
   color: #eadfd5 !important;
-  padding: 10px 4% !important;
+  padding: 14px 4% !important;
   margin: 0 !important;
   border: 0 !important;
   border-top: 1px solid rgba(234,223,213,.16) !important;
@@ -1718,8 +1718,8 @@ textarea:focus {
     align-items: center !important;
     justify-content: center !important;
     text-align: center !important;
-    padding: 18px 15px !important;
-    gap: 10px !important;
+    padding: 24px 15px !important;
+    gap: 13px !important;
     margin: 0 !important;
   }
 
@@ -1748,7 +1748,7 @@ textarea:focus {
 
   .site-footer-copyright {
     text-align: center !important;
-    padding: 8px 15px !important;
+    padding: 11px 15px !important;
     font-size: 12px !important;
   }
 
@@ -1837,6 +1837,6 @@ body {
 @media (max-width: 700px) {
   .site-footer {
     margin: 0 !important;
-    padding: 18px 15px !important;
+    padding: 24px 15px !important;
   }
 }
