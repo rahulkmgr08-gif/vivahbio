@@ -1857,138 +1857,135 @@ body {
 }
 
 /* =====================================================
-   FINAL FOOTER FIX
-   ===================================================== */
+   ACTUAL HTML FOOTER OVERRIDE
+   The copyright is the last direct DIV inside .site-footer.
+   This overrides the inline footer spacing from index.html.
+===================================================== */
 
 .site-footer {
-  width: 100% !important;
-  background: #241a1d !important;
-  color: #fff !important;
-  margin: 0 !important;
-  padding: 24px 7% 12px !important;
-  box-sizing: border-box !important;
-  display: block !important;
-  overflow: hidden !important;
-}
-
-/* Main footer row */
-.site-footer > div:first-child {
-  width: 100% !important;
-  max-width: 1400px !important;
-  margin: 0 auto !important;
-
-  display: grid !important;
-  grid-template-columns: auto 1fr auto !important;
-  align-items: center !important;
-
-  gap: 35px !important;
-  box-sizing: border-box !important;
-}
-
-/* Logo */
-.site-footer > div:first-child > div:first-child {
-  display: flex !important;
-  align-items: center !important;
+  padding: 18px 4% 12px !important;
   gap: 12px !important;
-  white-space: nowrap !important;
+  min-height: 0 !important;
 }
 
-/* Description */
-.site-footer .footer-description {
-  font-size: 16px !important;
-  color: #eadfd5 !important;
-  white-space: nowrap !important;
+/* Main footer content row */
+.site-footer > div:first-child {
   margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
 }
 
-/* Links */
+/* Copyright DIV in the current index.html */
+.site-footer > div:last-child {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 10px 0 0 !important;
+  padding: 10px 0 0 !important;
+  border-top: 0 !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+}
+
+/* Short separator instead of full-width border */
+.site-footer > div:last-child::before {
+  content: "" !important;
+  display: block !important;
+  width: 40% !important;
+  height: 1px !important;
+  background: rgba(234,223,213,.16) !important;
+  margin: 0 auto 9px !important;
+}
+
+/* Copyright text */
+.site-footer > div:last-child p {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+}
+
+/* Make the large inline sizes in the HTML harmless */
+.site-footer > div:last-child[style] {
+  margin-top: 10px !important;
+  padding-top: 10px !important;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  .site-footer {
+    padding: 16px 15px 10px !important;
+    gap: 9px !important;
+  }
+
+  .site-footer > div:last-child {
+    margin-top: 8px !important;
+    padding-top: 8px !important;
+  }
+
+  .site-footer > div:last-child::before {
+    width: 60% !important;
+    margin-bottom: 7px !important;
+  }
+}
+
+/* =====================================================
+   FINAL FOOTER LINKS TEXT FIX
+   Keeps every footer link clearly separated.
+===================================================== */
+
 .site-footer .footer-links {
   display: flex !important;
   align-items: center !important;
   justify-content: flex-end !important;
-  flex-wrap: nowrap !important;
-
+  flex-wrap: wrap !important;
   gap: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-
-  font-size: 14px !important;
-  line-height: 1.4 !important;
-  text-align: right !important;
-  white-space: nowrap !important;
+  white-space: normal !important;
+  line-height: 1.8 !important;
+  min-width: 0 !important;
 }
 
 .site-footer .footer-links a {
-  color: #eadfd5 !important;
-  text-decoration: none !important;
-}
-
-.site-footer .footer-links a:hover {
-  color: #fff !important;
-  text-decoration: underline !important;
+  display: inline-block !important;
+  margin: 0 5px !important;
+  padding: 0 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
 }
 
 .site-footer .footer-links span {
-  color: #eadfd5 !important;
-  margin: 0 4px !important;
-}
-
-/* Copyright */
-.site-footer > div:last-child {
-  width: 100% !important;
-  max-width: 1400px !important;
-  margin: 14px auto 0 !important;
-  padding: 10px 0 0 !important;
-
-  border-top: 1px solid rgba(234,223,213,.16) !important;
-
-  text-align: center !important;
-  box-sizing: border-box !important;
-}
-
-.site-footer > div:last-child p {
-  margin: 0 !important;
+  display: inline-block !important;
+  margin: 0 2px !important;
   padding: 0 !important;
-  color: #a99da0 !important;
-  font-size: 13px !important;
-  line-height: 1.3 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
 }
-
-
-/* =====================================================
-   MOBILE
-   ===================================================== */
 
 @media (max-width: 900px) {
-
-  .site-footer {
-    padding: 22px 5% 12px !important;
-  }
-
-  .site-footer > div:first-child {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-    text-align: center !important;
-  }
-
-  .site-footer > div:first-child > div:first-child {
+  .site-footer .footer-links {
+    width: 100% !important;
     justify-content: center !important;
-  }
-
-  .site-footer .footer-description {
-    white-space: normal !important;
     text-align: center !important;
+    line-height: 1.9 !important;
   }
 
+  .site-footer .footer-links a {
+    margin: 0 4px !important;
+  }
+
+  .site-footer .footer-links span {
+    margin: 0 1px !important;
+  }
+}
+
+@media (max-width: 600px) {
   .site-footer .footer-links {
     justify-content: center !important;
-    flex-wrap: wrap !important;
-    white-space: normal !important;
-    text-align: center !important;
+    line-height: 2 !important;
+    font-size: 13px !important;
   }
 
-  .site-footer > div:last-child {
-    margin-top: 12px !important;
-    padding-top: 9px !important;
+  .site-footer .footer-links a {
+    margin: 0 3px !important;
   }
 }
