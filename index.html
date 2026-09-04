@@ -436,6 +436,112 @@
 }
 </style>
 
+
+<style id="maker-top-attractive">
+  .maker-brand-intro{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    margin:0 auto 20px;
+  }
+
+  .maker-heart-logo{
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#fff7f7;
+    border:1px solid rgba(139,30,63,.12);
+    color:#8b1e3f;
+    font-family:Georgia,serif;
+    font-size:38px;
+    line-height:1;
+    box-shadow:0 8px 22px rgba(80,20,35,.08);
+  }
+
+  .maker-brand-name{
+    font-size:32px;
+    font-weight:800;
+    letter-spacing:-1px;
+    color:#171214;
+  }
+
+  .maker-brand-name span{
+    color:#8b1e3f;
+  }
+
+  .maker-quick-steps{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:24px auto 0;
+    max-width:900px;
+  }
+
+  .maker-quick-steps span{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 15px;
+    border:1px solid rgba(139,30,63,.15);
+    border-radius:999px;
+    background:rgba(255,255,255,.78);
+    color:#5f5557;
+    font-size:14px;
+    line-height:1;
+    box-shadow:0 4px 14px rgba(80,20,35,.04);
+  }
+
+  .maker-quick-steps b{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:#8b1e3f;
+    color:#fff;
+    font-size:12px;
+  }
+
+  @media (max-width:700px){
+    .maker-brand-intro{
+      margin-bottom:16px;
+    }
+
+    .maker-heart-logo{
+      width:44px;
+      height:44px;
+      font-size:32px;
+    }
+
+    .maker-brand-name{
+      font-size:27px;
+    }
+
+    .maker-quick-steps{
+      gap:8px;
+      margin-top:18px;
+    }
+
+    .maker-quick-steps span{
+      font-size:12px;
+      padding:8px 10px;
+    }
+
+    .maker-quick-steps b{
+      width:21px;
+      height:21px;
+      font-size:11px;
+    }
+  }
+</style>
+
 </head>
 
 
@@ -504,18 +610,29 @@
 
     <div class="maker-title">
 
+      <div class="maker-brand-intro">
+        <div class="maker-heart-logo" aria-hidden="true">♡</div>
+        <div class="maker-brand-name">Vivah<span>Bio</span></div>
+      </div>
+
       <span class="eyebrow">
-        BIODATA MAKER
+        ✦ YOUR SHAADI, YOUR STORY
       </span>
 
       <h2 data-i18n="makerTitle">
-        Create yours in minutes.
+        Create a beautiful marriage biodata in minutes.
       </h2>
 
       <p>
-        Your draft is saved in this browser.
-        Choose a design and the preview updates instantly.
+        Choose your favorite design, add your details and photo,
+        then download a polished biodata ready to share.
       </p>
+
+      <div class="maker-quick-steps" aria-label="Create biodata steps">
+        <span><b>1</b> Choose a design</span>
+        <span><b>2</b> Fill your details</span>
+        <span><b>3</b> Download &amp; share</span>
+      </div>
 
     </div>
 
