@@ -199,6 +199,384 @@
 </script>
 
   
+
+<style id="mobile-responsive-fix">
+/* =====================================================
+   MOBILE RESPONSIVE FIX
+   Keeps desktop layout unchanged and fixes small screens.
+===================================================== */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img, svg, video, canvas {
+  max-width: 100%;
+}
+
+button, input, textarea, select {
+  max-width: 100%;
+}
+
+@media (max-width: 700px) {
+
+  /* ---------- HEADER ---------- */
+  .nav {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0 !important;
+    padding: 12px 16px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    overflow: hidden;
+  }
+
+  .brand {
+    min-width: 0;
+    flex: 0 0 auto;
+    font-size: 21px !important;
+  }
+
+  .nav > nav {
+    order: 3;
+    width: 100%;
+    display: flex !important;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0 !important;
+    overflow: hidden;
+  }
+
+  .nav > nav a {
+    margin: 0 !important;
+    white-space: nowrap;
+    font-size: 13px !important;
+  }
+
+  .nav-actions {
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center;
+    gap: 7px !important;
+    flex-wrap: nowrap;
+  }
+
+  .nav-actions .admin-link {
+    display: none;
+  }
+
+  .nav-actions .small-btn {
+    white-space: nowrap;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 30px !important;
+    padding: 55px 18px 35px !important;
+    overflow: hidden !important;
+  }
+
+  .hero-copy {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .hero-copy h1 {
+    max-width: 100% !important;
+    font-size: clamp(40px, 12vw, 58px) !important;
+    line-height: 0.98 !important;
+    overflow-wrap: anywhere;
+  }
+
+  .hero-copy p {
+    max-width: 100% !important;
+    font-size: 17px !important;
+    line-height: 1.55 !important;
+  }
+
+  .hero-buttons {
+    width: 100%;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .hero-buttons a {
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: center;
+  }
+
+  .ticks {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 7px !important;
+  }
+
+  .hero-stage {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    padding: 0 !important;
+  }
+
+  .hero-stage .decor {
+    display: none !important;
+  }
+
+  /* Scale the decorative hero paper only; actual maker preview is untouched. */
+  .hero-stage #heroPaper {
+    width: 760px !important;
+    max-width: none !important;
+    flex: 0 0 760px !important;
+    transform: scale(0.43);
+    transform-origin: top center;
+    margin-bottom: -420px !important;
+  }
+
+  /* ---------- GENERAL SECTIONS ---------- */
+  .section,
+  .stats,
+  .maker {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  .section {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  .section-head {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: block !important;
+  }
+
+  .section-head > * {
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .section-head h2 {
+    max-width: 100% !important;
+    font-size: clamp(34px, 10vw, 48px) !important;
+    overflow-wrap: anywhere;
+  }
+
+  /* ---------- STATS ---------- */
+  .stats {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 1px !important;
+  }
+
+  /* ---------- TEMPLATE FILTERS ---------- */
+  .filters {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter {
+    flex: 0 0 auto !important;
+    white-space: nowrap;
+  }
+
+  .template-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .template-grid > * {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps {
+    width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ---------- MAKER ---------- */
+  .maker {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  .maker-title {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .maker-title h2 {
+    font-size: clamp(38px, 11vw, 52px) !important;
+    line-height: 1.05 !important;
+    overflow-wrap: anywhere;
+  }
+
+  .maker-layout {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 22px !important;
+    overflow: visible !important;
+  }
+
+  .form-card,
+  .preview-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .form-card {
+    overflow: hidden !important;
+  }
+
+  .form-grid {
+    width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-grid label,
+  .form-card .full {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .form-grid input,
+  .form-card textarea,
+  .form-card select,
+  .form-card input[type="file"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .form-top {
+    width: 100% !important;
+    min-width: 0 !important;
+    gap: 8px !important;
+  }
+
+  .mini-templates {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: auto !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 10px !important;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mini-templates > * {
+    flex: 0 0 auto !important;
+    max-width: 210px !important;
+  }
+
+  .upload {
+    overflow: hidden !important;
+  }
+
+  .download-row {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .download-row button {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* ---------- LIVE PREVIEW ---------- */
+  .preview-wrap {
+    overflow: hidden !important;
+  }
+
+  .preview-bar {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /*
+    The biodata paper is intentionally designed at a print-friendly desktop
+    width. On mobile we scale it visually to fit the screen instead of
+    changing its internal print/export dimensions.
+  */
+  .preview-wrap #preview {
+    width: 760px !important;
+    max-width: none !important;
+    flex: 0 0 760px !important;
+    transform: scale(0.43);
+    transform-origin: top left;
+    margin-bottom: -430px !important;
+  }
+
+  /* ---------- FOOTER ---------- */
+  .site-footer {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .footer-inner,
+  .footer-links,
+  .footer-description {
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .site-footer .footer-links {
+    gap: 4px 7px !important;
+  }
+}
+</style>
+
 </head>
 
 
