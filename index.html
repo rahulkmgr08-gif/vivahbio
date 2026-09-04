@@ -200,470 +200,242 @@
 
   
 
-<style id="mobile-responsive-fix">
+
+
+
+
+
+
+<style id="mobile-responsive-final">
 /* =====================================================
-   MOBILE RESPONSIVE FIX v2
-   Desktop layout remains unchanged.
+   FINAL MOBILE RESPONSIVE LAYOUT
+   No transform-based scaling for the actual biodata preview.
+   The preview becomes a true responsive layout on phones.
 ===================================================== */
-
-html, body {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden !important;
-}
-
-@media (max-width: 700px) {
-
-  /* ---------- HEADER ---------- */
-  .nav {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    height: auto !important;
-    min-height: 78px !important;
-    box-sizing: border-box !important;
-    padding: 12px 16px !important;
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 8px !important;
-    overflow: hidden !important;
+@media (max-width:700px){
+  html,body{
+    width:100% !important;
+    max-width:100% !important;
+    overflow-x:hidden !important;
   }
 
-  /* Hide desktop navigation links on phones.
-     The main CTA still provides the Create Biodata action. */
-  .nav > nav {
-    display: none !important;
+  img,svg,video,canvas{
+    max-width:100%;
   }
 
-  .brand {
-    min-width: 0 !important;
-    flex: 1 1 auto !important;
-    font-size: 21px !important;
-    white-space: nowrap !important;
+  /* Header */
+  .nav{
+    width:100% !important;
+    min-width:0 !important;
+    padding:12px 16px !important;
+    flex-wrap:nowrap !important;
+    gap:8px !important;
+    overflow:hidden !important;
+  }
+  .nav > nav{display:none !important;}
+  .brand{
+    min-width:0 !important;
+    flex:1 1 auto !important;
+    font-size:21px !important;
+    white-space:nowrap !important;
+  }
+  .nav-actions{
+    min-width:0 !important;
+    flex:0 0 auto !important;
+    gap:7px !important;
+  }
+  .admin-link{display:none !important;}
+  .nav-actions .lang{padding:10px 12px !important; white-space:nowrap !important;}
+  .nav-actions .small-btn{padding:11px 15px !important; white-space:nowrap !important;}
+
+  /* Hero */
+  .hero{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:24px !important;
+    padding:48px 18px 32px !important;
+    overflow:hidden !important;
+  }
+  .hero-copy{width:100% !important; min-width:0 !important;}
+  .hero-copy h1{
+    max-width:100% !important;
+    font-size:clamp(40px,12vw,58px) !important;
+    line-height:.98 !important;
+    overflow-wrap:anywhere !important;
+  }
+  .hero-copy p{font-size:17px !important; line-height:1.5 !important;}
+  .hero-buttons{width:100% !important; flex-direction:column !important; gap:10px !important;}
+  .hero-buttons a{width:100% !important; max-width:100% !important; box-sizing:border-box !important; text-align:center !important;}
+  .ticks{width:100% !important; display:grid !important; grid-template-columns:1fr !important; gap:7px !important;}
+  .hero-stage{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    overflow:hidden !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:flex-start !important;
+    padding:0 !important;
+  }
+  .hero-stage .decor{display:none !important;}
+  .hero-stage #heroPaper{
+    width:760px !important;
+    max-width:none !important;
+    flex:0 0 760px !important;
+    transform:scale(.43) !important;
+    transform-origin:top center !important;
+    margin-bottom:-430px !important;
   }
 
-  .nav-actions {
-    min-width: 0 !important;
-    flex: 0 0 auto !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 7px !important;
-    flex-wrap: nowrap !important;
+  /* General sections */
+  .section,.stats,.maker{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+    overflow-x:hidden !important;
   }
+  .section{padding-left:18px !important; padding-right:18px !important;}
+  .section-head{width:100% !important; min-width:0 !important; display:block !important;}
+  .section-head > *{max-width:100% !important; min-width:0 !important;}
+  .stats{display:grid !important; grid-template-columns:1fr 1fr !important; gap:1px !important;}
+  .filters{
+    width:100% !important;
+    max-width:100% !important;
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    gap:8px !important;
+    padding:2px 2px 10px !important;
+    scrollbar-width:none !important;
+  }
+  .filters::-webkit-scrollbar{display:none !important;}
+  .filter{flex:0 0 auto !important; white-space:nowrap !important;}
+  .template-grid{width:100% !important; grid-template-columns:1fr !important;}
+  .steps{width:100% !important; grid-template-columns:1fr !important;}
 
-  .nav-actions .admin-link {
-    display: none !important;
+  /* Maker */
+  .maker{padding-left:18px !important; padding-right:18px !important;}
+  .maker-layout{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:22px !important;
+    overflow:visible !important;
   }
+  .form-card,.preview-wrap{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+  }
+  .form-card{overflow:hidden !important;}
+  .form-grid{width:100% !important; min-width:0 !important; grid-template-columns:1fr !important;}
+  .form-grid label,.form-card .full{width:100% !important; min-width:0 !important;}
+  .form-grid input,.form-card textarea,.form-card select,.form-card input[type=file]{
+    width:100% !important; max-width:100% !important; min-width:0 !important; box-sizing:border-box !important;
+  }
+  .mini-templates{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    overflow-x:auto !important;
+    gap:10px !important;
+    padding-bottom:8px !important;
+    scrollbar-width:none !important;
+  }
+  .mini-templates::-webkit-scrollbar{display:none !important;}
+  .mini-templates > *{flex:0 0 auto !important;}
+  .download-row{width:100% !important; flex-direction:column !important; gap:10px !important;}
+  .download-row button{width:100% !important; max-width:100% !important;}
 
-  .nav-actions .lang {
-    padding: 10px 12px !important;
-    white-space: nowrap !important;
+  /* =====================================================
+     ACTUAL MOBILE BIODATA PREVIEW
+     No transform, no fixed 760px layout, no JS height hack.
+  ===================================================== */
+  .preview-wrap{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    padding:25px !important;
+    overflow:visible !important;
+    align-self:stretch !important;
   }
+  .preview-bar{
+    width:100% !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+    margin-bottom:12px !important;
+  }
+  .preview-wrap #preview{
+    display:block !important;
+    position:relative !important;
+    left:auto !important;
+    top:auto !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    height:auto !important;
+    margin:0 !important;
+    padding:22px !important;
+    box-sizing:border-box !important;
+    transform:none !important;
+    transform-origin:initial !important;
+    overflow:hidden !important;
+  }
+  .bio-preview{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:0 !important;
+    height:auto !important;
+    box-sizing:border-box !important;
+  }
+  .bio-header{
+    gap:12px !important;
+  }
+  .bio-header-text h2{
+    font-size:24px !important;
+    line-height:1.15 !important;
+  }
+  .bio-header-text p,.bio-location{font-size:10px !important;}
+  .profile{
+    width:82px !important;
+    height:102px !important;
+    flex:0 0 82px !important;
+  }
+  .bio-section{margin-top:18px !important;}
+  .bio-section-body{grid-template-columns:1fr !important; gap:0 !important;}
+  .bio-row{
+    font-size:10.5px !important;
+    padding:5px 0 !important;
+    gap:10px !important;
+  }
+  .bio-about{font-size:10.5px !important;}
+  .bio-foot{font-size:10px !important; margin-top:18px !important;}
+  .bio-floral-watermark{font-size:100px !important;}
 
-  .nav-actions .small-btn {
-    padding: 11px 15px !important;
-    white-space: nowrap !important;
+  /* Footer */
+  .site-footer{
+    width:100% !important;
+    max-width:100% !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
   }
-
-  /* ---------- HERO ---------- */
-  .hero {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 24px !important;
-    padding: 48px 18px 32px !important;
-    overflow: hidden !important;
-  }
-
-  .hero-copy {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-  }
-
-  .hero-copy h1 {
-    max-width: 100% !important;
-    font-size: clamp(40px, 12vw, 58px) !important;
-    line-height: .98 !important;
-    overflow-wrap: anywhere !important;
-  }
-
-  .hero-copy p {
-    max-width: 100% !important;
-    font-size: 17px !important;
-    line-height: 1.5 !important;
-  }
-
-  .hero-buttons {
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-  }
-
-  .hero-buttons a {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-    text-align: center !important;
-  }
-
-  .ticks {
-    width: 100% !important;
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 7px !important;
-  }
-
-  .hero-stage {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    overflow: hidden !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: flex-start !important;
-    padding: 0 !important;
-  }
-
-  .hero-stage .decor {
-    display: none !important;
-  }
-
-  .hero-stage #heroPaper {
-    width: 760px !important;
-    max-width: none !important;
-    flex: 0 0 760px !important;
-    transform-origin: top center !important;
-  }
-
-  /* ---------- SECTIONS ---------- */
-  .section,
-  .stats,
-  .maker {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-    overflow-x: hidden !important;
-  }
-
-  .section {
-    padding-left: 18px !important;
-    padding-right: 18px !important;
-  }
-
-  .section-head {
-    width: 100% !important;
-    min-width: 0 !important;
-    display: block !important;
-  }
-
-  .section-head > * {
-    max-width: 100% !important;
-    min-width: 0 !important;
-  }
-
-  /* ---------- STATS ---------- */
-  .stats {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 1px !important;
-  }
-
-  /* ---------- TEMPLATE FILTERS ---------- */
-  .filters {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    gap: 8px !important;
-    padding: 2px 2px 10px !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-  }
-
-  .filters::-webkit-scrollbar {
-    display: none !important;
-  }
-
-  .filter {
-    flex: 0 0 auto !important;
-    white-space: nowrap !important;
-  }
-
-  .template-grid {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    grid-template-columns: 1fr !important;
-  }
-
-  .template-grid > * {
-    min-width: 0 !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  /* ---------- HOW IT WORKS ---------- */
-  .steps {
-    width: 100% !important;
-    min-width: 0 !important;
-    grid-template-columns: 1fr !important;
-  }
-
-  /* ---------- MAKER ---------- */
-  .maker {
-    padding-left: 18px !important;
-    padding-right: 18px !important;
-  }
-
-  .maker-title {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-  }
-
-  .maker-title h2 {
-    font-size: clamp(38px, 11vw, 52px) !important;
-    line-height: 1.05 !important;
-    overflow-wrap: anywhere !important;
-  }
-
-  .maker-layout {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 22px !important;
-    overflow: visible !important;
-  }
-
-  .form-card,
-  .preview-wrap {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-  }
-
-  .form-card {
-    overflow: hidden !important;
-  }
-
-  .form-grid {
-    width: 100% !important;
-    min-width: 0 !important;
-    grid-template-columns: 1fr !important;
-  }
-
-  .form-grid label,
-  .form-card .full {
-    width: 100% !important;
-    min-width: 0 !important;
-  }
-
-  .form-grid input,
-  .form-card textarea,
-  .form-card select,
-  .form-card input[type="file"] {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-  }
-
-  .form-top {
-    width: 100% !important;
-    min-width: 0 !important;
-    gap: 8px !important;
-  }
-
-  .mini-templates {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    overflow-x: auto !important;
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    gap: 10px !important;
-    padding-bottom: 8px !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-  }
-
-  .mini-templates::-webkit-scrollbar {
-    display: none !important;
-  }
-
-  .mini-templates > * {
-    flex: 0 0 auto !important;
-    max-width: 210px !important;
-  }
-
-  .upload {
-    overflow: hidden !important;
-  }
-
-  .download-row {
-    width: 100% !important;
-    max-width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-  }
-
-  .download-row button {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-  }
-
-  /* ---------- LIVE PREVIEW: FINAL MOBILE FIT ---------- */
-  .maker-layout {
-    align-items: stretch !important;
-  }
-
-  .preview-wrap {
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    overflow: hidden !important;
-    align-self: stretch !important;
-  }
-
-  .preview-wrap #preview {
-    display: block !important;
-    width: 760px !important;
-    max-width: none !important;
-    margin: 0 !important;
-    position: relative !important;
-    left: 0 !important;
-    top: 0 !important;
-  }
-
-  .preview-bar {
-    flex: none !important;
-    margin-bottom: 14px !important;
-  }
-  /* ---------- LIVE PREVIEW ---------- */
-  .preview-wrap {
-    overflow: hidden !important;
-  }
-
-  .preview-bar {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .preview-wrap #preview {
-    width: 760px !important;
-    max-width: none !important;
-    flex: 0 0 760px !important;
-    transform-origin: top left !important;
-  }
-
-  /* ---------- FOOTER ---------- */
-  .site-footer {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-  }
-
-  .footer-inner,
-  .footer-links,
-  .footer-description {
-    max-width: 100% !important;
-    min-width: 0 !important;
-  }
-
-  .site-footer .footer-links {
-    gap: 4px 7px !important;
-  }
+  .footer-inner,.footer-links,.footer-description{max-width:100% !important; min-width:0 !important;}
+  .site-footer .footer-links{gap:4px 7px !important; justify-content:center !important; text-align:center !important;}
 }
 </style>
 
-
-<style id="mobile-preview-fix-v3">
-@media (max-width: 700px) {
-  .preview-wrap {
-    overflow: hidden !important;
-  }
-
-  .preview-wrap #preview {
-    width: 760px !important;
-    max-width: none !important;
-    flex: 0 0 760px !important;
-    transform-origin: top left !important;
-  }
-
-  .hero-stage #heroPaper {
-    transform-origin: top center !important;
-  }
-}
-</style>
-
-<style id="mobile-gap-fix-v5">
-@media (max-width: 700px) {
-  .preview-wrap {
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    padding-bottom: 16px !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-  }
-
-  .preview-wrap #preview {
-    margin-bottom: 0 !important;
-  }
-}
-</style>
-
-
-<style id="mobile-preview-gap-fix-v6">
-@media (max-width: 700px) {
-  .preview-wrap {
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-    align-self: flex-start !important;
-  }
-
-  .preview-wrap #preview {
-    display: block !important;
-    width: 760px !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    position: relative !important;
-    left: 0 !important;
-    top: 0 !important;
-    flex: none !important;
-  }
-
-  .preview-bar {
-    flex: none !important;
-  }
-
-  .maker-layout {
-    align-items: flex-start !important;
-  }
-}
-</style>
 </head>
 
 
@@ -1518,87 +1290,6 @@ html, body {
 
 
 
-<script id="mobile-preview-final-fit-v6">
-(function () {
-  function fitPreview() {
-    if (window.innerWidth > 700) return;
-
-    var wrap = document.querySelector('.preview-wrap');
-    var el = document.getElementById('preview');
-    if (!wrap || !el) return;
-
-    /* First remove any old height so the real preview size can be measured. */
-    wrap.style.height = 'auto';
-    wrap.style.minHeight = '0px';
-    wrap.style.maxHeight = 'none';
-
-    var available = wrap.clientWidth;
-    if (!available) return;
-
-    var baseWidth = 760;
-    var scale = Math.min(1, Math.max(0.1, (available - 2) / baseWidth));
-
-    el.style.width = baseWidth + 'px';
-    el.style.maxWidth = 'none';
-    el.style.flex = 'none';
-    el.style.margin = '0';
-    el.style.transformOrigin = 'top left';
-    el.style.transform = 'scale(' + scale + ')';
-
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () {
-        var wrapRect = wrap.getBoundingClientRect();
-        var elRect = el.getBoundingClientRect();
-        var bar = wrap.querySelector('.preview-bar');
-        var barRect = bar ? bar.getBoundingClientRect() : null;
-
-        /* Measure the ACTUAL visual bottom after CSS transform.
-           This prevents the unscaled 760px preview height from creating
-           a large blank area underneath it. */
-        var top = barRect ? Math.min(barRect.top, elRect.top) : elRect.top;
-        var bottom = Math.max(barRect ? barRect.bottom : 0, elRect.bottom);
-        var needed = Math.ceil(bottom - wrapRect.top + 14);
-
-        wrap.style.height = Math.max(needed, 120) + 'px';
-        wrap.style.minHeight = '0px';
-        wrap.style.maxHeight = 'none';
-        wrap.style.overflow = 'hidden';
-      });
-    });
-  }
-
-  var timer;
-  function schedule() {
-    clearTimeout(timer);
-    timer = setTimeout(fitPreview, 120);
-  }
-
-  window.addEventListener('load', function () {
-    fitPreview();
-    setTimeout(fitPreview, 300);
-    setTimeout(fitPreview, 800);
-  });
-
-  window.addEventListener('resize', schedule);
-  window.addEventListener('orientationchange', function () {
-    setTimeout(fitPreview, 200);
-  });
-
-  window.addEventListener('input', schedule, true);
-  window.addEventListener('change', schedule, true);
-
-  if (window.ResizeObserver) {
-    window.addEventListener('load', function () {
-      var wrap = document.querySelector('.preview-wrap');
-      if (wrap) {
-        new ResizeObserver(function () {
-          schedule();
-        }).observe(wrap);
-      }
-    });
-  }
-})();
-</script>
 
 </body>
 </html>
