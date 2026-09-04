@@ -202,75 +202,69 @@
 
 <style id="mobile-responsive-fix">
 /* =====================================================
-   MOBILE RESPONSIVE FIX
-   Keeps desktop layout unchanged and fixes small screens.
+   MOBILE RESPONSIVE FIX v2
+   Desktop layout remains unchanged.
 ===================================================== */
+
 html, body {
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
-}
-
-img, svg, video, canvas {
-  max-width: 100%;
-}
-
-button, input, textarea, select {
-  max-width: 100%;
+  overflow-x: hidden !important;
 }
 
 @media (max-width: 700px) {
 
   /* ---------- HEADER ---------- */
   .nav {
-    width: 100%;
-    max-width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     min-width: 0 !important;
+    height: auto !important;
+    min-height: 78px !important;
+    box-sizing: border-box !important;
     padding: 12px 16px !important;
     display: flex !important;
-    flex-wrap: wrap !important;
+    flex-wrap: nowrap !important;
     align-items: center !important;
     justify-content: space-between !important;
-    gap: 10px !important;
-    overflow: hidden;
+    gap: 8px !important;
+    overflow: hidden !important;
+  }
+
+  /* Hide desktop navigation links on phones.
+     The main CTA still provides the Create Biodata action. */
+  .nav > nav {
+    display: none !important;
   }
 
   .brand {
-    min-width: 0;
-    flex: 0 0 auto;
-    font-size: 21px !important;
-  }
-
-  .nav > nav {
-    order: 3;
-    width: 100%;
-    display: flex !important;
-    justify-content: space-between;
-    gap: 10px;
     min-width: 0 !important;
-    overflow: hidden;
-  }
-
-  .nav > nav a {
-    margin: 0 !important;
-    white-space: nowrap;
-    font-size: 13px !important;
+    flex: 1 1 auto !important;
+    font-size: 21px !important;
+    white-space: nowrap !important;
   }
 
   .nav-actions {
     min-width: 0 !important;
+    flex: 0 0 auto !important;
     display: flex !important;
-    align-items: center;
+    align-items: center !important;
     gap: 7px !important;
-    flex-wrap: nowrap;
+    flex-wrap: nowrap !important;
   }
 
   .nav-actions .admin-link {
-    display: none;
+    display: none !important;
+  }
+
+  .nav-actions .lang {
+    padding: 10px 12px !important;
+    white-space: nowrap !important;
   }
 
   .nav-actions .small-btn {
-    white-space: nowrap;
+    padding: 11px 15px !important;
+    white-space: nowrap !important;
   }
 
   /* ---------- HERO ---------- */
@@ -278,10 +272,11 @@ button, input, textarea, select {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
+    box-sizing: border-box !important;
     display: grid !important;
     grid-template-columns: 1fr !important;
-    gap: 30px !important;
-    padding: 55px 18px 35px !important;
+    gap: 24px !important;
+    padding: 48px 18px 32px !important;
     overflow: hidden !important;
   }
 
@@ -294,18 +289,18 @@ button, input, textarea, select {
   .hero-copy h1 {
     max-width: 100% !important;
     font-size: clamp(40px, 12vw, 58px) !important;
-    line-height: 0.98 !important;
-    overflow-wrap: anywhere;
+    line-height: .98 !important;
+    overflow-wrap: anywhere !important;
   }
 
   .hero-copy p {
     max-width: 100% !important;
     font-size: 17px !important;
-    line-height: 1.55 !important;
+    line-height: 1.5 !important;
   }
 
   .hero-buttons {
-    width: 100%;
+    width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 10px !important;
@@ -314,11 +309,12 @@ button, input, textarea, select {
   .hero-buttons a {
     width: 100% !important;
     max-width: 100% !important;
-    text-align: center;
+    box-sizing: border-box !important;
+    text-align: center !important;
   }
 
   .ticks {
-    width: 100%;
+    width: 100% !important;
     display: grid !important;
     grid-template-columns: 1fr !important;
     gap: 7px !important;
@@ -339,23 +335,21 @@ button, input, textarea, select {
     display: none !important;
   }
 
-  /* Scale the decorative hero paper only; actual maker preview is untouched. */
   .hero-stage #heroPaper {
     width: 760px !important;
     max-width: none !important;
     flex: 0 0 760px !important;
-    transform: scale(0.43);
-    transform-origin: top center;
-    margin-bottom: -420px !important;
+    transform-origin: top center !important;
   }
 
-  /* ---------- GENERAL SECTIONS ---------- */
+  /* ---------- SECTIONS ---------- */
   .section,
   .stats,
   .maker {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
+    box-sizing: border-box !important;
     overflow-x: hidden !important;
   }
 
@@ -375,12 +369,6 @@ button, input, textarea, select {
     min-width: 0 !important;
   }
 
-  .section-head h2 {
-    max-width: 100% !important;
-    font-size: clamp(34px, 10vw, 48px) !important;
-    overflow-wrap: anywhere;
-  }
-
   /* ---------- STATS ---------- */
   .stats {
     display: grid !important;
@@ -392,23 +380,24 @@ button, input, textarea, select {
   .filters {
     width: 100% !important;
     max-width: 100% !important;
+    box-sizing: border-box !important;
     display: flex !important;
+    flex-wrap: nowrap !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
-    flex-wrap: nowrap !important;
     gap: 8px !important;
-    padding-bottom: 8px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    padding: 2px 2px 10px !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
   }
 
   .filters::-webkit-scrollbar {
-    display: none;
+    display: none !important;
   }
 
   .filter {
     flex: 0 0 auto !important;
-    white-space: nowrap;
+    white-space: nowrap !important;
   }
 
   .template-grid {
@@ -421,6 +410,7 @@ button, input, textarea, select {
   .template-grid > * {
     min-width: 0 !important;
     max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   /* ---------- HOW IT WORKS ---------- */
@@ -445,7 +435,7 @@ button, input, textarea, select {
   .maker-title h2 {
     font-size: clamp(38px, 11vw, 52px) !important;
     line-height: 1.05 !important;
-    overflow-wrap: anywhere;
+    overflow-wrap: anywhere !important;
   }
 
   .maker-layout {
@@ -489,6 +479,7 @@ button, input, textarea, select {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
+    box-sizing: border-box !important;
   }
 
   .form-top {
@@ -505,8 +496,13 @@ button, input, textarea, select {
     display: flex !important;
     flex-wrap: nowrap !important;
     gap: 10px !important;
-    padding-bottom: 8px;
-    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  .mini-templates::-webkit-scrollbar {
+    display: none !important;
   }
 
   .mini-templates > * {
@@ -543,18 +539,11 @@ button, input, textarea, select {
     box-sizing: border-box !important;
   }
 
-  /*
-    The biodata paper is intentionally designed at a print-friendly desktop
-    width. On mobile we scale it visually to fit the screen instead of
-    changing its internal print/export dimensions.
-  */
   .preview-wrap #preview {
     width: 760px !important;
     max-width: none !important;
     flex: 0 0 760px !important;
-    transform: scale(0.43);
-    transform-origin: top left;
-    margin-bottom: -430px !important;
+    transform-origin: top left !important;
   }
 
   /* ---------- FOOTER ---------- */
@@ -562,6 +551,7 @@ button, input, textarea, select {
     width: 100% !important;
     max-width: 100% !important;
     overflow: hidden !important;
+    box-sizing: border-box !important;
   }
 
   .footer-inner,
@@ -1417,6 +1407,76 @@ button, input, textarea, select {
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <script src="app.js"></script>
+
+  <script>
+    /* =====================================================
+       MOBILE PREVIEW FIT
+       Scales the print-size preview to the phone width
+       and adjusts its container height so there is no
+       large blank area or clipped right side.
+    ===================================================== */
+    (function () {
+      function fitMobilePreview() {
+        if (window.innerWidth > 700) return;
+
+        var preview = document.getElementById("preview");
+        var previewWrap = document.querySelector(".preview-wrap");
+        var heroPaper = document.getElementById("heroPaper");
+
+        function fitElement(el, wrapper, origin) {
+          if (!el || !wrapper) return;
+
+          var available = Math.max(280, wrapper.clientWidth - 20);
+          var baseWidth = el.scrollWidth || 760;
+          var scale = Math.min(1, available / baseWidth);
+
+          el.style.width = baseWidth + "px";
+          el.style.maxWidth = "none";
+          el.style.transformOrigin = origin;
+          el.style.transform = "scale(" + scale + ")";
+
+          if (el === preview) {
+            var baseHeight = el.scrollHeight || 900;
+            var visualHeight = Math.ceil(baseHeight * scale);
+            wrapper.style.minHeight = (visualHeight + 70) + "px";
+          } else {
+            var heroHeight = el.scrollHeight || 900;
+            var heroVisualHeight = Math.ceil(heroHeight * scale);
+            el.style.marginBottom = "-" + Math.ceil(heroHeight - heroVisualHeight) + "px";
+          }
+        }
+
+        fitElement(preview, previewWrap, "top left");
+
+        if (heroPaper) {
+          var heroStage = heroPaper.parentElement;
+          fitElement(heroPaper, heroStage, "top center");
+        }
+      }
+
+      window.addEventListener("load", function () {
+        setTimeout(fitMobilePreview, 250);
+        setTimeout(fitMobilePreview, 900);
+      });
+
+      window.addEventListener("resize", function () {
+        clearTimeout(window.__vivahMobileFitTimer);
+        window.__vivahMobileFitTimer = setTimeout(fitMobilePreview, 120);
+      });
+
+      var observer = new MutationObserver(function () {
+        clearTimeout(window.__vivahMobilePreviewObserverTimer);
+        window.__vivahMobilePreviewObserverTimer = setTimeout(fitMobilePreview, 80);
+      });
+
+      window.addEventListener("load", function () {
+        var preview = document.getElementById("preview");
+        if (preview) {
+          observer.observe(preview, { childList: true, subtree: true, characterData: true });
+        }
+      });
+    })();
+  </script>
 
 
   <script>
