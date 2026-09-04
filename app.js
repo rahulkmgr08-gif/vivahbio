@@ -3,13 +3,12 @@
    Complete frontend
    - Templates
    - Live preview
-   - Local draft
+   - Fresh form on every page load
    - Razorpay payment
    - Supabase profile saving
    - Supabase photo storage
    - PDF/JPG export
    - Download logging
-   - PREMIUM RESET FIX
 ========================================================= */
 
 
@@ -394,6 +393,43 @@ function renderMini(){
 
 
 /* =========================================================
+   FORM FIELDS
+========================================================= */
+
+const formFields = [
+
+  "name",
+  "dob",
+  "time_of_birth",
+  "place_of_birth",
+  "height",
+  "religion",
+  "caste",
+  "gotra",
+  "rashi",
+  "nakshatra",
+  "complexion",
+  "education",
+  "profession",
+  "company",
+  "languages",
+  "hobbies",
+  "father",
+  "father_occupation",
+  "mother",
+  "mother_occupation",
+  "siblings",
+  "contact_person",
+  "city",
+  "phone",
+  "email",
+  "address",
+  "about"
+
+];
+
+
+/* =========================================================
    PROFILE / PAYMENT STORAGE KEYS
 ========================================================= */
 
@@ -415,23 +451,17 @@ const PREMIUM_DRAFT_KEY =
 const PHOTO_VERSION_KEY =
   "vivah_photo_version";
 
-/*
-  IMPORTANT:
-  This flag is used only in browser localStorage.
-  It does NOT delete anything from Supabase.
-*/
-const DOWNLOAD_COMPLETED_KEY =
-  "vivah_download_completed";
-
 
 /* =========================================================
-   CLEAR LOCAL DRAFT AFTER DOWNLOAD
+   IMPORTANT:
+   CLEAR OLD LOCAL DRAFT
 ========================================================= */
 
-function clearLocalDraftAfterDownload(){
+function clearLocalDraft(){
 
   /*
-    Clear all locally saved form fields.
+    Remove all previously saved biodata
+    from this browser.
   */
 
   formFields.forEach(
@@ -441,22 +471,12 @@ function clearLocalDraftAfterDownload(){
         "vivah_" + id
       );
 
-      const input =
-        $(id);
-
-      if(input){
-
-        input.value =
-          "";
-
-      }
-
     }
   );
 
 
   /*
-    Clear selected template.
+    Remove old selected template.
   */
 
   localStorage.removeItem(
@@ -465,8 +485,12 @@ function clearLocalDraftAfterDownload(){
 
 
   /*
-    Clear current browser profile/payment state.
-    Supabase data remains untouched.
+    Remove old browser profile/payment
+    session.
+
+    IMPORTANT:
+    This does NOT delete anything
+    from Supabase.
   */
 
   localStorage.removeItem(
@@ -495,78 +519,51 @@ function clearLocalDraftAfterDownload(){
 
 
   /*
-    Clear photo input.
+    Clear actual form inputs.
   */
 
-  const photoInput =
+  formFields.forEach(
+    id => {
+
+      const input =
+        $(id);
+
+      if(input){
+
+        input.value =
+          "";
+
+      }
+
+    }
+  );
+
+
+  /*
+    Clear photo.
+  */
+
+  const photo =
     $("photo");
 
-  if(photoInput){
+  if(photo){
 
-    photoInput.value =
+    photo.value =
       "";
 
   }
 
-
-  /*
-    Clear runtime photo.
-  */
 
   profileDataUrl =
     "";
 
 
   /*
-    Reset selected template.
+    Always start with first template.
   */
 
   selected =
     0;
-
-
-  /*
-    Remove completion flag after processing.
-  */
-
-  localStorage.removeItem(
-    DOWNLOAD_COMPLETED_KEY
-  );
-
-
-  /*
-    Refresh preview/buttons.
-  */
-
-  renderMini();
-
-  updatePreview();
-
-  updatePremiumButtons();
-
-}
-
-
-/* =========================================================
-   CHECK COMPLETED DOWNLOAD ON PAGE LOAD
-========================================================= */
-
-function clearCompletedDownloadDraft(){
-
-  const completed =
-    localStorage.getItem(
-      DOWNLOAD_COMPLETED_KEY
-    ) === "true";
-
-
-  if(!completed){
-
-    return;
-
-  }
-
-
-  clearLocalDraftAfterDownload();
 
 }
 
@@ -594,11 +591,6 @@ function setProfileId(id){
   const oldProfileId =
     getProfileId();
 
-
-  /*
-    If backend creates a new profile,
-    old payment must NEVER unlock it.
-  */
 
   if(
     oldProfileId &&
@@ -1169,42 +1161,18 @@ function updatePreview(){
 
 /* =========================================================
    LOCAL DRAFT
+   IMPORTANT:
+   OLD DRAFT IS NEVER RESTORED.
 ========================================================= */
 
-const formFields = [
-
-  "name",
-  "dob",
-  "time_of_birth",
-  "place_of_birth",
-  "height",
-  "religion",
-  "caste",
-  "gotra",
-  "rashi",
-  "nakshatra",
-  "complexion",
-  "education",
-  "profession",
-  "company",
-  "languages",
-  "hobbies",
-  "father",
-  "father_occupation",
-  "mother",
-  "mother_occupation",
-  "siblings",
-  "contact_person",
-  "city",
-  "phone",
-  "email",
-  "address",
-  "about"
-
-];
-
-
 function loadDraft(){
+
+  /*
+    Deliberately DO NOT load old
+    vivah_* form values.
+
+    Every page visit starts fresh.
+  */
 
   formFields.forEach(
     id => {
@@ -1212,55 +1180,43 @@ function loadDraft(){
       const input =
         $(id);
 
-      if(!input) return;
-
-
-      const saved =
-        localStorage.getItem(
-          "vivah_" + id
-        );
-
-
-      if(saved !== null){
+      if(input){
 
         input.value =
-          saved;
+          "";
 
       }
+
+
+      localStorage.removeItem(
+        "vivah_" + id
+      );
 
     }
   );
 
 
-  const savedTemplate =
-    localStorage.getItem(
-      "vivah_selected_template"
-    );
+  localStorage.removeItem(
+    "vivah_selected_template"
+  );
 
 
-  if(savedTemplate !== null){
-
-    const index =
-      Number(savedTemplate);
-
-
-    if(
-      Number.isInteger(index) &&
-      index >= 0 &&
-      index < templates.length
-    ){
-
-      selected =
-        index;
-
-    }
-
-  }
+  selected =
+    0;
 
 }
 
 
+/* =========================================================
+   SAVE TEMPLATE ONLY
+========================================================= */
+
 function saveDraftMeta(){
+
+  /*
+    Template preference can be stored,
+    but it will be cleared on next page load.
+  */
 
   localStorage.setItem(
     "vivah_selected_template",
@@ -1285,6 +1241,14 @@ formFields.forEach(
 
     const handleChange =
       () => {
+
+        /*
+          Keep current form data temporarily
+          while the user is working.
+
+          It will NOT be restored after
+          a new page load.
+        */
 
         localStorage.setItem(
           "vivah_" + id,
@@ -2674,12 +2638,6 @@ async function downloadJpg(){
   link.remove();
 
 
-  /*
-    First log the download.
-    Only after successful logging,
-    mark download as completed.
-  */
-
   const logged =
     await logDownload(
       "jpg"
@@ -2688,10 +2646,12 @@ async function downloadJpg(){
 
   if(logged){
 
-    localStorage.setItem(
-      DOWNLOAD_COMPLETED_KEY,
-      "true"
-    );
+    /*
+      Immediately clear local browser
+      data after successful download.
+    */
+
+    clearLocalDraft();
 
   }
 
@@ -2838,12 +2798,6 @@ async function downloadPdf(){
   );
 
 
-  /*
-    First log the download.
-    Only after successful logging,
-    mark download as completed.
-  */
-
   const logged =
     await logDownload(
       "pdf"
@@ -2852,10 +2806,12 @@ async function downloadPdf(){
 
   if(logged){
 
-    localStorage.setItem(
-      DOWNLOAD_COMPLETED_KEY,
-      "true"
-    );
+    /*
+      Immediately clear local browser
+      data after successful download.
+    */
+
+    clearLocalDraft();
 
   }
 
@@ -3258,12 +3214,16 @@ if(
 ========================================================= */
 
 /*
-  IMPORTANT:
-  Check whether a completed download happened
-  before restoring old local draft.
+  VERY IMPORTANT:
+
+  Old browser/localStorage data is cleared
+  FIRST.
+
+  Therefore old biodata can never be restored
+  by loadDraft().
 */
 
-clearCompletedDownloadDraft();
+clearLocalDraft();
 
 loadDraft();
 
