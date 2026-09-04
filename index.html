@@ -567,6 +567,26 @@ html, body {
 }
 </style>
 
+
+<style id="mobile-preview-fix-v3">
+@media (max-width: 700px) {
+  .preview-wrap {
+    overflow: hidden !important;
+  }
+
+  .preview-wrap #preview {
+    width: 760px !important;
+    max-width: none !important;
+    flex: 0 0 760px !important;
+    transform-origin: top left !important;
+  }
+
+  .hero-stage #heroPaper {
+    transform-origin: top center !important;
+  }
+}
+</style>
+
 </head>
 
 
@@ -1484,6 +1504,79 @@ html, body {
       new Date().getFullYear();
   </script>
 
+
+
+<script id="mobile-preview-fix-script">
+(function () {
+  function fitMobilePreviews() {
+    if (window.innerWidth > 700) return;
+
+    var previewWrap = document.querySelector(".preview-wrap");
+    var preview = document.querySelector("#preview");
+
+    if (previewWrap && preview) {
+      var wrapStyle = getComputedStyle(previewWrap);
+      var horizontalPadding =
+        (parseFloat(wrapStyle.paddingLeft) || 0) +
+        (parseFloat(wrapStyle.paddingRight) || 0);
+
+      var available = previewWrap.clientWidth - horizontalPadding;
+      var baseWidth = 760;
+      var scale = Math.min(1, Math.max(0.45, available / baseWidth));
+
+      preview.style.transformOrigin = "top left";
+      preview.style.transform = "scale(" + scale + ")";
+
+      requestAnimationFrame(function () {
+        var previewHeight = preview.offsetHeight * scale;
+        var bar = previewWrap.querySelector(".preview-bar");
+        var barHeight = bar ? bar.offsetHeight : 0;
+
+        previewWrap.style.height =
+          Math.ceil(barHeight + previewHeight + 28) + "px";
+      });
+    }
+
+    var heroStage = document.querySelector(".hero-stage");
+    var heroPaper = document.querySelector("#heroPaper");
+
+    if (heroStage && heroPaper) {
+      var heroAvailable = heroStage.clientWidth;
+      var heroScale = Math.min(1, Math.max(0.45, heroAvailable / 760));
+
+      heroPaper.style.transformOrigin = "top center";
+      heroPaper.style.transform = "scale(" + heroScale + ")";
+
+      requestAnimationFrame(function () {
+        heroStage.style.height =
+          Math.ceil(heroPaper.offsetHeight * heroScale + 10) + "px";
+      });
+    }
+  }
+
+  window.addEventListener("load", fitMobilePreviews);
+  window.addEventListener("resize", fitMobilePreviews);
+
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(function () {
+      fitMobilePreviews();
+    });
+
+    window.addEventListener("load", function () {
+      var pw = document.querySelector(".preview-wrap");
+      var p = document.querySelector("#preview");
+      var hs = document.querySelector(".hero-stage");
+      if (pw) ro.observe(pw);
+      if (p) ro.observe(p);
+      if (hs) ro.observe(hs);
+    });
+  }
+
+  setTimeout(fitMobilePreviews, 300);
+  setTimeout(fitMobilePreviews, 1000);
+  setTimeout(fitMobilePreviews, 2000);
+})();
+</script>
 
 </body>
 </html>
