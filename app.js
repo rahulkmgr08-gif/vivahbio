@@ -415,6 +415,161 @@ const PREMIUM_DRAFT_KEY =
 const PHOTO_VERSION_KEY =
   "vivah_photo_version";
 
+/*
+  IMPORTANT:
+  This flag is used only in browser localStorage.
+  It does NOT delete anything from Supabase.
+*/
+const DOWNLOAD_COMPLETED_KEY =
+  "vivah_download_completed";
+
+
+/* =========================================================
+   CLEAR LOCAL DRAFT AFTER DOWNLOAD
+========================================================= */
+
+function clearLocalDraftAfterDownload(){
+
+  /*
+    Clear all locally saved form fields.
+  */
+
+  formFields.forEach(
+    id => {
+
+      localStorage.removeItem(
+        "vivah_" + id
+      );
+
+      const input =
+        $(id);
+
+      if(input){
+
+        input.value =
+          "";
+
+      }
+
+    }
+  );
+
+
+  /*
+    Clear selected template.
+  */
+
+  localStorage.removeItem(
+    "vivah_selected_template"
+  );
+
+
+  /*
+    Clear current browser profile/payment state.
+    Supabase data remains untouched.
+  */
+
+  localStorage.removeItem(
+    PROFILE_ID_KEY
+  );
+
+  localStorage.removeItem(
+    PAYMENT_ID_KEY
+  );
+
+  localStorage.removeItem(
+    PREMIUM_UNLOCK_KEY
+  );
+
+  localStorage.removeItem(
+    PREMIUM_PROFILE_KEY
+  );
+
+  localStorage.removeItem(
+    PREMIUM_DRAFT_KEY
+  );
+
+  localStorage.removeItem(
+    PHOTO_VERSION_KEY
+  );
+
+
+  /*
+    Clear photo input.
+  */
+
+  const photoInput =
+    $("photo");
+
+  if(photoInput){
+
+    photoInput.value =
+      "";
+
+  }
+
+
+  /*
+    Clear runtime photo.
+  */
+
+  profileDataUrl =
+    "";
+
+
+  /*
+    Reset selected template.
+  */
+
+  selected =
+    0;
+
+
+  /*
+    Remove completion flag after processing.
+  */
+
+  localStorage.removeItem(
+    DOWNLOAD_COMPLETED_KEY
+  );
+
+
+  /*
+    Refresh preview/buttons.
+  */
+
+  renderMini();
+
+  updatePreview();
+
+  updatePremiumButtons();
+
+}
+
+
+/* =========================================================
+   CHECK COMPLETED DOWNLOAD ON PAGE LOAD
+========================================================= */
+
+function clearCompletedDownloadDraft(){
+
+  const completed =
+    localStorage.getItem(
+      DOWNLOAD_COMPLETED_KEY
+    ) === "true";
+
+
+  if(!completed){
+
+    return;
+
+  }
+
+
+  clearLocalDraftAfterDownload();
+
+}
+
 
 /* =========================================================
    PROFILE ID
@@ -492,8 +647,6 @@ function setPaymentId(id){
 
 /* =========================================================
    CURRENT DRAFT SIGNATURE
-   Used to detect if user changed biodata
-   after payment.
 ========================================================= */
 
 const signatureFields = [
@@ -626,15 +779,6 @@ function premiumUnlocked(){
     getDraftSignature();
 
 
-  /*
-    Premium is valid ONLY when:
-    1. Premium flag exists
-    2. Payment ID exists
-    3. Profile ID exists
-    4. Paid profile == current profile
-    5. Current biodata == paid biodata
-  */
-
   return (
 
     unlocked &&
@@ -690,10 +834,6 @@ function setPremiumUnlocked(paymentId){
 
   }
 
-
-  /*
-    Save exact biodata state that was paid for.
-  */
 
   localStorage.setItem(
     PREMIUM_DRAFT_KEY,
@@ -1132,9 +1272,6 @@ function saveDraftMeta(){
 
 /* =========================================================
    FORM CHANGE HANDLERS
-   IMPORTANT:
-   Any biodata change after payment
-   invalidates old premium.
 ========================================================= */
 
 formFields.forEach(
@@ -1154,11 +1291,6 @@ formFields.forEach(
           input.value
         );
 
-
-        /*
-          If user changes biodata after payment,
-          old payment cannot unlock modified biodata.
-        */
 
         if(
           localStorage.getItem(
@@ -1214,11 +1346,6 @@ function selectTemplate(index){
   selected =
     index;
 
-
-  /*
-    Changing template means current
-    paid biodata has changed.
-  */
 
   if(
     previous !== index &&
@@ -1312,11 +1439,6 @@ $("photo")?.addEventListener(
 
     }
 
-
-    /*
-      New photo = modified biodata.
-      Old payment must not unlock it.
-    */
 
     let photoVersion =
       Number(
@@ -1829,10 +1951,6 @@ async function startRazorpayPayment(){
     }
 
 
-    /*
-      New payment creates a new profile.
-    */
-
     if(
       orderData.profileId
     ){
@@ -1893,10 +2011,6 @@ async function startRazorpayPayment(){
 
           try{
 
-            /*
-              VERIFY PAYMENT
-            */
-
             const verifyRes =
               await fetch(
                 "/api/verify-payment",
@@ -1950,20 +2064,10 @@ async function startRazorpayPayment(){
             }
 
 
-            /*
-              SAVE PAYMENT ID
-            */
-
             setPaymentId(
               verifyData.paymentId
             );
 
-
-            /*
-              IMPORTANT:
-              Store premium against CURRENT profile
-              and CURRENT biodata.
-            */
 
             setPremiumUnlocked(
               verifyData.paymentId
@@ -1972,10 +2076,6 @@ async function startRazorpayPayment(){
 
             updatePremiumButtons();
 
-
-            /*
-              UPLOAD PHOTO
-            */
 
             let photoSaved =
               false;
@@ -2574,9 +2674,26 @@ async function downloadJpg(){
   link.remove();
 
 
-  await logDownload(
-    "jpg"
-  );
+  /*
+    First log the download.
+    Only after successful logging,
+    mark download as completed.
+  */
+
+  const logged =
+    await logDownload(
+      "jpg"
+    );
+
+
+  if(logged){
+
+    localStorage.setItem(
+      DOWNLOAD_COMPLETED_KEY,
+      "true"
+    );
+
+  }
 
 
   toast(
@@ -2721,9 +2838,26 @@ async function downloadPdf(){
   );
 
 
-  await logDownload(
-    "pdf"
-  );
+  /*
+    First log the download.
+    Only after successful logging,
+    mark download as completed.
+  */
+
+  const logged =
+    await logDownload(
+      "pdf"
+    );
+
+
+  if(logged){
+
+    localStorage.setItem(
+      DOWNLOAD_COMPLETED_KEY,
+      "true"
+    );
+
+  }
 
 
   toast(
@@ -2738,12 +2872,6 @@ async function downloadPdf(){
 ========================================================= */
 
 async function requirePremium(action){
-
-  /*
-    THIS IS THE IMPORTANT PART.
-    Every download checks current profile +
-    current biodata + paid payment.
-  */
 
   if(
     premiumUnlocked()
@@ -3128,6 +3256,14 @@ if(
 /* =========================================================
    INITIALIZE
 ========================================================= */
+
+/*
+  IMPORTANT:
+  Check whether a completed download happened
+  before restoring old local draft.
+*/
+
+clearCompletedDownloadDraft();
 
 loadDraft();
 
