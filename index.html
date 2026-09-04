@@ -631,6 +631,39 @@ html, body {
 }
 </style>
 
+
+<style id="mobile-preview-gap-fix-v6">
+@media (max-width: 700px) {
+  .preview-wrap {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    align-self: flex-start !important;
+  }
+
+  .preview-wrap #preview {
+    display: block !important;
+    width: 760px !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative !important;
+    left: 0 !important;
+    top: 0 !important;
+    flex: none !important;
+  }
+
+  .preview-bar {
+    flex: none !important;
+  }
+
+  .maker-layout {
+    align-items: flex-start !important;
+  }
+}
+</style>
 </head>
 
 
@@ -1485,85 +1518,85 @@ html, body {
 
 
 
-<script id="mobile-preview-final-fit">
+<script id="mobile-preview-final-fit-v6">
 (function () {
-  function fitOne(el, wrap, isHero) {
-    if (!el || !wrap) return;
+  function fitPreview() {
+    if (window.innerWidth > 700) return;
+
+    var wrap = document.querySelector('.preview-wrap');
+    var el = document.getElementById('preview');
+    if (!wrap || !el) return;
+
+    /* First remove any old height so the real preview size can be measured. */
+    wrap.style.height = 'auto';
+    wrap.style.minHeight = '0px';
+    wrap.style.maxHeight = 'none';
+
+    var available = wrap.clientWidth;
+    if (!available) return;
 
     var baseWidth = 760;
-    var wrapWidth = wrap.clientWidth;
-    if (!wrapWidth) return;
-
-    var sidePadding = 0;
-    var cs = window.getComputedStyle(wrap);
-    sidePadding += parseFloat(cs.paddingLeft) || 0;
-    sidePadding += parseFloat(cs.paddingRight) || 0;
-
-    var available = Math.max(280, wrapWidth - sidePadding - 2);
-    var scale = Math.min(1, available / baseWidth);
+    var scale = Math.min(1, Math.max(0.1, (available - 2) / baseWidth));
 
     el.style.width = baseWidth + 'px';
     el.style.maxWidth = 'none';
-    el.style.transformOrigin = isHero ? 'top center' : 'top left';
+    el.style.flex = 'none';
+    el.style.margin = '0';
+    el.style.transformOrigin = 'top left';
     el.style.transform = 'scale(' + scale + ')';
 
     requestAnimationFrame(function () {
-      var naturalHeight = el.offsetHeight;
-      var visualHeight = Math.ceil(naturalHeight * scale);
-
-      if (isHero) {
-        wrap.style.height = visualHeight + 'px';
-        wrap.style.minHeight = '0px';
-      } else {
+      requestAnimationFrame(function () {
+        var wrapRect = wrap.getBoundingClientRect();
+        var elRect = el.getBoundingClientRect();
         var bar = wrap.querySelector('.preview-bar');
-        var barHeight = bar ? bar.offsetHeight : 0;
-        var margin = 24;
-        wrap.style.height = (barHeight + visualHeight + margin) + 'px';
+        var barRect = bar ? bar.getBoundingClientRect() : null;
+
+        /* Measure the ACTUAL visual bottom after CSS transform.
+           This prevents the unscaled 760px preview height from creating
+           a large blank area underneath it. */
+        var top = barRect ? Math.min(barRect.top, elRect.top) : elRect.top;
+        var bottom = Math.max(barRect ? barRect.bottom : 0, elRect.bottom);
+        var needed = Math.ceil(bottom - wrapRect.top + 14);
+
+        wrap.style.height = Math.max(needed, 120) + 'px';
         wrap.style.minHeight = '0px';
-      }
+        wrap.style.maxHeight = 'none';
+        wrap.style.overflow = 'hidden';
+      });
     });
-  }
-
-  function fitMobile() {
-    if (window.innerWidth > 700) return;
-
-    var preview = document.getElementById('preview');
-    var previewWrap = document.querySelector('.preview-wrap');
-    fitOne(preview, previewWrap, false);
-
-    var hero = document.getElementById('heroPaper');
-    var heroStage = document.querySelector('.hero-stage');
-    fitOne(hero, heroStage, true);
   }
 
   var timer;
   function schedule() {
     clearTimeout(timer);
-    timer = setTimeout(fitMobile, 80);
+    timer = setTimeout(fitPreview, 120);
   }
 
   window.addEventListener('load', function () {
-    fitMobile();
-    setTimeout(fitMobile, 300);
-    setTimeout(fitMobile, 1000);
+    fitPreview();
+    setTimeout(fitPreview, 300);
+    setTimeout(fitPreview, 800);
   });
+
   window.addEventListener('resize', schedule);
   window.addEventListener('orientationchange', function () {
-    setTimeout(fitMobile, 150);
+    setTimeout(fitPreview, 200);
   });
+
+  window.addEventListener('input', schedule, true);
+  window.addEventListener('change', schedule, true);
 
   if (window.ResizeObserver) {
     window.addEventListener('load', function () {
       var wrap = document.querySelector('.preview-wrap');
       if (wrap) {
-        new ResizeObserver(schedule).observe(wrap);
+        new ResizeObserver(function () {
+          schedule();
+        }).observe(wrap);
       }
     });
   }
-
-  // app.js can update the preview after fields/photo/template changes.
-  window.addEventListener('input', schedule, true);
-  window.addEventListener('change', schedule, true);
 })();
 </script>
 
