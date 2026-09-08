@@ -2464,128 +2464,154 @@ async function ensureExportLibraries(){
 
 async function createPreviewCanvas(){
 
-  const preview =
-    $("preview");
-
+  const preview = $("preview");
 
   if(!preview){
-
-    throw new Error(
-      "Biodata preview not found."
-    );
-
+    throw new Error("Biodata preview not found.");
   }
 
-
-  if(
-    document.fonts &&
-    document.fonts.ready
-  ){
-
+  if(document.fonts && document.fonts.ready){
     await document.fonts.ready;
-
   }
 
+  /*
+    Create a hidden desktop-width export area.
+    This prevents mobile CSS from affecting
+    PDF/JPG downloads.
+  */
+  const exportArea = document.createElement("div");
 
-  const images =
-    Array.from(
-      preview.querySelectorAll("img")
-    );
+  exportArea.style.position = "fixed";
+  exportArea.style.left = "-10000px";
+  exportArea.style.top = "0";
+  exportArea.style.width = "794px";
+  exportArea.style.background = "#ffffff";
+  exportArea.style.zIndex = "-9999";
+  exportArea.style.overflow = "visible";
 
+  /*
+    Clone the current biodata.
+  */
+  const clone = preview.cloneNode(true);
+
+  clone.id = "vivahbioExportPreview";
+
+  exportArea.appendChild(clone);
+  document.body.appendChild(exportArea);
+
+  /*
+    Force desktop/A4 layout only inside
+    the hidden export copy.
+  */
+  const exportStyle = document.createElement("style");
+
+  exportStyle.textContent = `
+
+    #vivahbioExportPreview{
+      width:794px !important;
+      min-width:794px !important;
+      max-width:794px !important;
+
+      height:auto !important;
+      min-height:1123px !important;
+
+      margin:0 !important;
+
+      transform:none !important;
+      transition:none !important;
+
+      box-sizing:border-box !important;
+    }
+
+    #vivahbioExportPreview *{
+      box-sizing:border-box !important;
+    }
+
+    /* Force desktop header */
+
+    #vivahbioExportPreview .bio-header{
+      display:flex !important;
+      flex-direction:row !important;
+      align-items:center !important;
+      justify-content:space-between !important;
+    }
+
+    /* Force two-column details */
+
+    #vivahbioExportPreview .bio-section-body{
+      display:grid !important;
+      grid-template-columns:1fr 1fr !important;
+    }
+
+    /* Prevent mobile rows/layout */
+
+    #vivahbioExportPreview .bio-row{
+      display:flex !important;
+    }
+
+  `;
+
+  exportArea.appendChild(exportStyle);
+
+  /*
+    Wait for images in the cloned preview.
+  */
+  const images = Array.from(
+    clone.querySelectorAll("img")
+  );
 
   await Promise.all(
     images.map(
       image =>
-        new Promise(
-          resolve => {
+        new Promise(resolve => {
 
-            if(image.complete){
-
-              resolve();
-
-              return;
-
-            }
-
-
-            image.onload =
-              resolve;
-
-
-            image.onerror =
-              resolve;
-
+          if(image.complete){
+            resolve();
+            return;
           }
-        )
+
+          image.onload = resolve;
+          image.onerror = resolve;
+
+        })
     )
   );
 
-
-  const oldTransition =
-    preview.style.transition;
-
-
-  const oldTransform =
-    preview.style.transform;
-
-
-  preview.style.transition =
-    "none";
-
-
-  preview.style.transform =
-    "none";
-
-
   let canvas;
-
 
   try{
 
-    canvas =
-      await html2canvas(
-        preview,
-        {
+    canvas = await html2canvas(
+      clone,
+      {
+        scale: 2,
 
-          scale:
-            Math.min(
-              3,
-              Math.max(
-                2,
-                window.devicePixelRatio ||
-                1
-              )
-            ),
+        useCORS: true,
 
-          useCORS:
-            true,
+        allowTaint: false,
 
-          allowTaint:
-            false,
+        backgroundColor: "#ffffff",
 
-          backgroundColor:
-            null,
+        logging: false,
 
-          logging:
-            false,
+        imageTimeout: 15000,
 
-          imageTimeout:
-            15000
+        windowWidth: 794,
 
-        }
-      );
+        scrollX: 0,
+
+        scrollY: 0
+      }
+    );
 
   }finally{
 
-    preview.style.transition =
-      oldTransition;
-
-
-    preview.style.transform =
-      oldTransform;
+    /*
+      Remove temporary export copy.
+    */
+    exportArea.remove();
 
   }
-
 
   return canvas;
 
