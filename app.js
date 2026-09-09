@@ -39,7 +39,6 @@ const defaultTemplates = [
   ["Ruby Classic","traditional","red",true]
 ];
 
-
 const $ = id => document.getElementById(id);
 
 let selected = 0;
@@ -63,7 +62,6 @@ function getTemplates(){
       Array.isArray(saved) &&
       saved.length
     ){
-
       return saved;
     }
 
@@ -80,9 +78,7 @@ function getTemplates(){
 
 }
 
-
 let templates = getTemplates();
-
 
 function saveTemplates(){
 
@@ -115,29 +111,23 @@ function escapeHtml(value){
 
 }
 
-
 function safeValue(id){
 
   const el = $(id);
 
   if(!el) return "";
 
-  return String(
-    el.value || ""
-  ).trim();
+  return String(el.value || "").trim();
 
 }
 
-
 function val(id){
 
-  const value =
-    safeValue(id);
+  const value = safeValue(id);
 
   return value || "—";
 
 }
-
 
 function cap(value){
 
@@ -148,37 +138,26 @@ function cap(value){
 
 }
 
-
 function toast(message){
 
-  const box =
-    $("toast");
+  const box = $("toast");
 
   if(!box){
 
     alert(message);
-
     return;
 
   }
 
-  box.textContent =
-    message;
+  box.textContent = message;
+  box.style.display = "block";
 
-  box.style.display =
-    "block";
-
-  clearTimeout(
-    window.__vivahToastTimer
-  );
+  clearTimeout(window.__vivahToastTimer);
 
   window.__vivahToastTimer =
     setTimeout(
       () => {
-
-        box.style.display =
-          "none";
-
+        box.style.display = "none";
       },
       3000
     );
@@ -203,137 +182,96 @@ function artClass(index){
     "red"
   ];
 
-  return colors[
-    index % colors.length
-  ];
+  return colors[index % colors.length];
 
 }
 
-
 function renderTemplates(filter = "all"){
 
-  const grid =
-    $("templateGrid");
+  const grid = $("templateGrid");
 
   if(!grid) return;
 
   grid.innerHTML = "";
 
+  templates.forEach((template,index) => {
 
-  templates.forEach(
-    (template,index) => {
+    if(
+      filter !== "all" &&
+      template[1] !== filter
+    ){
+      return;
+    }
 
-      if(
-        filter !== "all" &&
-        template[1] !== filter
-      ){
+    const card =
+      document.createElement("div");
 
-        return;
+    card.className = "template-card";
+
+    card.setAttribute("role","button");
+    card.setAttribute("tabindex","0");
+
+    card.innerHTML = `
+      <div class="template-art ${artClass(index)}">
+        <div class="tp"></div>
+
+        <div class="tt">
+          ${escapeHtml(template[0])}
+        </div>
+
+        <div class="tl"></div>
+        <div class="lines"></div>
+      </div>
+
+      <footer>
+        <b>${escapeHtml(template[0])}</b>
+
+        <small>
+          ${escapeHtml(cap(template[1]))}
+          •
+          ${template[3] ? "Premium" : "Free"}
+        </small>
+      </footer>
+    `;
+
+    card.onclick = function(){
+
+      selectTemplate(index);
+
+      const maker = $("maker");
+
+      if(maker){
+
+        setTimeout(() => {
+
+          maker.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+          });
+
+        },100);
 
       }
 
+    };
 
-      const card =
-        document.createElement("div");
+    card.onkeydown = function(event){
 
+      if(
+        event.key === "Enter" ||
+        event.key === " "
+      ){
 
-      card.className =
-        "template-card";
+        event.preventDefault();
+        card.click();
 
+      }
 
-      card.setAttribute(
-        "role",
-        "button"
-      );
+    };
 
+    grid.appendChild(card);
 
-      card.setAttribute(
-        "tabindex",
-        "0"
-      );
-
-
-      card.innerHTML = `
-
-        <div class="template-art ${artClass(index)}">
-
-          <div class="tp"></div>
-
-          <div class="tt">
-            ${escapeHtml(template[0])}
-          </div>
-
-          <div class="tl"></div>
-
-          <div class="lines"></div>
-
-        </div>
-
-        <footer>
-
-          <b>
-            ${escapeHtml(template[0])}
-          </b>
-
-          <small>
-            ${escapeHtml(cap(template[1]))}
-            •
-            ${template[3] ? "Premium" : "Free"}
-          </small>
-
-        </footer>
-
-      `;
-
-
-      card.onclick =
-        function(){
-
-          selectTemplate(index);
-
-          const maker =
-            $("maker");
-
-          if(maker){
-
-            setTimeout(
-              () => {
-
-                maker.scrollIntoView({
-                  behavior:"smooth",
-                  block:"start"
-                });
-
-              },
-              100
-            );
-
-          }
-
-        };
-
-
-      card.onkeydown =
-        function(event){
-
-          if(
-            event.key === "Enter" ||
-            event.key === " "
-          ){
-
-            event.preventDefault();
-
-            card.click();
-
-          }
-
-        };
-
-
-      grid.appendChild(card);
-
-    }
-  );
+  });
 
 }
 
@@ -344,50 +282,32 @@ function renderTemplates(filter = "all"){
 
 function renderMini(){
 
-  const box =
-    $("miniTemplates");
+  const box = $("miniTemplates");
 
   if(!box) return;
 
   box.innerHTML = "";
 
+  templates.forEach((template,index) => {
 
-  templates.forEach(
-    (template,index) => {
+    const button =
+      document.createElement("button");
 
-      const button =
-        document.createElement("button");
+    button.type = "button";
 
+    button.className =
+      "mini" +
+      (index === selected ? " active" : "");
 
-      button.type =
-        "button";
+    button.textContent = template[0];
+    button.title = template[0];
 
+    button.onclick =
+      () => selectTemplate(index);
 
-      button.className =
-        "mini" +
-        (
-          index === selected
-            ? " active"
-            : ""
-        );
+    box.appendChild(button);
 
-
-      button.textContent =
-        template[0];
-
-
-      button.title =
-        template[0];
-
-
-      button.onclick =
-        () => selectTemplate(index);
-
-
-      box.appendChild(button);
-
-    }
-  );
+  });
 
 }
 
@@ -453,117 +373,48 @@ const PHOTO_VERSION_KEY =
 
 
 /* =========================================================
-   IMPORTANT:
-   CLEAR OLD LOCAL DRAFT
+   CLEAR LOCAL DRAFT
 ========================================================= */
 
 function clearLocalDraft(){
 
-  /*
-    Remove all previously saved biodata
-    from this browser.
-  */
+  formFields.forEach(id => {
 
-  formFields.forEach(
-    id => {
+    localStorage.removeItem(
+      "vivah_" + id
+    );
 
-      localStorage.removeItem(
-        "vivah_" + id
-      );
-
-    }
-  );
-
-
-  /*
-    Remove old selected template.
-  */
+  });
 
   localStorage.removeItem(
     "vivah_selected_template"
   );
 
+  localStorage.removeItem(PROFILE_ID_KEY);
+  localStorage.removeItem(PAYMENT_ID_KEY);
+  localStorage.removeItem(PREMIUM_UNLOCK_KEY);
+  localStorage.removeItem(PREMIUM_PROFILE_KEY);
+  localStorage.removeItem(PREMIUM_DRAFT_KEY);
+  localStorage.removeItem(PHOTO_VERSION_KEY);
 
-  /*
-    Remove old browser profile/payment
-    session.
+  formFields.forEach(id => {
 
-    IMPORTANT:
-    This does NOT delete anything
-    from Supabase.
-  */
+    const input = $(id);
 
-  localStorage.removeItem(
-    PROFILE_ID_KEY
-  );
-
-  localStorage.removeItem(
-    PAYMENT_ID_KEY
-  );
-
-  localStorage.removeItem(
-    PREMIUM_UNLOCK_KEY
-  );
-
-  localStorage.removeItem(
-    PREMIUM_PROFILE_KEY
-  );
-
-  localStorage.removeItem(
-    PREMIUM_DRAFT_KEY
-  );
-
-  localStorage.removeItem(
-    PHOTO_VERSION_KEY
-  );
-
-
-  /*
-    Clear actual form inputs.
-  */
-
-  formFields.forEach(
-    id => {
-
-      const input =
-        $(id);
-
-      if(input){
-
-        input.value =
-          "";
-
-      }
-
+    if(input){
+      input.value = "";
     }
-  );
 
+  });
 
-  /*
-    Clear photo.
-  */
-
-  const photo =
-    $("photo");
+  const photo = $("photo");
 
   if(photo){
-
-    photo.value =
-      "";
-
+    photo.value = "";
   }
 
-
-  profileDataUrl =
-    "";
-
-
-  /*
-    Always start with first template.
-  */
-
-  selected =
-    0;
+  profileDataUrl = "";
+  selected = 0;
 
 }
 
@@ -580,27 +431,19 @@ function getProfileId(){
 
 }
 
-
 function setProfileId(id){
 
   if(!id) return;
 
-  const newProfileId =
-    String(id);
-
-  const oldProfileId =
-    getProfileId();
-
+  const newProfileId = String(id);
+  const oldProfileId = getProfileId();
 
   if(
     oldProfileId &&
     oldProfileId !== newProfileId
   ){
-
     invalidatePremium(false);
-
   }
-
 
   localStorage.setItem(
     PROFILE_ID_KEY,
@@ -622,7 +465,6 @@ function getPaymentId(){
 
 }
 
-
 function setPaymentId(id){
 
   if(id){
@@ -641,57 +483,19 @@ function setPaymentId(id){
    CURRENT DRAFT SIGNATURE
 ========================================================= */
 
-const signatureFields = [
-
-  "name",
-  "dob",
-  "time_of_birth",
-  "place_of_birth",
-  "height",
-  "religion",
-  "caste",
-  "gotra",
-  "rashi",
-  "nakshatra",
-  "complexion",
-  "education",
-  "profession",
-  "company",
-  "languages",
-  "hobbies",
-  "father",
-  "father_occupation",
-  "mother",
-  "mother_occupation",
-  "siblings",
-  "contact_person",
-  "city",
-  "phone",
-  "email",
-  "address",
-  "about"
-
-];
-
+const signatureFields = [...formFields];
 
 function getDraftSignature(){
 
   const data = {};
 
-  signatureFields.forEach(
-    id => {
-
-      data[id] =
-        safeValue(id);
-
-    }
-  );
-
+  signatureFields.forEach(id => {
+    data[id] = safeValue(id);
+  });
 
   data.template =
     templates[selected]?.[0] ||
     "Elegant Gold";
-
 
   return JSON.stringify(data);
 
@@ -704,25 +508,12 @@ function getDraftSignature(){
 
 function invalidatePremium(showMessage = false){
 
-  localStorage.removeItem(
-    PREMIUM_UNLOCK_KEY
-  );
-
-  localStorage.removeItem(
-    PAYMENT_ID_KEY
-  );
-
-  localStorage.removeItem(
-    PREMIUM_PROFILE_KEY
-  );
-
-  localStorage.removeItem(
-    PREMIUM_DRAFT_KEY
-  );
-
+  localStorage.removeItem(PREMIUM_UNLOCK_KEY);
+  localStorage.removeItem(PAYMENT_ID_KEY);
+  localStorage.removeItem(PREMIUM_PROFILE_KEY);
+  localStorage.removeItem(PREMIUM_DRAFT_KEY);
 
   updatePremiumButtons();
-
 
   if(showMessage){
 
@@ -746,47 +537,33 @@ function premiumUnlocked(){
       PREMIUM_UNLOCK_KEY
     ) === "true";
 
-
   const paymentId =
     getPaymentId();
-
 
   const paidProfileId =
     localStorage.getItem(
       PREMIUM_PROFILE_KEY
     ) || "";
 
-
   const currentProfileId =
     getProfileId();
-
 
   const paidDraftSignature =
     localStorage.getItem(
       PREMIUM_DRAFT_KEY
     ) || "";
 
-
   const currentDraftSignature =
     getDraftSignature();
 
-
   return (
-
     unlocked &&
-
     !!paymentId &&
-
     !!paidProfileId &&
-
     !!currentProfileId &&
-
     paidProfileId === currentProfileId &&
-
     !!paidDraftSignature &&
-
     paidDraftSignature === currentDraftSignature
-
   );
 
 }
@@ -803,19 +580,11 @@ function setPremiumUnlocked(paymentId){
     "true"
   );
 
-
   if(paymentId){
-
-    setPaymentId(
-      paymentId
-    );
-
+    setPaymentId(paymentId);
   }
 
-
-  const profileId =
-    getProfileId();
-
+  const profileId = getProfileId();
 
   if(profileId){
 
@@ -825,7 +594,6 @@ function setPremiumUnlocked(paymentId){
     );
 
   }
-
 
   localStorage.setItem(
     PREMIUM_DRAFT_KEY,
@@ -842,52 +610,32 @@ function setPremiumUnlocked(paymentId){
 function bioRow(label,value){
 
   return `
-
     <div class="bio-row">
-
-      <span>
-        ${escapeHtml(label)}
-      </span>
-
-      <b>
-        ${escapeHtml(value || "—")}
-      </b>
-
+      <span>${escapeHtml(label)}</span>
+      <b>${escapeHtml(value || "—")}</b>
     </div>
-
   `;
 
 }
 
-
 function updatePreview(){
 
-  const preview =
-    $("preview");
+  const preview = $("preview");
 
   if(!preview) return;
 
-
   const designNumber =
     (selected % 10) + 1;
-
 
   preview.className =
     "bio-preview design-" +
     designNumber;
 
-
   const name =
-    escapeHtml(
-      val("name")
-    );
-
+    escapeHtml(val("name"));
 
   const profession =
-    escapeHtml(
-      val("profession")
-    );
-
+    escapeHtml(val("profession"));
 
   preview.innerHTML = `
 
@@ -895,25 +643,17 @@ function updatePreview(){
       ॥ श्री गणेशाय नमः ॥
     </div>
 
-
     <div class="bio-header">
 
       <div class="bio-header-text">
 
-        <small>
-          MARRIAGE BIODATA
-        </small>
+        <small>MARRIAGE BIODATA</small>
 
-        <h2>
-          ${name}
-        </h2>
+        <h2>${name}</h2>
 
-        <p>
-          ${profession}
-        </p>
+        <p>${profession}</p>
 
       </div>
-
 
       <div class="profile">
 
@@ -930,227 +670,101 @@ function updatePreview(){
 
     </div>
 
-
     <div class="bio-section">
 
-      <h5>
-        PERSONAL DETAILS
-      </h5>
+      <h5>PERSONAL DETAILS</h5>
 
       <div class="bio-section-body">
 
-        ${bioRow(
-          "Date of Birth",
-          safeValue("dob")
-        )}
-
-        ${bioRow(
-          "Time of Birth",
-          safeValue("time_of_birth")
-        )}
-
-        ${bioRow(
-          "Place of Birth",
-          safeValue("place_of_birth")
-        )}
-
-        ${bioRow(
-          "Height",
-          safeValue("height")
-        )}
-
-        ${bioRow(
-          "Religion",
-          safeValue("religion")
-        )}
-
-        ${bioRow(
-          "Caste / Community",
-          safeValue("caste")
-        )}
-
-        ${bioRow(
-          "Gotra",
-          safeValue("gotra")
-        )}
-
-        ${bioRow(
-          "Rashi",
-          safeValue("rashi")
-        )}
-
-        ${bioRow(
-          "Nakshatra",
-          safeValue("nakshatra")
-        )}
-
-        ${bioRow(
-          "Complexion",
-          safeValue("complexion")
-        )}
-
-        ${bioRow(
-          "Education",
-          safeValue("education")
-        )}
-
-        ${bioRow(
-          "Profession",
-          safeValue("profession")
-        )}
-
-        ${bioRow(
-          "Company",
-          safeValue("company")
-        )}
-
-        ${bioRow(
-          "Languages",
-          safeValue("languages")
-        )}
-
-        ${bioRow(
-          "Hobbies",
-          safeValue("hobbies")
-        )}
+        ${bioRow("Date of Birth",safeValue("dob"))}
+        ${bioRow("Time of Birth",safeValue("time_of_birth"))}
+        ${bioRow("Place of Birth",safeValue("place_of_birth"))}
+        ${bioRow("Height",safeValue("height"))}
+        ${bioRow("Religion",safeValue("religion"))}
+        ${bioRow("Caste / Community",safeValue("caste"))}
+        ${bioRow("Gotra",safeValue("gotra"))}
+        ${bioRow("Rashi",safeValue("rashi"))}
+        ${bioRow("Nakshatra",safeValue("nakshatra"))}
+        ${bioRow("Complexion",safeValue("complexion"))}
+        ${bioRow("Education",safeValue("education"))}
+        ${bioRow("Profession",safeValue("profession"))}
+        ${bioRow("Company",safeValue("company"))}
+        ${bioRow("Languages",safeValue("languages"))}
+        ${bioRow("Hobbies",safeValue("hobbies"))}
 
       </div>
 
     </div>
 
-
     <div class="bio-section">
 
-      <h5>
-        FAMILY DETAILS
-      </h5>
+      <h5>FAMILY DETAILS</h5>
 
       <div class="bio-section-body">
 
-        ${bioRow(
-          "Father's Name",
-          safeValue("father")
-        )}
-
-        ${bioRow(
-          "Father's Occupation",
-          safeValue("father_occupation")
-        )}
-
-        ${bioRow(
-          "Mother's Name",
-          safeValue("mother")
-        )}
-
-        ${bioRow(
-          "Mother's Occupation",
-          safeValue("mother_occupation")
-        )}
-
-        ${bioRow(
-          "Siblings",
-          safeValue("siblings")
-        )}
-
-        ${bioRow(
-          "Contact Person",
-          safeValue("contact_person")
-        )}
+        ${bioRow("Father's Name",safeValue("father"))}
+        ${bioRow("Father's Occupation",safeValue("father_occupation"))}
+        ${bioRow("Mother's Name",safeValue("mother"))}
+        ${bioRow("Mother's Occupation",safeValue("mother_occupation"))}
+        ${bioRow("Siblings",safeValue("siblings"))}
+        ${bioRow("Contact Person",safeValue("contact_person"))}
 
       </div>
 
     </div>
 
-
     <div class="bio-section">
 
-      <h5>
-        ABOUT ME
-      </h5>
+      <h5>ABOUT ME</h5>
 
       <p class="bio-about">
-        ${escapeHtml(
-          safeValue("about") || "—"
-        )}
+        ${escapeHtml(safeValue("about") || "—")}
       </p>
 
     </div>
 
-
     <div class="bio-section">
 
-      <h5>
-        CONTACT DETAILS
-      </h5>
+      <h5>CONTACT DETAILS</h5>
 
       <div class="bio-section-body">
 
-        ${bioRow(
-          "City",
-          safeValue("city")
-        )}
-
-        ${bioRow(
-          "Contact Number",
-          safeValue("phone")
-        )}
-
-        ${bioRow(
-          "Email",
-          safeValue("email")
-        )}
-
-        ${bioRow(
-          "Address",
-          safeValue("address")
-        )}
+        ${bioRow("City",safeValue("city"))}
+        ${bioRow("Contact Number",safeValue("phone"))}
+        ${bioRow("Email",safeValue("email"))}
+        ${bioRow("Address",safeValue("address"))}
 
       </div>
 
     </div>
 
-
     <div class="bio-foot">
 
-      📞 ${escapeHtml(
-        safeValue("phone") || "—"
-      )}
+      📞 ${escapeHtml(safeValue("phone") || "—")}
 
       &nbsp; • &nbsp;
 
-      📍 ${escapeHtml(
-        safeValue("city") || "—"
-      )}
+      📍 ${escapeHtml(safeValue("city") || "—")}
 
     </div>
 
   `;
 
-
   if(profileDataUrl){
 
-    const image =
-      $("pimg");
-
-    const placeholder =
-      $("ph");
-
+    const image = $("pimg");
+    const placeholder = $("ph");
 
     if(image){
 
-      image.src =
-        profileDataUrl;
-
-      image.style.display =
-        "block";
+      image.src = profileDataUrl;
+      image.style.display = "block";
 
     }
 
-
     if(placeholder){
 
-      placeholder.style.display =
-        "none";
+      placeholder.style.display = "none";
 
     }
 
@@ -1160,49 +774,30 @@ function updatePreview(){
 
 
 /* =========================================================
-   LOCAL DRAFT
-   IMPORTANT:
-   OLD DRAFT IS NEVER RESTORED.
+   LOAD DRAFT - ALWAYS FRESH
 ========================================================= */
 
 function loadDraft(){
 
-  /*
-    Deliberately DO NOT load old
-    vivah_* form values.
+  formFields.forEach(id => {
 
-    Every page visit starts fresh.
-  */
+    const input = $(id);
 
-  formFields.forEach(
-    id => {
-
-      const input =
-        $(id);
-
-      if(input){
-
-        input.value =
-          "";
-
-      }
-
-
-      localStorage.removeItem(
-        "vivah_" + id
-      );
-
+    if(input){
+      input.value = "";
     }
-  );
 
+    localStorage.removeItem(
+      "vivah_" + id
+    );
+
+  });
 
   localStorage.removeItem(
     "vivah_selected_template"
   );
 
-
-  selected =
-    0;
+  selected = 0;
 
 }
 
@@ -1212,11 +807,6 @@ function loadDraft(){
 ========================================================= */
 
 function saveDraftMeta(){
-
-  /*
-    Template preference can be stored,
-    but it will be cleared on next page load.
-  */
 
   localStorage.setItem(
     "vivah_selected_template",
@@ -1230,61 +820,42 @@ function saveDraftMeta(){
    FORM CHANGE HANDLERS
 ========================================================= */
 
-formFields.forEach(
-  id => {
+formFields.forEach(id => {
 
-    const input =
-      $(id);
+  const input = $(id);
 
-    if(!input) return;
+  if(!input) return;
 
+  const handleChange = () => {
 
-    const handleChange =
-      () => {
-
-        /*
-          Keep current form data temporarily
-          while the user is working.
-
-          It will NOT be restored after
-          a new page load.
-        */
-
-        localStorage.setItem(
-          "vivah_" + id,
-          input.value
-        );
-
-
-        if(
-          localStorage.getItem(
-            PREMIUM_UNLOCK_KEY
-          ) === "true"
-        ){
-
-          invalidatePremium();
-
-        }
-
-
-        updatePreview();
-
-      };
-
-
-    input.addEventListener(
-      "input",
-      handleChange
+    localStorage.setItem(
+      "vivah_" + id,
+      input.value
     );
 
+    if(
+      localStorage.getItem(
+        PREMIUM_UNLOCK_KEY
+      ) === "true"
+    ){
+      invalidatePremium();
+    }
 
-    input.addEventListener(
-      "change",
-      handleChange
-    );
+    updatePreview();
 
-  }
-);
+  };
+
+  input.addEventListener(
+    "input",
+    handleChange
+  );
+
+  input.addEventListener(
+    "change",
+    handleChange
+  );
+
+});
 
 
 /* =========================================================
@@ -1297,19 +868,12 @@ function selectTemplate(index){
     index < 0 ||
     index >= templates.length
   ){
-
     return;
-
   }
 
+  const previous = selected;
 
-  const previous =
-    selected;
-
-
-  selected =
-    index;
-
+  selected = index;
 
   if(
     previous !== index &&
@@ -1317,15 +881,11 @@ function selectTemplate(index){
       PREMIUM_UNLOCK_KEY
     ) === "true"
   ){
-
     invalidatePremium();
-
   }
-
 
   const selectedName =
     $("selectedName");
-
 
   if(selectedName){
 
@@ -1334,10 +894,7 @@ function selectTemplate(index){
 
   }
 
-
-  const preview =
-    $("preview");
-
+  const preview = $("preview");
 
   if(preview){
 
@@ -1347,11 +904,8 @@ function selectTemplate(index){
 
   }
 
-
   renderMini();
-
   updatePreview();
-
   saveDraftMeta();
 
 }
@@ -1368,25 +922,19 @@ $("photo")?.addEventListener(
     const file =
       event.target.files?.[0];
 
-
     if(!file) return;
-
 
     if(
       !file.type.startsWith("image/")
     ){
 
-      toast(
-        "Please choose an image file."
-      );
+      toast("Please choose an image file.");
 
-      event.target.value =
-        "";
+      event.target.value = "";
 
       return;
 
     }
-
 
     if(
       file.size > 12 * 1024 * 1024
@@ -1396,13 +944,11 @@ $("photo")?.addEventListener(
         "Photo should be smaller than 12 MB."
       );
 
-      event.target.value =
-        "";
+      event.target.value = "";
 
       return;
 
     }
-
 
     let photoVersion =
       Number(
@@ -1411,51 +957,40 @@ $("photo")?.addEventListener(
         ) || "0"
       );
 
-
     photoVersion++;
-
 
     localStorage.setItem(
       PHOTO_VERSION_KEY,
       String(photoVersion)
     );
 
-
     invalidatePremium();
 
-
     compressPhoto(file)
-      .then(
-        compressedData => {
+      .then(compressedData => {
 
-          profileDataUrl =
-            compressedData;
+        profileDataUrl =
+          compressedData;
 
+        updatePreview();
 
-          updatePreview();
+        toast(
+          "Photo added successfully."
+        );
 
+      })
+      .catch(error => {
 
-          toast(
-            "Photo added successfully."
-          );
+        console.error(
+          "Photo processing:",
+          error
+        );
 
-        }
-      )
-      .catch(
-        error => {
+        toast(
+          "Photo could not be processed."
+        );
 
-          console.error(
-            "Photo processing:",
-            error
-          );
-
-
-          toast(
-            "Photo could not be processed."
-          );
-
-        }
-      );
+      });
 
   }
 );
@@ -1467,153 +1002,107 @@ $("photo")?.addEventListener(
 
 function compressPhoto(file){
 
-  return new Promise(
-    (resolve,reject) => {
+  return new Promise((resolve,reject) => {
 
-      const reader =
-        new FileReader();
+    const reader =
+      new FileReader();
 
+    reader.onload = function(){
 
-      reader.onload =
-        function(){
+      const img = new Image();
 
-          const img =
-            new Image();
+      img.onload = function(){
 
+        const maxSize = 1600;
 
-          img.onload =
-            function(){
+        let width = img.width;
+        let height = img.height;
 
-              const maxSize =
-                1600;
+        if(
+          width > maxSize ||
+          height > maxSize
+        ){
 
+          if(width > height){
 
-              let width =
-                img.width;
+            height =
+              Math.round(
+                height *
+                maxSize /
+                width
+              );
 
+            width = maxSize;
 
-              let height =
-                img.height;
+          }else{
 
-
-              if(
-                width > maxSize ||
-                height > maxSize
-              ){
-
-                if(width > height){
-
-                  height =
-                    Math.round(
-                      height *
-                      maxSize /
-                      width
-                    );
-
-                  width =
-                    maxSize;
-
-                }else{
-
-                  width =
-                    Math.round(
-                      width *
-                      maxSize /
-                      height
-                    );
-
-                  height =
-                    maxSize;
-
-                }
-
-              }
-
-
-              const canvas =
-                document.createElement(
-                  "canvas"
-                );
-
-
-              canvas.width =
-                width;
-
-
-              canvas.height =
-                height;
-
-
-              const ctx =
-                canvas.getContext(
-                  "2d"
-                );
-
-
-              if(!ctx){
-
-                reject(
-                  new Error(
-                    "Canvas not supported"
-                  )
-                );
-
-                return;
-
-              }
-
-
-              ctx.drawImage(
-                img,
-                0,
-                0,
-                width,
+            width =
+              Math.round(
+                width *
+                maxSize /
                 height
               );
 
+            height = maxSize;
 
-              const dataUrl =
-                canvas.toDataURL(
-                  "image/jpeg",
-                  0.82
-                );
+          }
 
+        }
 
-              resolve(
-                dataUrl
-              );
+        const canvas =
+          document.createElement("canvas");
 
-            };
+        canvas.width = width;
+        canvas.height = height;
 
+        const ctx =
+          canvas.getContext("2d");
 
-          img.onerror =
-            () => reject(
-              new Error(
-                "Invalid image"
-              )
-            );
+        if(!ctx){
 
+          reject(
+            new Error("Canvas not supported")
+          );
 
-          img.src =
-            reader.result;
+          return;
 
-        };
+        }
 
-
-      reader.onerror =
-        () => reject(
-          new Error(
-            "Could not read image"
-          )
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          width,
+          height
         );
 
+        const dataUrl =
+          canvas.toDataURL(
+            "image/jpeg",
+            0.82
+          );
 
-      reader.readAsDataURL(
-        file
+        resolve(dataUrl);
+
+      };
+
+      img.onerror =
+        () => reject(
+          new Error("Invalid image")
+        );
+
+      img.src = reader.result;
+
+    };
+
+    reader.onerror =
+      () => reject(
+        new Error("Could not read image")
       );
 
-    }
-  );
+    reader.readAsDataURL(file);
+
+  });
 
 }
 
@@ -1626,86 +1115,36 @@ function getProfilePayload(){
 
   return {
 
-    name:
-      safeValue("name") || null,
-
-    date_of_birth:
-      safeValue("dob") || null,
-
-    time_of_birth:
-      safeValue("time_of_birth") || null,
-
-    place_of_birth:
-      safeValue("place_of_birth") || null,
-
-    height:
-      safeValue("height") || null,
-
-    religion:
-      safeValue("religion") || null,
-
-    caste:
-      safeValue("caste") || null,
-
-    gotra:
-      safeValue("gotra") || null,
-
-    rashi:
-      safeValue("rashi") || null,
-
-    nakshatra:
-      safeValue("nakshatra") || null,
-
-    complexion:
-      safeValue("complexion") || null,
-
-    education:
-      safeValue("education") || null,
-
-    profession:
-      safeValue("profession") || null,
-
-    company:
-      safeValue("company") || null,
-
-    languages:
-      safeValue("languages") || null,
-
-    hobbies:
-      safeValue("hobbies") || null,
-
-    father_name:
-      safeValue("father") || null,
-
+    name: safeValue("name") || null,
+    date_of_birth: safeValue("dob") || null,
+    time_of_birth: safeValue("time_of_birth") || null,
+    place_of_birth: safeValue("place_of_birth") || null,
+    height: safeValue("height") || null,
+    religion: safeValue("religion") || null,
+    caste: safeValue("caste") || null,
+    gotra: safeValue("gotra") || null,
+    rashi: safeValue("rashi") || null,
+    nakshatra: safeValue("nakshatra") || null,
+    complexion: safeValue("complexion") || null,
+    education: safeValue("education") || null,
+    profession: safeValue("profession") || null,
+    company: safeValue("company") || null,
+    languages: safeValue("languages") || null,
+    hobbies: safeValue("hobbies") || null,
+    father_name: safeValue("father") || null,
     father_occupation:
       safeValue("father_occupation") || null,
-
-    mother_name:
-      safeValue("mother") || null,
-
+    mother_name: safeValue("mother") || null,
     mother_occupation:
       safeValue("mother_occupation") || null,
-
-    siblings:
-      safeValue("siblings") || null,
-
+    siblings: safeValue("siblings") || null,
     contact_person:
       safeValue("contact_person") || null,
-
-    phone:
-      safeValue("phone") || null,
-
-    email:
-      safeValue("email") || null,
-
-    city:
-      safeValue("city") || null,
-
-    address:
-      safeValue("address") || null,
-
-    about_me:
-      safeValue("about") || null,
+    phone: safeValue("phone") || null,
+    email: safeValue("email") || null,
+    city: safeValue("city") || null,
+    address: safeValue("address") || null,
+    about_me: safeValue("about") || null,
 
     template_id:
       templates[selected]?.[0] ||
@@ -1730,48 +1169,36 @@ async function uploadProfilePhoto(profileId){
 
   }
 
-
   if(!profileDataUrl){
-
     return null;
-
   }
-
 
   const response =
     await fetch(
       "/api/upload-photo",
       {
 
-        method:
-          "POST",
+        method: "POST",
 
         headers: {
           "Content-Type":
             "application/json"
         },
 
-        body:
-          JSON.stringify({
+        body: JSON.stringify({
 
-            profile_id:
-              profileId,
+          profile_id: profileId,
+          image_data: profileDataUrl
 
-            image_data:
-              profileDataUrl
-
-          })
+        })
 
       }
     );
 
-
   const rawText =
     await response.text();
 
-
   let data = {};
-
 
   try{
 
@@ -1789,7 +1216,6 @@ async function uploadProfilePhoto(profileId){
 
   }
 
-
   if(
     !response.ok ||
     !data.success
@@ -1802,8 +1228,114 @@ async function uploadProfilePhoto(profileId){
 
   }
 
-
   return data.photoUrl;
+
+}
+
+
+/* =========================================================
+   PREMIUM PAYMENT FORM VALIDATION
+========================================================= */
+
+function validatePremiumForm(){
+
+  /*
+    Minimum details required before payment.
+    User cannot make payment on an empty form.
+  */
+
+  const requiredFields = [
+
+    {
+      id: "name",
+      label: "Full Name"
+    },
+
+    {
+      id: "dob",
+      label: "Date of Birth"
+    },
+
+    {
+      id: "height",
+      label: "Height"
+    },
+
+    {
+      id: "religion",
+      label: "Religion"
+    },
+
+    {
+      id: "education",
+      label: "Education"
+    },
+
+    {
+      id: "profession",
+      label: "Profession"
+    },
+
+    {
+      id: "city",
+      label: "City"
+    },
+
+    {
+      id: "phone",
+      label: "Mobile Number"
+    }
+
+  ];
+
+  const missing = [];
+
+  for(const field of requiredFields){
+
+    const element =
+      $(field.id);
+
+    const value =
+      String(
+        element?.value || ""
+      ).trim();
+
+    if(!value){
+      missing.push(field);
+    }
+
+  }
+
+  if(missing.length > 0){
+
+    toast(
+      "Please fill required details first: " +
+      missing
+        .slice(0,3)
+        .map(field => field.label)
+        .join(", ") +
+      (missing.length > 3 ? "..." : "")
+    );
+
+    const firstMissing =
+      $(missing[0].id);
+
+    if(firstMissing){
+
+      firstMissing.focus();
+
+      firstMissing.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+    }
+
+    return false;
+
+  }
+
+  return true;
 
 }
 
@@ -1812,24 +1344,29 @@ async function uploadProfilePhoto(profileId){
    RAZORPAY
 ========================================================= */
 
-const PREMIUM_PRICE_PAISE =
-  1900;
-
+const PREMIUM_PRICE_PAISE = 1900;
 
 async function startRazorpayPayment(){
 
-  if(
-    premiumUnlocked()
-  ){
+  /*
+    IMPORTANT:
+    No payment if required biodata
+    details are missing.
+  */
+
+  if(!validatePremiumForm()){
+    return false;
+  }
+
+  if(premiumUnlocked()){
 
     toast(
-      "Premium already unlocked. You can download now."
+      "Premium already unlocked. You can download both PDF and JPG."
     );
 
     return true;
 
   }
-
 
   if(
     typeof Razorpay ===
@@ -1844,62 +1381,50 @@ async function startRazorpayPayment(){
 
   }
 
-
-  const payBtn =
-    $("payBtn");
-
+  const payBtn = $("payBtn");
 
   if(payBtn){
 
-    payBtn.disabled =
-      true;
+    payBtn.disabled = true;
 
     payBtn.textContent =
       "Opening payment…";
 
   }
 
-
   try{
 
     saveDraftMeta();
-
 
     const orderRes =
       await fetch(
         "/api/create-order",
         {
 
-          method:
-            "POST",
+          method: "POST",
 
           headers: {
             "Content-Type":
               "application/json"
           },
 
-          body:
-            JSON.stringify({
+          body: JSON.stringify({
 
-              amount:
-                PREMIUM_PRICE_PAISE,
+            amount:
+              PREMIUM_PRICE_PAISE,
 
-              profile:
-                getProfilePayload()
+            profile:
+              getProfilePayload()
 
-            })
+          })
 
         }
       );
 
-
     const orderData =
       await orderRes
         .json()
-        .catch(
-          () => ({})
-        );
-
+        .catch(() => ({}));
 
     if(
       !orderRes.ok ||
@@ -1914,10 +1439,7 @@ async function startRazorpayPayment(){
 
     }
 
-
-    if(
-      orderData.profileId
-    ){
+    if(orderData.profileId){
 
       setProfileId(
         orderData.profileId
@@ -1925,28 +1447,22 @@ async function startRazorpayPayment(){
 
     }
 
-
     const options = {
 
-      key:
-        orderData.keyId,
+      key: orderData.keyId,
 
-      amount:
-        orderData.amount,
+      amount: orderData.amount,
 
       currency:
-        orderData.currency ||
-        "INR",
+        orderData.currency || "INR",
 
-      name:
-        "VivahBio",
+      name: "VivahBio",
 
       description:
         "Premium Biodata Download",
 
       order_id:
         orderData.orderId,
-
 
       prefill: {
 
@@ -1961,14 +1477,9 @@ async function startRazorpayPayment(){
 
       },
 
-
       theme: {
-
-        color:
-          "#7b2036"
-
+        color: "#7b2036"
       },
-
 
       handler:
         async function(response){
@@ -1980,8 +1491,7 @@ async function startRazorpayPayment(){
                 "/api/verify-payment",
                 {
 
-                  method:
-                    "POST",
+                  method: "POST",
 
                   headers: {
                     "Content-Type":
@@ -2005,14 +1515,10 @@ async function startRazorpayPayment(){
                 }
               );
 
-
             const verifyData =
               await verifyRes
                 .json()
-                .catch(
-                  () => ({})
-                );
-
+                .catch(() => ({}));
 
             if(
               !verifyRes.ok ||
@@ -2027,23 +1533,17 @@ async function startRazorpayPayment(){
 
             }
 
-
             setPaymentId(
               verifyData.paymentId
             );
-
 
             setPremiumUnlocked(
               verifyData.paymentId
             );
 
-
             updatePremiumButtons();
 
-
-            let photoSaved =
-              false;
-
+            let photoSaved = false;
 
             try{
 
@@ -2051,7 +1551,6 @@ async function startRazorpayPayment(){
                 getProfileId() ||
                 orderData.profileId ||
                 "";
-
 
               if(
                 profileId &&
@@ -2063,12 +1562,8 @@ async function startRazorpayPayment(){
                     profileId
                   );
 
-
                 if(photoUrl){
-
-                  photoSaved =
-                    true;
-
+                  photoSaved = true;
                 }
 
               }
@@ -2082,27 +1577,25 @@ async function startRazorpayPayment(){
 
             }
 
-
             if(photoSaved){
 
               toast(
-                "Payment successful! Photo saved. PDF/JPG unlocked."
+                "Payment successful! PDF and JPG both unlocked."
               );
 
             }else if(profileDataUrl){
 
               toast(
-                "Payment successful, but photo could not be saved."
+                "Payment successful! PDF and JPG unlocked."
               );
 
             }else{
 
               toast(
-                "Payment successful! PDF/JPG unlocked."
+                "Payment successful! PDF and JPG unlocked."
               );
 
             }
-
 
           }catch(error){
 
@@ -2111,12 +1604,10 @@ async function startRazorpayPayment(){
               error
             );
 
-
             toast(
               error.message ||
               "Payment verification failed."
             );
-
 
           }finally{
 
@@ -2126,30 +1617,24 @@ async function startRazorpayPayment(){
 
         },
 
-
       modal: {
 
-        ondismiss:
-          function(){
+        ondismiss: function(){
 
-            resetPayButton();
+          resetPayButton();
 
-            toast(
-              "Payment cancelled."
-            );
+          toast(
+            "Payment cancelled."
+          );
 
-          }
+        }
 
       }
 
     };
 
-
     const razorpay =
-      new Razorpay(
-        options
-      );
-
+      new Razorpay(options);
 
     razorpay.on(
       "payment.failed",
@@ -2164,12 +1649,9 @@ async function startRazorpayPayment(){
       }
     );
 
-
     razorpay.open();
 
-
     return true;
-
 
   }catch(error){
 
@@ -2178,15 +1660,12 @@ async function startRazorpayPayment(){
       error
     );
 
-
     toast(
       error.message ||
       "Payment start nahi ho paya."
     );
 
-
     resetPayButton();
-
 
     return false;
 
@@ -2201,16 +1680,11 @@ async function startRazorpayPayment(){
 
 function resetPayButton(){
 
-  const button =
-    $("payBtn");
-
+  const button = $("payBtn");
 
   if(!button) return;
 
-
-  button.disabled =
-    false;
-
+  button.disabled = false;
 
   button.textContent =
     premiumUnlocked()
@@ -2219,12 +1693,10 @@ function resetPayButton(){
 
 }
 
-
 function updatePremiumButtons(){
 
   const unlocked =
     premiumUnlocked();
-
 
   if($("pdfBtn")){
 
@@ -2235,7 +1707,6 @@ function updatePremiumButtons(){
 
   }
 
-
   if($("jpgBtn")){
 
     $("jpgBtn").textContent =
@@ -2244,7 +1715,6 @@ function updatePremiumButtons(){
         : "Unlock to Download JPG";
 
   }
-
 
   resetPayButton();
 
@@ -2260,7 +1730,6 @@ async function logDownload(fileType){
   const paymentId =
     getPaymentId();
 
-
   if(!paymentId){
 
     console.warn(
@@ -2271,7 +1740,6 @@ async function logDownload(fileType){
 
   }
 
-
   try{
 
     const response =
@@ -2279,8 +1747,7 @@ async function logDownload(fileType){
         "/api/log-download",
         {
 
-          method:
-            "POST",
+          method: "POST",
 
           headers: {
             "Content-Type":
@@ -2301,14 +1768,10 @@ async function logDownload(fileType){
         }
       );
 
-
     const data =
       await response
         .json()
-        .catch(
-          () => ({})
-        );
-
+        .catch(() => ({}));
 
     if(
       !response.ok ||
@@ -2324,9 +1787,7 @@ async function logDownload(fileType){
 
     }
 
-
     return true;
-
 
   }catch(error){
 
@@ -2348,87 +1809,70 @@ async function logDownload(fileType){
 
 function loadScript(src){
 
-  return new Promise(
-    (resolve,reject) => {
+  return new Promise((resolve,reject) => {
 
-      const existing =
-        document.querySelector(
-          `script[src="${src}"]`
+    const existing =
+      document.querySelector(
+        `script[src="${src}"]`
+      );
+
+    if(existing){
+
+      if(
+        existing.dataset.loaded ===
+        "true"
+      ){
+
+        resolve();
+
+      }else{
+
+        existing.addEventListener(
+          "load",
+          resolve,
+          {once:true}
         );
 
-
-      if(existing){
-
-        if(
-          existing.dataset.loaded ===
-          "true"
-        ){
-
-          resolve();
-
-        }else{
-
-          existing.addEventListener(
-            "load",
-            resolve,
-            {once:true}
-          );
-
-          existing.addEventListener(
-            "error",
-            reject,
-            {once:true}
-          );
-
-        }
-
-        return;
+        existing.addEventListener(
+          "error",
+          reject,
+          {once:true}
+        );
 
       }
 
-
-      const script =
-        document.createElement(
-          "script"
-        );
-
-
-      script.src =
-        src;
-
-
-      script.onload =
-        () => {
-
-          script.dataset.loaded =
-            "true";
-
-          resolve();
-
-        };
-
-
-      script.onerror =
-        () => {
-
-          reject(
-            new Error(
-              "Required download library could not be loaded."
-            )
-          );
-
-        };
-
-
-      document.head.appendChild(
-        script
-      );
+      return;
 
     }
-  );
+
+    const script =
+      document.createElement("script");
+
+    script.src = src;
+
+    script.onload = () => {
+
+      script.dataset.loaded = "true";
+
+      resolve();
+
+    };
+
+    script.onerror = () => {
+
+      reject(
+        new Error(
+          "Required download library could not be loaded."
+        )
+      );
+
+    };
+
+    document.head.appendChild(script);
+
+  });
 
 }
-
 
 async function ensureExportLibraries(){
 
@@ -2442,7 +1886,6 @@ async function ensureExportLibraries(){
     );
 
   }
-
 
   if(
     typeof window.jspdf ===
@@ -2474,12 +1917,8 @@ async function createPreviewCanvas(){
     await document.fonts.ready;
   }
 
-  /*
-    Create a hidden desktop-width export area.
-    This prevents mobile CSS from affecting
-    PDF/JPG downloads.
-  */
-  const exportArea = document.createElement("div");
+  const exportArea =
+    document.createElement("div");
 
   exportArea.style.position = "fixed";
   exportArea.style.left = "-10000px";
@@ -2489,21 +1928,20 @@ async function createPreviewCanvas(){
   exportArea.style.zIndex = "-9999";
   exportArea.style.overflow = "visible";
 
-  /*
-    Clone the current biodata.
-  */
-  const clone = preview.cloneNode(true);
+  const clone =
+    preview.cloneNode(true);
 
-  clone.id = "vivahbioExportPreview";
+  clone.id =
+    "vivahbioExportPreview";
 
   exportArea.appendChild(clone);
-  document.body.appendChild(exportArea);
 
-  /*
-    Force desktop/A4 layout only inside
-    the hidden export copy.
-  */
-  const exportStyle = document.createElement("style");
+  document.body.appendChild(
+    exportArea
+  );
+
+  const exportStyle =
+    document.createElement("style");
 
   exportStyle.textContent = `
 
@@ -2527,8 +1965,6 @@ async function createPreviewCanvas(){
       box-sizing:border-box !important;
     }
 
-    /* Force desktop header */
-
     #vivahbioExportPreview .bio-header{
       display:flex !important;
       flex-direction:row !important;
@@ -2536,14 +1972,10 @@ async function createPreviewCanvas(){
       justify-content:space-between !important;
     }
 
-    /* Force two-column details */
-
     #vivahbioExportPreview .bio-section-body{
       display:grid !important;
       grid-template-columns:1fr 1fr !important;
     }
-
-    /* Prevent mobile rows/layout */
 
     #vivahbioExportPreview .bio-row{
       display:flex !important;
@@ -2553,14 +1985,13 @@ async function createPreviewCanvas(){
 
   exportArea.appendChild(exportStyle);
 
-  /*
-    Wait for images in the cloned preview.
-  */
-  const images = Array.from(
-    clone.querySelectorAll("img")
-  );
+  const images =
+    Array.from(
+      clone.querySelectorAll("img")
+    );
 
   await Promise.all(
+
     images.map(
       image =>
         new Promise(resolve => {
@@ -2575,40 +2006,41 @@ async function createPreviewCanvas(){
 
         })
     )
+
   );
 
   let canvas;
 
   try{
 
-    canvas = await html2canvas(
-      clone,
-      {
-        scale: 2,
+    canvas =
+      await html2canvas(
+        clone,
+        {
 
-        useCORS: true,
+          scale: 2,
 
-        allowTaint: false,
+          useCORS: true,
 
-        backgroundColor: "#ffffff",
+          allowTaint: false,
 
-        logging: false,
+          backgroundColor: "#ffffff",
 
-        imageTimeout: 15000,
+          logging: false,
 
-        windowWidth: 794,
+          imageTimeout: 15000,
 
-        scrollX: 0,
+          windowWidth: 794,
 
-        scrollY: 0
-      }
-    );
+          scrollX: 0,
+
+          scrollY: 0
+
+        }
+      );
 
   }finally{
 
-    /*
-      Remove temporary export copy.
-    */
     exportArea.remove();
 
   }
@@ -2624,27 +2056,18 @@ async function createPreviewCanvas(){
 
 async function downloadJpg(){
 
-  toast(
-    "Preparing JPG…"
-  );
-
+  toast("Preparing JPG…");
 
   await ensureExportLibraries();
-
 
   const canvas =
     await createPreviewCanvas();
 
-
   const link =
-    document.createElement(
-      "a"
-    );
-
+    document.createElement("a");
 
   link.download =
     "vivahbio-marriage-biodata.jpg";
-
 
   link.href =
     canvas.toDataURL(
@@ -2652,35 +2075,21 @@ async function downloadJpg(){
       0.95
     );
 
-
-  document.body.appendChild(
-    link
-  );
-
+  document.body.appendChild(link);
 
   link.click();
 
-
   link.remove();
 
+  /*
+    IMPORTANT:
+    Download log only.
+    DO NOT clear premium or form data.
+    User can now download PDF and JPG
+    with the same payment.
+  */
 
-  const logged =
-    await logDownload(
-      "jpg"
-    );
-
-
-  if(logged){
-
-    /*
-      Immediately clear local browser
-      data after successful download.
-    */
-
-    clearLocalDraft();
-
-  }
-
+  await logDownload("jpg");
 
   toast(
     "JPG downloaded successfully."
@@ -2695,17 +2104,12 @@ async function downloadJpg(){
 
 async function downloadPdf(){
 
-  toast(
-    "Preparing PDF…"
-  );
-
+  toast("Preparing PDF…");
 
   await ensureExportLibraries();
 
-
   const canvas =
     await createPreviewCanvas();
-
 
   const imageData =
     canvas.toDataURL(
@@ -2713,10 +2117,8 @@ async function downloadPdf(){
       0.95
     );
 
-
   const jsPDF =
     window.jspdf?.jsPDF;
-
 
   if(!jsPDF){
 
@@ -2726,69 +2128,46 @@ async function downloadPdf(){
 
   }
 
-
   const pdf =
     new jsPDF({
 
-      orientation:
-        "portrait",
+      orientation: "portrait",
 
-      unit:
-        "mm",
+      unit: "mm",
 
-      format:
-        "a4",
+      format: "a4",
 
-      compress:
-        true
+      compress: true
 
     });
-
 
   const pageWidth =
     pdf.internal.pageSize.getWidth();
 
-
   const pageHeight =
     pdf.internal.pageSize.getHeight();
 
-
-  const margin =
-    5;
-
+  const margin = 5;
 
   const availableWidth =
-    pageWidth -
-    margin * 2;
-
+    pageWidth - margin * 2;
 
   const availableHeight =
-    pageHeight -
-    margin * 2;
-
+    pageHeight - margin * 2;
 
   const imageRatio =
-    canvas.width /
-    canvas.height;
-
+    canvas.width / canvas.height;
 
   let imageWidth =
     availableWidth;
 
-
   let imageHeight =
-    imageWidth /
-    imageRatio;
+    imageWidth / imageRatio;
 
-
-  if(
-    imageHeight >
-    availableHeight
-  ){
+  if(imageHeight > availableHeight){
 
     imageHeight =
       availableHeight;
-
 
     imageWidth =
       imageHeight *
@@ -2796,16 +2175,11 @@ async function downloadPdf(){
 
   }
 
-
   const x =
-    (pageWidth -
-      imageWidth) / 2;
-
+    (pageWidth - imageWidth) / 2;
 
   const y =
-    (pageHeight -
-      imageHeight) / 2;
-
+    (pageHeight - imageHeight) / 2;
 
   pdf.addImage(
     imageData,
@@ -2818,29 +2192,17 @@ async function downloadPdf(){
     "FAST"
   );
 
-
   pdf.save(
     "vivahbio-marriage-biodata.pdf"
   );
 
+  /*
+    IMPORTANT:
+    Download log only.
+    DO NOT clear premium or form data.
+  */
 
-  const logged =
-    await logDownload(
-      "pdf"
-    );
-
-
-  if(logged){
-
-    /*
-      Immediately clear local browser
-      data after successful download.
-    */
-
-    clearLocalDraft();
-
-  }
-
+  await logDownload("pdf");
 
   toast(
     "PDF downloaded successfully."
@@ -2855,9 +2217,7 @@ async function downloadPdf(){
 
 async function requirePremium(action){
 
-  if(
-    premiumUnlocked()
-  ){
+  if(premiumUnlocked()){
 
     try{
 
@@ -2870,7 +2230,6 @@ async function requirePremium(action){
         error
       );
 
-
       toast(
         error.message ||
         "Download failed."
@@ -2878,16 +2237,21 @@ async function requirePremium(action){
 
     }
 
-
     return;
 
   }
 
+  /*
+    Validate form before opening payment.
+  */
+
+  if(!validatePremiumForm()){
+    return;
+  }
 
   toast(
     "Download ke liye pehle ₹19 Premium unlock karein."
   );
-
 
   await startRazorpayPayment();
 
@@ -2901,26 +2265,16 @@ async function requirePremium(action){
 $("pdfBtn")?.addEventListener(
   "click",
   () => {
-
-    requirePremium(
-      downloadPdf
-    );
-
+    requirePremium(downloadPdf);
   }
 );
-
 
 $("jpgBtn")?.addEventListener(
   "click",
   () => {
-
-    requirePremium(
-      downloadJpg
-    );
-
+    requirePremium(downloadJpg);
   }
 );
-
 
 $("payBtn")?.addEventListener(
   "click",
@@ -2934,44 +2288,34 @@ $("payBtn")?.addEventListener(
 
 document
   .querySelectorAll(".filter")
-  .forEach(
-    button => {
+  .forEach(button => {
 
-      button.addEventListener(
-        "click",
-        () => {
+    button.addEventListener(
+      "click",
+      () => {
 
-          document
-            .querySelectorAll(".filter")
-            .forEach(
-              item =>
-                item.classList.remove(
-                  "active"
-                )
-            );
-
-
-          button.classList.add(
-            "active"
+        document
+          .querySelectorAll(".filter")
+          .forEach(item =>
+            item.classList.remove("active")
           );
 
+        button.classList.add("active");
 
-          renderTemplates(
-            button.dataset.filter ||
-            "all"
-          );
+        renderTemplates(
+          button.dataset.filter ||
+          "all"
+        );
 
+        setTimeout(
+          activateTemplateClickFix,
+          50
+        );
 
-          setTimeout(
-            activateTemplateClickFix,
-            50
-          );
+      }
+    );
 
-        }
-      );
-
-    }
-  );
+  });
 
 
 /* =========================================================
@@ -2999,32 +2343,22 @@ const heroPaper =
     "heroPaper"
   );
 
-
 if(heroPaper){
 
-  heroPaper.style.cursor =
-    "pointer";
-
+  heroPaper.style.cursor = "pointer";
 
   heroPaper.addEventListener(
     "click",
     function(){
 
       const maker =
-        document.getElementById(
-          "maker"
-        );
-
+        document.getElementById("maker");
 
       if(maker){
 
         maker.scrollIntoView({
-          behavior:
-            "smooth",
-
-          block:
-            "start"
-
+          behavior:"smooth",
+          block:"start"
         });
 
       }
@@ -3046,141 +2380,101 @@ function activateTemplateClickFix(){
       "#templateGrid .template-card"
     );
 
+  cards.forEach(card => {
 
-  cards.forEach(
-    card => {
+    card.style.cursor = "pointer";
 
-      card.style.cursor =
-        "pointer";
+    card.setAttribute(
+      "role",
+      "button"
+    );
 
+    card.setAttribute(
+      "tabindex",
+      "0"
+    );
 
-      card.setAttribute(
-        "role",
-        "button"
-      );
+    card.onclick = function(event){
 
+      event.preventDefault();
+      event.stopPropagation();
 
-      card.setAttribute(
-        "tabindex",
-        "0"
-      );
+      const title =
+        card.querySelector(
+          "footer b"
+        )?.textContent?.trim();
 
+      let templateIndex =
+        templates.findIndex(
+          template =>
+            template[0] === title
+        );
 
-      card.onclick =
-        function(event){
+      if(templateIndex < 0){
 
-          event.preventDefault();
-
-          event.stopPropagation();
-
-
-          const title =
-            card.querySelector(
-              "footer b"
-            )?.textContent
-              ?.trim();
-
-
-          let templateIndex =
-            templates.findIndex(
-              template =>
-                template[0] === title
-            );
-
-
-          if(
-            templateIndex < 0
-          ){
-
-            const allCards =
-              Array.from(
-                document.querySelectorAll(
-                  "#templateGrid .template-card"
-                )
-              );
-
-
-            templateIndex =
-              allCards.indexOf(card);
-
-          }
-
-
-          if(
-            templateIndex >= 0
-          ){
-
-            selectTemplate(
-              templateIndex
-            );
-
-          }
-
-
-          const maker =
-            document.getElementById(
-              "maker"
-            );
-
-
-          if(maker){
-
-            setTimeout(
-              function(){
-
-                maker.scrollIntoView({
-                  behavior:
-                    "smooth",
-
-                  block:
-                    "start"
-
-                });
-
-              },
-              100
-            );
-
-          }
-
-
-          document
-            .querySelectorAll(
+        const allCards =
+          Array.from(
+            document.querySelectorAll(
               "#templateGrid .template-card"
             )
-            .forEach(
-              c =>
-                c.classList.remove(
-                  "selected"
-                )
-            );
-
-
-          card.classList.add(
-            "selected"
           );
 
-        };
+        templateIndex =
+          allCards.indexOf(card);
 
+      }
 
-      card.onkeydown =
-        function(event){
+      if(templateIndex >= 0){
 
-          if(
-            event.key === "Enter" ||
-            event.key === " "
-          ){
+        selectTemplate(
+          templateIndex
+        );
 
-            event.preventDefault();
+      }
 
-            card.click();
+      const maker =
+        document.getElementById("maker");
 
-          }
+      if(maker){
 
-        };
+        setTimeout(function(){
 
-    }
-  );
+          maker.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+          });
+
+        },100);
+
+      }
+
+      document
+        .querySelectorAll(
+          "#templateGrid .template-card"
+        )
+        .forEach(
+          c => c.classList.remove("selected")
+        );
+
+      card.classList.add("selected");
+
+    };
+
+    card.onkeydown = function(event){
+
+      if(
+        event.key === "Enter" ||
+        event.key === " "
+      ){
+
+        event.preventDefault();
+        card.click();
+
+      }
+
+    };
+
+  });
 
 }
 
@@ -3196,14 +2490,10 @@ if(
 ){
 
   const style =
-    document.createElement(
-      "style"
-    );
-
+    document.createElement("style");
 
   style.id =
     "template-click-fix-style";
-
 
   style.textContent = `
 
@@ -3227,10 +2517,7 @@ if(
 
   `;
 
-
-  document.head.appendChild(
-    style
-  );
+  document.head.appendChild(style);
 
 }
 
@@ -3238,16 +2525,6 @@ if(
 /* =========================================================
    INITIALIZE
 ========================================================= */
-
-/*
-  VERY IMPORTANT:
-
-  Old browser/localStorage data is cleared
-  FIRST.
-
-  Therefore old biodata can never be restored
-  by loadDraft().
-*/
 
 clearLocalDraft();
 
@@ -3257,9 +2534,7 @@ renderTemplates();
 
 renderMini();
 
-selectTemplate(
-  selected
-);
+selectTemplate(selected);
 
 updatePreview();
 
