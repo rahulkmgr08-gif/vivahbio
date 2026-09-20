@@ -152,7 +152,6 @@
       font-size: 14px;
     }
 
-
     /* =====================================================
        MOBILE FOOTER
     ===================================================== */
@@ -188,329 +187,595 @@
       }
     }
   </style>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-SQKHVGS05E"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-SQKHVGS05E');
-</script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SQKHVGS05E"></script>
 
-  
+  <script>
+    window.dataLayer = window.dataLayer || [];
 
-
-
-
-
-
-
-<style id="mobile-responsive-final">
-/* =====================================================
-   FINAL MOBILE RESPONSIVE LAYOUT
-   No transform-based scaling for the actual biodata preview.
-   The preview becomes a true responsive layout on phones.
-===================================================== */
-@media (max-width:700px){
-  html,body{
-    width:100% !important;
-    max-width:100% !important;
-    overflow-x:hidden !important;
-  }
-
-  img,svg,video,canvas{
-    max-width:100%;
-  }
-
-  /* Header */
-  .nav{
-    width:100% !important;
-    min-width:0 !important;
-    padding:12px 16px !important;
-    flex-wrap:nowrap !important;
-    gap:8px !important;
-    overflow:hidden !important;
-  }
-  .nav > nav{display:none !important;}
-  .brand{
-    min-width:0 !important;
-    flex:1 1 auto !important;
-    font-size:21px !important;
-    white-space:nowrap !important;
-  }
-  .nav-actions{
-    min-width:0 !important;
-    flex:0 0 auto !important;
-    gap:7px !important;
-  }
-  .admin-link{display:none !important;}
-  .nav-actions .lang{padding:10px 12px !important; white-space:nowrap !important;}
-  .nav-actions .small-btn{padding:11px 15px !important; white-space:nowrap !important;}
-
-  /* Hero */
-  .hero{
-    width:100% !important;
-    max-width:100% !important;
-    min-width:0 !important;
-    display:grid !important;
-    grid-template-columns:1fr !important;
-    gap:24px !important;
-    padding:48px 18px 32px !important;
-    overflow:hidden !important;
-  }
-  .hero-copy{width:100% !important; min-width:0 !important;}
-  .hero-copy h1{
-    max-width:100% !important;
-    font-size:clamp(40px,12vw,58px) !important;
-    line-height:.98 !important;
-    overflow-wrap:anywhere !important;
-  }
-  .hero-copy p{font-size:17px !important; line-height:1.5 !important;}
-  .hero-buttons{width:100% !important; flex-direction:column !important; gap:10px !important;}
-  .hero-buttons a{width:100% !important; max-width:100% !important; box-sizing:border-box !important; text-align:center !important;}
-  .ticks{width:100% !important; display:grid !important; grid-template-columns:1fr !important; gap:7px !important;}
-  .hero-stage{
-    width:100% !important;
-    max-width:100% !important;
-    min-width:0 !important;
-    overflow:hidden !important;
-    display:flex !important;
-    justify-content:center !important;
-    align-items:flex-start !important;
-    padding:0 !important;
-  }
-  .hero-stage .decor{display:none !important;}
-  .hero-stage #heroPaper{
-    width:760px !important;
-    max-width:none !important;
-    flex:0 0 760px !important;
-    transform:scale(.43) !important;
-    transform-origin:top center !important;
-    margin-bottom:-430px !important;
-  }
-
-  /* General sections */
-  .section,.stats,.maker{
-    width:100% !important;
-    max-width:100% !important;
-    min-width:0 !important;
-    box-sizing:border-box !important;
-    overflow-x:hidden !important;
-  }
-  .section{padding-left:18px !important; padding-right:18px !important;}
-  .section-head{width:100% !important; min-width:0 !important; display:block !important;}
-  .section-head > *{max-width:100% !important; min-width:0 !important;}
-  .stats{display:grid !important; grid-template-columns:1fr 1fr !important; gap:1px !important;}
-  .filters{
-    width:100% !important;
-    max-width:100% !important;
-    display:flex !important;
-    flex-wrap:nowrap !important;
-    overflow-x:auto !important;
-    overflow-y:hidden !important;
-    gap:8px !important;
-    padding:2px 2px 10px !important;
-    scrollbar-width:none !important;
-  }
-  .filters::-webkit-scrollbar{display:none !important;}
-  .filter{flex:0 0 auto !important; white-space:nowrap !important;}
-  .template-grid{width:100% !important; grid-template-columns:1fr !important;}
-  .steps{width:100% !important; grid-template-columns:1fr !important;}
-
-  /* Maker */
-  .maker{padding-left:18px !important; padding-right:18px !important;}
-  .maker-layout{
-    width:100% !important;
-    max-width:100% !important;
-    min-width:0 !important;
-    display:flex !important;
-    flex-direction:column !important;
-    align-items:stretch !important;
-    gap:22px !important;
-    overflow:visible !important;
-  }
-  .form-card,.preview-wrap{
-    width:100% !important;
-    max-width:100% !important;
-    min-width:0 !important;
-    box-sizing:border-box !important;
-  }
-  .form-card{overflow:hidden !important;}
-  .form-grid{width:100% !important; min-width:0 !important; grid-template-columns:1fr !important;}
-  .form-grid label,.form-card .full{width:100% !important; min-width:0 !important;}
-  .form-grid input,.form-card textarea,.form-card select,.form-card input[type=file]{
-    width:100% !important; max-width:100% !important; min-width:0 !important; box-sizing:border-box !important;
-  }
-  .mini-templates{
-    width:100% !important;
-    max-width:100% !important;
-    min-width:0 !important;
-    display:flex !important;
-    flex-wrap:nowrap !important;
-    overflow-x:auto !important;
-    gap:10px !important;
-    padding-bottom:8px !important;
-    scrollbar-width:none !important;
-  }
-  .mini-templates::-webkit-scrollbar{display:none !important;}
-  .mini-templates > *{flex:0 0 auto !important;}
-  .download-row{width:100% !important; flex-direction:column !important; gap:10px !important;}
-  .download-row button{width:100% !important; max-width:100% !important;}
-
-  /* =====================================================
-     ACTUAL MOBILE BIODATA PREVIEW
-     No transform, no fixed 760px layout, no JS height hack.
-  ===================================================== */
-  .preview-wrap{
-    height:auto !important;
-    min-height:0 !important;
-    max-height:none !important;
-    padding:25px !important;
-    overflow:visible !important;
-    align-self:stretch !important;
-  }
-  .preview-bar{
-    width:100% !important;
-    max-width:100% !important;
-    box-sizing:border-box !important;
-    margin-bottom:12px !important;
-  }
-  .preview-wrap #preview{
-    display:block !important;
-    position:relative !important;
-    left:auto !important;
-    top:auto !important;
-    width:100% !important;
-    max-width:100% !important;
-    min-width:0 !important;
-    min-height:0 !important;
-    height:auto !important;
-    margin:0 !important;
-    padding:22px !important;
-    box-sizing:border-box !important;
-    transform:none !important;
-    transform-origin:initial !important;
-    overflow:hidden !important;
-  }
-  .bio-preview{
-    width:100% !important;
-    max-width:100% !important;
-    min-height:0 !important;
-    height:auto !important;
-    box-sizing:border-box !important;
-  }
-  .bio-header{
-    gap:12px !important;
-  }
-  .bio-header-text h2{
-    font-size:24px !important;
-    line-height:1.15 !important;
-  }
-  .bio-header-text p,.bio-location{font-size:10px !important;}
-  .profile{
-    width:82px !important;
-    height:102px !important;
-    flex:0 0 82px !important;
-  }
-  .bio-section{margin-top:18px !important;}
-  .bio-section-body{grid-template-columns:1fr !important; gap:0 !important;}
-  .bio-row{
-    font-size:10.5px !important;
-    padding:5px 0 !important;
-    gap:10px !important;
-  }
-  .bio-about{font-size:10.5px !important;}
-  .bio-foot{font-size:10px !important; margin-top:18px !important;}
-  .bio-floral-watermark{font-size:100px !important;}
-
-  /* Footer */
-  .site-footer{
-    width:100% !important;
-    max-width:100% !important;
-    overflow:hidden !important;
-    box-sizing:border-box !important;
-  }
-  .footer-inner,.footer-links,.footer-description{max-width:100% !important; min-width:0 !important;}
-  .site-footer .footer-links{gap:4px 7px !important; justify-content:center !important; text-align:center !important;}
-}
-</style>
-
-
-<style id="maker-top-attractive">
-.maker-quick-steps{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:10px;
-    margin:24px auto 0;
-    max-width:900px;
-  }
-
-  .maker-quick-steps span{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding:10px 15px;
-    border:1px solid rgba(139,30,63,.15);
-    border-radius:999px;
-    background:rgba(255,255,255,.78);
-    color:#5f5557;
-    font-size:14px;
-    line-height:1;
-    box-shadow:0 4px 14px rgba(80,20,35,.04);
-  }
-
-  .maker-quick-steps b{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    width:24px;
-    height:24px;
-    border-radius:50%;
-    background:#8b1e3f;
-    color:#fff;
-    font-size:12px;
-  }
-
-  @media (max-width:700px){
-.maker-quick-steps{
-      gap:8px;
-      margin-top:18px;
+    function gtag() {
+      dataLayer.push(arguments);
     }
 
-    .maker-quick-steps span{
-      font-size:12px;
-      padding:8px 10px;
+    gtag('js', new Date());
+    gtag('config', 'G-SQKHVGS05E');
+  </script>
+
+
+  <style id="mobile-responsive-final">
+    /* =====================================================
+       FINAL MOBILE RESPONSIVE LAYOUT
+       No transform-based scaling for the actual biodata preview.
+       The preview becomes a true responsive layout on phones.
+    ===================================================== */
+
+    @media (max-width:700px) {
+
+      html,
+      body {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+      }
+
+      img,
+      svg,
+      video,
+      canvas {
+        max-width: 100%;
+      }
+
+      /* Header */
+      .nav {
+        width: 100% !important;
+        min-width: 0 !important;
+        padding: 12px 16px !important;
+        flex-wrap: nowrap !important;
+        gap: 8px !important;
+        overflow: hidden !important;
+      }
+
+      .nav > nav {
+        display: none !important;
+      }
+
+      .brand {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        font-size: 21px !important;
+        white-space: nowrap !important;
+      }
+
+      .nav-actions {
+        min-width: 0 !important;
+        flex: 0 0 auto !important;
+        gap: 7px !important;
+      }
+
+      .admin-link {
+        display: none !important;
+      }
+
+      .nav-actions .lang {
+        padding: 10px 12px !important;
+        white-space: nowrap !important;
+      }
+
+      .nav-actions .small-btn {
+        padding: 11px 15px !important;
+        white-space: nowrap !important;
+      }
+
+      /* Hero */
+      .hero {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+        padding: 48px 18px 32px !important;
+        overflow: hidden !important;
+      }
+
+      .hero-copy {
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+
+      .hero-copy h1 {
+        max-width: 100% !important;
+        font-size: clamp(40px, 12vw, 58px) !important;
+        line-height: .98 !important;
+        overflow-wrap: anywhere !important;
+      }
+
+      .hero-copy p {
+        font-size: 17px !important;
+        line-height: 1.5 !important;
+      }
+
+      .hero-buttons {
+        width: 100% !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+      }
+
+      .hero-buttons a {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+      }
+
+      .ticks {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 7px !important;
+      }
+
+      .hero-stage {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+        padding: 0 !important;
+      }
+
+      .hero-stage .decor {
+        display: none !important;
+      }
+
+      .hero-stage #heroPaper {
+        width: 760px !important;
+        max-width: none !important;
+        flex: 0 0 760px !important;
+        transform: scale(.43) !important;
+        transform-origin: top center !important;
+        margin-bottom: -430px !important;
+      }
+
+      /* General sections */
+      .section,
+      .stats,
+      .maker {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+      }
+
+      .section {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+      }
+
+      .section-head {
+        width: 100% !important;
+        min-width: 0 !important;
+        display: block !important;
+      }
+
+      .section-head > * {
+        max-width: 100% !important;
+        min-width: 0 !important;
+      }
+
+      .stats {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 1px !important;
+      }
+
+      .filters {
+        width: 100% !important;
+        max-width: 100% !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        gap: 8px !important;
+        padding: 2px 2px 10px !important;
+        scrollbar-width: none !important;
+      }
+
+      .filters::-webkit-scrollbar {
+        display: none !important;
+      }
+
+      .filter {
+        flex: 0 0 auto !important;
+        white-space: nowrap !important;
+      }
+
+      .template-grid {
+        width: 100% !important;
+        grid-template-columns: 1fr !important;
+      }
+
+      .steps {
+        width: 100% !important;
+        grid-template-columns: 1fr !important;
+      }
+
+      /* Maker */
+      .maker {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+      }
+
+      .maker-layout {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 22px !important;
+        overflow: visible !important;
+      }
+
+      .form-card,
+      .preview-wrap {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+      }
+
+      .form-card {
+        overflow: hidden !important;
+      }
+
+      .form-grid {
+        width: 100% !important;
+        min-width: 0 !important;
+        grid-template-columns: 1fr !important;
+      }
+
+      .form-grid label,
+      .form-card .full {
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+
+      .form-grid input,
+      .form-card textarea,
+      .form-card select,
+      .form-card input[type=file] {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+      }
+
+      .mini-templates {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        gap: 10px !important;
+        padding-bottom: 8px !important;
+        scrollbar-width: none !important;
+      }
+
+      .mini-templates::-webkit-scrollbar {
+        display: none !important;
+      }
+
+      .mini-templates > * {
+        flex: 0 0 auto !important;
+      }
+
+      .download-row {
+        width: 100% !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+      }
+
+      .download-row button {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      /* =====================================================
+         ACTUAL MOBILE BIODATA PREVIEW
+         No transform, no fixed 760px layout, no JS height hack.
+      ===================================================== */
+
+      .preview-wrap {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        padding: 25px !important;
+        overflow: visible !important;
+        align-self: stretch !important;
+      }
+
+      .preview-bar {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        margin-bottom: 12px !important;
+      }
+
+      .preview-wrap #preview {
+        display: block !important;
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 22px !important;
+        box-sizing: border-box !important;
+        transform: none !important;
+        transform-origin: initial !important;
+        overflow: hidden !important;
+      }
+
+      .bio-preview {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: 0 !important;
+        height: auto !important;
+        box-sizing: border-box !important;
+      }
+
+      .bio-header {
+        gap: 12px !important;
+      }
+
+      .bio-header-text h2 {
+        font-size: 24px !important;
+        line-height: 1.15 !important;
+      }
+
+      .bio-header-text p,
+      .bio-location {
+        font-size: 10px !important;
+      }
+
+      .profile {
+        width: 82px !important;
+        height: 102px !important;
+        flex: 0 0 82px !important;
+      }
+
+      .bio-section {
+        margin-top: 18px !important;
+      }
+
+      .bio-section-body {
+        grid-template-columns: 1fr !important;
+        gap: 0 !important;
+      }
+
+      .bio-row {
+        font-size: 10.5px !important;
+        padding: 5px 0 !important;
+        gap: 10px !important;
+      }
+
+      .bio-about {
+        font-size: 10.5px !important;
+      }
+
+      .bio-foot {
+        font-size: 10px !important;
+        margin-top: 18px !important;
+      }
+
+      .bio-floral-watermark {
+        font-size: 100px !important;
+      }
+
+      /* Footer */
+      .site-footer {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+
+      .footer-inner,
+      .footer-links,
+      .footer-description {
+        max-width: 100% !important;
+        min-width: 0 !important;
+      }
+
+      .site-footer .footer-links {
+        gap: 4px 7px !important;
+        justify-content: center !important;
+        text-align: center !important;
+      }
+    }
+  </style>
+
+
+  <style id="maker-top-attractive">
+
+    .maker-quick-steps {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 24px auto 0;
+      max-width: 900px;
     }
 
-    .maker-quick-steps b{
-      width:21px;
-      height:21px;
-      font-size:11px;
+    .maker-quick-steps span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 15px;
+      border: 1px solid rgba(139, 30, 63, .15);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .78);
+      color: #5f5557;
+      font-size: 14px;
+      line-height: 1;
+      box-shadow: 0 4px 14px rgba(80, 20, 35, .04);
     }
-  }
-</style>
 
-
-<style id="maker-top-spacing-fix">
-  /* The Maker section is now the first main section, so keep only a small
-     breathing space below the navigation instead of the old section spacing. */
-  #maker{
-    padding-top:28px !important;
-  }
-
-  #maker .maker-title{
-    margin-top:0 !important;
-  }
-
-  @media (max-width:700px){
-    #maker{
-      padding-top:20px !important;
+    .maker-quick-steps b {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #8b1e3f;
+      color: #fff;
+      font-size: 12px;
     }
-  }
-</style>
+
+    @media (max-width:700px) {
+
+      .maker-quick-steps {
+        gap: 8px;
+        margin-top: 18px;
+      }
+
+      .maker-quick-steps span {
+        font-size: 12px;
+        padding: 8px 10px;
+      }
+
+      .maker-quick-steps b {
+        width: 21px;
+        height: 21px;
+        font-size: 11px;
+      }
+    }
+  </style>
+
+
+  <style id="maker-top-spacing-fix">
+
+    /*
+      The Maker section is now the first main section, so keep only a small
+      breathing space below the navigation instead of the old section spacing.
+    */
+
+    #maker {
+      padding-top: 28px !important;
+    }
+
+    #maker .maker-title {
+      margin-top: 0 !important;
+    }
+
+    @media (max-width:700px) {
+
+      #maker {
+        padding-top: 20px !important;
+      }
+    }
+  </style>
+
+
+  <!-- =====================================================
+       SEO RESOURCE LINKS
+       Internal links for Google crawling and users
+  ===================================================== -->
+
+  <style id="seo-resource-links">
+
+    .seo-resources {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 50px 24px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .seo-resources-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .seo-resources h2 {
+      margin: 10px 0 12px;
+      font-size: 36px;
+      line-height: 1.15;
+      color: #8b1e3f;
+    }
+
+    .seo-resources p {
+      max-width: 760px;
+      margin: 0 auto;
+      color: #62585b;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .seo-resource-links {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 25px;
+    }
+
+    .seo-resource-links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 22px;
+      border-radius: 10px;
+      background: #8b1e3f;
+      color: #ffffff !important;
+      text-decoration: none !important;
+      font-weight: 700;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+
+    .seo-resource-links a:hover {
+      transform: translateY(-2px);
+      opacity: .92;
+    }
+
+    @media (max-width:700px) {
+
+      .seo-resources {
+        padding: 38px 18px;
+      }
+
+      .seo-resources h2 {
+        font-size: 28px;
+      }
+
+      .seo-resources p {
+        font-size: 15px;
+      }
+
+      .seo-resource-links {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .seo-resource-links a {
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+  </style>
 
 </head>
 
@@ -528,10 +793,12 @@
 
     <a class="brand" href="#">
       <span class="brand-icon">♡</span>
+
       <span>
         Vivah<span>Bio</span>
       </span>
     </a>
+
 
     <nav>
 
@@ -568,11 +835,8 @@
 
   </header>
 
-  <!-- =====================================================
-       BIODATA MAKER — MOVED TO TOP FOR QUICK CREATION
-  ===================================================== -->
 
-<!-- =====================================================
+  <!-- =====================================================
        BIODATA MAKER
   ===================================================== -->
 
@@ -580,7 +844,7 @@
 
     <div class="maker-title">
 
-<span class="eyebrow">
+      <span class="eyebrow">
         ✦ YOUR SHAADI, YOUR STORY
       </span>
 
@@ -594,9 +858,22 @@
       </p>
 
       <div class="maker-quick-steps" aria-label="Create biodata steps">
-        <span><b>1</b> Choose a design</span>
-        <span><b>2</b> Fill your details</span>
-        <span><b>3</b> Download &amp; share</span>
+
+        <span>
+          <b>1</b>
+          Choose a design
+        </span>
+
+        <span>
+          <b>2</b>
+          Fill your details
+        </span>
+
+        <span>
+          <b>3</b>
+          Download &amp; share
+        </span>
+
       </div>
 
     </div>
@@ -608,7 +885,6 @@
       <!-- FORM -->
 
       <div class="form-card">
-
 
         <div class="form-top">
 
@@ -646,6 +922,7 @@
 
           <label>
             Full Name
+
             <input
               id="name"
               placeholder="Priya Sharma">
@@ -654,6 +931,7 @@
 
           <label>
             Date of Birth
+
             <input
               id="dob"
               type="date">
@@ -662,6 +940,7 @@
 
           <label>
             Time of Birth
+
             <input
               id="time_of_birth"
               type="time">
@@ -670,6 +949,7 @@
 
           <label>
             Place of Birth
+
             <input
               id="place_of_birth"
               placeholder="New Delhi">
@@ -678,6 +958,7 @@
 
           <label>
             Height
+
             <input
               id="height"
               placeholder="5'4&quot;">
@@ -686,6 +967,7 @@
 
           <label>
             Religion
+
             <input
               id="religion"
               placeholder="Hindu">
@@ -694,6 +976,7 @@
 
           <label>
             Caste / Community
+
             <input
               id="caste"
               placeholder="Optional">
@@ -702,6 +985,7 @@
 
           <label>
             Gotra
+
             <input
               id="gotra"
               placeholder="Optional">
@@ -710,6 +994,7 @@
 
           <label>
             Rashi
+
             <input
               id="rashi"
               placeholder="Tula (Libra)">
@@ -718,6 +1003,7 @@
 
           <label>
             Nakshatra
+
             <input
               id="nakshatra"
               placeholder="Aswini">
@@ -726,6 +1012,7 @@
 
           <label>
             Complexion
+
             <input
               id="complexion"
               placeholder="Fair">
@@ -734,6 +1021,7 @@
 
           <label>
             Education
+
             <input
               id="education"
               placeholder="B.Tech">
@@ -742,6 +1030,7 @@
 
           <label>
             Profession / Work
+
             <input
               id="profession"
               placeholder="Software Engineer">
@@ -750,6 +1039,7 @@
 
           <label>
             Company
+
             <input
               id="company"
               placeholder="Company name">
@@ -758,6 +1048,7 @@
 
           <label>
             Languages
+
             <input
               id="languages"
               placeholder="Hindi, English">
@@ -766,6 +1057,7 @@
 
           <label>
             Hobbies
+
             <input
               id="hobbies"
               placeholder="Travel, Music">
@@ -774,6 +1066,7 @@
 
           <label>
             Father's Name
+
             <input
               id="father"
               placeholder="Father's name">
@@ -782,6 +1075,7 @@
 
           <label>
             Father's Occupation
+
             <input
               id="father_occupation"
               placeholder="Business">
@@ -790,6 +1084,7 @@
 
           <label>
             Mother's Name
+
             <input
               id="mother"
               placeholder="Mother's name">
@@ -798,6 +1093,7 @@
 
           <label>
             Mother's Occupation
+
             <input
               id="mother_occupation"
               placeholder="Homemaker">
@@ -806,6 +1102,7 @@
 
           <label>
             Siblings
+
             <input
               id="siblings"
               placeholder="1 Brother, 1 Sister">
@@ -814,6 +1111,7 @@
 
           <label>
             Contact Person
+
             <input
               id="contact_person"
               placeholder="Father / Mother">
@@ -822,6 +1120,7 @@
 
           <label>
             City
+
             <input
               id="city"
               placeholder="Delhi">
@@ -830,6 +1129,7 @@
 
           <label>
             Contact Number
+
             <input
               id="phone"
               placeholder="+91 XXXXX XXXXX">
@@ -838,6 +1138,7 @@
 
           <label>
             Email
+
             <input
               id="email"
               type="email"
@@ -847,6 +1148,7 @@
 
           <label>
             Residential Address
+
             <input
               id="address"
               placeholder="City, State">
@@ -943,6 +1245,44 @@
   </section>
 
 
+  <!-- =====================================================
+       SEO RESOURCE LINKS
+       Internal links to important SEO pages
+  ===================================================== -->
+
+  <section class="seo-resources">
+
+    <div class="seo-resources-inner">
+
+      <span class="eyebrow">
+        MARRIAGE BIODATA GUIDE
+      </span>
+
+      <h2>
+        Marriage Biodata Formats &amp; Guides
+      </h2>
+
+      <p>
+        Looking for the right marriage biodata format?
+        Explore our helpful guides for creating a beautiful
+        biodata for marriage.
+      </p>
+
+      <div class="seo-resource-links">
+
+        <a href="marriage-biodata-format.html">
+          Marriage Biodata Format
+        </a>
+
+        <a href="marriage-biodata-maker.html">
+          Marriage Biodata Maker
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
 
 
   <!-- =====================================================
@@ -954,15 +1294,20 @@
     <div class="hero-copy">
 
       <span class="eyebrow">
+
         ✦
+
         <span data-i18n="eyebrow">
           INDIA'S BIODATA MAKER
         </span>
+
       </span>
+
 
       <h1 data-i18n="heroTitle">
         Your story deserves a <em>beautiful</em> biodata.
       </h1>
+
 
       <p data-i18n="heroText">
         Choose a design, add your details and photo, then
@@ -972,15 +1317,17 @@
 
       <div class="hero-buttons">
 
-        <a href="#templates"
-           class="primary-btn"
-           data-i18n="browse">
+        <a
+          href="#templates"
+          class="primary-btn"
+          data-i18n="browse">
           Browse Templates →
         </a>
 
-        <a href="#maker"
-           class="ghost-btn"
-           data-i18n="make">
+        <a
+          href="#maker"
+          class="ghost-btn"
+          data-i18n="make">
           Make Mine Free
         </a>
 
@@ -989,9 +1336,17 @@
 
       <div class="ticks">
 
-        <span>✓ 20 designs</span>
-        <span>✓ Hindi + English</span>
-        <span>✓ PDF + JPG</span>
+        <span>
+          ✓ 20 designs
+        </span>
+
+        <span>
+          ✓ Hindi + English
+        </span>
+
+        <span>
+          ✓ PDF + JPG
+        </span>
 
       </div>
 
@@ -1166,30 +1521,43 @@
 
     <div class="filters">
 
-      <button class="filter active" data-filter="all">
+      <button
+        class="filter active"
+        data-filter="all">
         All
       </button>
 
-      <button class="filter" data-filter="traditional">
+      <button
+        class="filter"
+        data-filter="traditional">
         Traditional
       </button>
 
-      <button class="filter" data-filter="modern">
+      <button
+        class="filter"
+        data-filter="modern">
         Modern
       </button>
 
-      <button class="filter" data-filter="floral">
+      <button
+        class="filter"
+        data-filter="floral">
         Floral
       </button>
 
-      <button class="filter" data-filter="royal">
+      <button
+        class="filter"
+        data-filter="royal">
         Royal
       </button>
 
     </div>
 
 
-    <div id="templateGrid" class="template-grid"></div>
+    <div
+      id="templateGrid"
+      class="template-grid">
+    </div>
 
   </section>
 
@@ -1268,7 +1636,7 @@
   </section>
 
 
-    <!-- =====================================================
+  <!-- =====================================================
        SINGLE FOOTER
   ===================================================== -->
 
@@ -1364,8 +1732,6 @@
 
   <script src="app.js"></script>
 
-  
-
 
   <script>
     document.getElementById("currentYear").textContent =
@@ -1373,10 +1739,6 @@
   </script>
 
 
-
-
-
-
-
 </body>
+
 </html>
